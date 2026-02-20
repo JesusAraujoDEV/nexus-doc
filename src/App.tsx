@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AdminLayout } from "./components/layout/AdminLayout";
 import PatientLanding from "./pages/PatientLanding";
 import BookingFlow from "./pages/BookingFlow";
@@ -22,7 +22,8 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           {/* Public Patient Routes */}
-          <Route path="/" element={<PatientLanding />} />
+          <Route path="/" element={<Navigate to="/dra-rosana-arteaga" replace />} />
+          <Route path="/:doctorSlug" element={<PatientLanding />} />
           <Route path="/booking" element={<BookingFlow />} />
 
           {/* Admin Routes */}
