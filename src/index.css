@@ -2,95 +2,108 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ==========================================
+   MEDICAL SaaS DESIGN SYSTEM
+   Mobile-First | Clean | Professional
+========================================== */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Core backgrounds */
+    --background: 210 20% 98%;
+    --foreground: 215 30% 12%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 215 30% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 215 30% 12%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary: Medical Blue */
+    --primary: 210 85% 35%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 210 80% 92%;
+    --primary-glow: 210 85% 50%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary: Soft Blue-Gray */
+    --secondary: 210 20% 94%;
+    --secondary-foreground: 215 30% 25%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted */
+    --muted: 210 15% 96%;
+    --muted-foreground: 215 15% 55%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Accent: Teal/Green for success states */
+    --accent: 162 60% 42%;
+    --accent-foreground: 0 0% 100%;
+    --accent-light: 162 55% 92%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Destructive */
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Borders & inputs */
+    --border: 210 20% 88%;
+    --input: 210 20% 88%;
+    --ring: 210 85% 35%;
 
-    --radius: 0.5rem;
+    /* Border radius */
+    --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(210 85% 35%), hsl(210 85% 48%));
+    --gradient-hero: linear-gradient(160deg, hsl(210 85% 35%) 0%, hsl(200 75% 45%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(210 20% 97%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(162 60% 42%), hsl(170 65% 50%));
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    /* Shadows */
+    --shadow-sm: 0 1px 3px 0 hsl(215 30% 12% / 0.06), 0 1px 2px -1px hsl(215 30% 12% / 0.06);
+    --shadow-md: 0 4px 16px -2px hsl(215 30% 12% / 0.10), 0 2px 6px -2px hsl(215 30% 12% / 0.06);
+    --shadow-lg: 0 10px 30px -5px hsl(215 30% 12% / 0.12), 0 4px 10px -4px hsl(215 30% 12% / 0.08);
+    --shadow-primary: 0 8px 25px -5px hsl(210 85% 35% / 0.35);
+    --shadow-accent: 0 8px 25px -5px hsl(162 60% 42% / 0.35);
 
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Sidebar */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 215 30% 20%;
+    --sidebar-primary: 210 85% 35%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 20% 94%;
+    --sidebar-accent-foreground: 215 30% 20%;
+    --sidebar-border: 210 20% 91%;
+    --sidebar-ring: 210 85% 35%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --background: 220 25% 8%;
+    --foreground: 210 20% 95%;
+    --card: 220 22% 11%;
+    --card-foreground: 210 20% 95%;
+    --popover: 220 22% 11%;
+    --popover-foreground: 210 20% 95%;
+    --primary: 210 80% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 20% 16%;
+    --secondary-foreground: 210 20% 85%;
+    --muted: 220 18% 14%;
+    --muted-foreground: 215 15% 55%;
+    --accent: 162 55% 48%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 65% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 20% 18%;
+    --input: 220 20% 18%;
+    --ring: 210 80% 55%;
+    --sidebar-background: 220 25% 7%;
+    --sidebar-foreground: 210 20% 85%;
+    --sidebar-primary: 210 80% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 220 20% 13%;
+    --sidebar-accent-foreground: 210 20% 85%;
+    --sidebar-border: 220 20% 14%;
+    --sidebar-ring: 210 80% 55%;
   }
 }
 
@@ -101,5 +114,154 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground));
+  }
+}
+
+@layer components {
+  /* ---- GRADIENT UTILITIES ---- */
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+  .gradient-accent {
+    background: var(--gradient-accent);
+  }
+
+  /* ---- SHADOW UTILITIES ---- */
+  .shadow-card {
+    box-shadow: var(--shadow-md);
+  }
+  .shadow-primary {
+    box-shadow: var(--shadow-primary);
+  }
+  .shadow-accent-glow {
+    box-shadow: var(--shadow-accent);
+  }
+
+  /* ---- MEDICAL CARD ---- */
+  .medical-card {
+    @apply bg-card rounded-2xl border border-border;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .medical-card:hover {
+    box-shadow: var(--shadow-md);
+  }
+
+  /* ---- PILL BADGE ---- */
+  .badge-primary {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium;
+    background: hsl(var(--primary-light));
+    color: hsl(var(--primary));
+  }
+  .badge-accent {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium;
+    background: hsl(var(--accent-light));
+    color: hsl(var(--accent));
+  }
+  .badge-muted {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium bg-muted text-muted-foreground;
+  }
+
+  /* ---- FLOATING CTA BUTTON ---- */
+  .cta-float {
+    @apply fixed bottom-6 left-1/2 z-50 w-[calc(100%-3rem)] max-w-sm rounded-2xl py-4 text-base font-semibold text-white shadow-primary;
+    background: var(--gradient-primary);
+    transform: translateX(-50%);
+    box-shadow: var(--shadow-primary);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .cta-float:active {
+    transform: translateX(-50%) scale(0.97);
+  }
+
+  /* ---- SLOT BUTTON (Booking) ---- */
+  .slot-btn {
+    @apply flex items-center justify-center rounded-xl border-2 border-border py-3 text-sm font-medium transition-all duration-200;
+    color: hsl(var(--foreground));
+  }
+  .slot-btn:hover, .slot-btn.active {
+    border-color: hsl(var(--primary));
+    background: hsl(var(--primary-light));
+    color: hsl(var(--primary));
+  }
+  .slot-btn.selected {
+    background: var(--gradient-primary);
+    border-color: transparent;
+    color: white;
+    box-shadow: var(--shadow-primary);
+  }
+
+  /* ---- BOTTOM NAV ---- */
+  .bottom-nav {
+    @apply fixed bottom-0 left-0 right-0 z-50 flex border-t border-border bg-card;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .bottom-nav-item {
+    @apply flex flex-1 flex-col items-center justify-center gap-1 py-2.5 text-xs font-medium text-muted-foreground transition-colors duration-200;
+  }
+  .bottom-nav-item.active {
+    color: hsl(var(--primary));
+  }
+
+  /* ---- TIMELINE NODE ---- */
+  .timeline-node {
+    @apply relative pl-8;
+  }
+  .timeline-node::before {
+    content: '';
+    @apply absolute left-3 top-5 bottom-0 w-0.5;
+    background: hsl(var(--border));
+  }
+  .timeline-node:last-child::before {
+    display: none;
+  }
+  .timeline-dot {
+    @apply absolute left-0 top-2 flex h-6 w-6 items-center justify-center rounded-full text-white text-xs font-bold;
+    background: var(--gradient-primary);
+    box-shadow: var(--shadow-primary);
+  }
+
+  /* ---- STEP INDICATOR ---- */
+  .step-indicator {
+    @apply flex items-center justify-center rounded-full text-xs font-bold w-7 h-7 shrink-0 transition-all duration-300;
+  }
+  .step-indicator.completed {
+    background: var(--gradient-accent);
+    @apply text-white;
+  }
+  .step-indicator.active {
+    background: var(--gradient-primary);
+    @apply text-white;
+    box-shadow: var(--shadow-primary);
+  }
+  .step-indicator.pending {
+    @apply bg-muted text-muted-foreground;
   }
 }
