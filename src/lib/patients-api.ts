@@ -65,6 +65,7 @@ export interface PatientListParams {
   sortDir?: SortDir;
   gender?: "Femenino" | "Masculino";
   hasVisits?: "true" | "false";
+  hasCedula?: "true" | "false";
 }
 
 export function fetchPatients(params: PatientListParams) {
@@ -76,6 +77,7 @@ export function fetchPatients(params: PatientListParams) {
   if (params.sortDir) query.set("sortDir", params.sortDir);
   if (params.gender) query.set("gender", params.gender);
   if (params.hasVisits) query.set("hasVisits", params.hasVisits);
+  if (params.hasCedula) query.set("hasCedula", params.hasCedula);
   return apiFetch<PatientListResponse>(`/patients?${query.toString()}`);
 }
 
