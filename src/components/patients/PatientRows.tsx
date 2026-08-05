@@ -1,4 +1,4 @@
-import { MessageCircle, Eye } from "lucide-react";
+import { MessageCircle, Eye, Pencil, Trash2, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PatientListItem } from "@/lib/patients-api";
 
@@ -36,9 +36,12 @@ interface RowProps {
   p: PatientListItem;
   navigate: (s: string) => void;
   idx: number;
+  onEdit?: (p: PatientListItem) => void;
+  onDelete?: (p: PatientListItem) => void;
+  onNewConsultation?: (p: PatientListItem) => void;
 }
 
-export function PatientTableRow({ p, navigate, idx }: RowProps) {
+export function PatientTableRow({ p, navigate, idx, onEdit, onDelete, onNewConsultation }: RowProps) {
   const visit = getVisitLabel(Number(p.visitsCount));
   const color = avatarColors[idx % avatarColors.length];
   return (
@@ -63,19 +66,47 @@ export function PatientTableRow({ p, navigate, idx }: RowProps) {
       </td>
       <td className="px-4 py-3 text-sm text-muted-foreground">{formatDate(p.lastVisit)}</td>
       <td className="px-4 py-3">
-        <button
-          onClick={() => navigate(`/admin/patients/${p.id}`)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-semibold hover:opacity-90 transition-opacity"
-        >
-          <Eye size={12} />
-          Ver Historial
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => navigate(`/admin/patients/${p.id}`)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-semibold hover:opacity-90 transition-opacity"
+          >
+            <Eye size={12} />Ver
+          </button>
+          {onNewConsultation && (
+            <button
+              onClick={() => onNewConsultation(p)}
+              title="Nueva consulta"
+              className="p-1.5 rounded-lg hover:bg-accent-light transition-colors"
+            >
+              <Plus size={14} className="text-accent" />
+            </button>
+          )}
+          {onEdit && (
+            <button
+              onClick={() => onEdit(p)}
+              title="Editar paciente"
+              className="p-1.5 rounded-lg hover:bg-muted transition-colors"
+            >
+              <Pencil size={14} className="text-muted-foreground" />
+            </button>
+          )}
+          {onDelete && (
+            <button
+              onClick={() => onDelete(p)}
+              title="Eliminar paciente"
+              className="p-1.5 rounded-lg hover:bg-destructive/10 transition-colors"
+            >
+              <Trash2 size={14} className="text-destructive" />
+            </button>
+          )}
+        </div>
       </td>
     </tr>
   );
 }
 
-export function PatientCard({ p, navigate, idx }: RowProps) {
+export function PatientCard({ p, navigate, idx, onEdit, onDelete, onNewConsultation }: RowProps) {
   const visit = getVisitLabel(Number(p.visitsCount));
   const color = avatarColors[idx % avatarColors.length];
   return (
@@ -91,6 +122,23 @@ export function PatientCard({ p, navigate, idx }: RowProps) {
           </div>
           <p className="text-xs text-muted-foreground mt-0.5">{p.cedula || "Sin cédula"}</p>
           <p className="text-xs text-muted-foreground mt-0.5">Última visita: {formatDate(p.lastVisit)}</p>
+        </div>
+        <div className="flex items-center gap-0.5 shrink-0">
+          {onNewConsultation && (
+            <button onClick={() => onNewConsultation(p)} title="Nueva consulta" className="p-1.5 rounded hover:bg-accent-light transition-colors">
+              <Plus size={14} className="text-accent" />
+            </button>
+          )}
+          {onEdit && (
+            <button onClick={() => onEdit(p)} title="Editar" className="p-1.5 rounded hover:bg-muted transition-colors">
+              <Pencil size={13} className="text-muted-foreground" />
+            </button>
+          )}
+          {onDelete && (
+            <button onClick={() => onDelete(p)} title="Eliminar" className="p-1.5 rounded hover:bg-destructive/10 transition-colors">
+              <Trash2 size={13} className="text-destructive" />
+            </button>
+          )}
         </div>
       </div>
       <div className="flex gap-2 mt-3">

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Search, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
@@ -8,10 +8,14 @@ import {
   PaginationPrevious, PaginationNext,
 } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
-import { fetchPatients, PatientSortBy, SortDir } from "@/lib/patients-api";
+import { fetchPatients, PatientSortBy, SortDir, PatientListItem, deletePatient, updatePatient } from "@/lib/patients-api";
 import { PatientTableRow, PatientCard } from "@/components/patients/PatientRows";
 import { SortableHeader } from "@/components/patients/SortableHeader";
 import { PatientFilters, Filters } from "@/components/patients/PatientFilters";
+import { ConfirmDeleteDialog } from "@/components/patients/ConfirmDeleteDialog";
+import { NewConsultationDialog } from "@/components/patients/NewConsultationDialog";
+import { EditPatientQuickDialog } from "@/components/patients/EditPatientQuickDialog";
+import { useToast } from "@/components/ui/use-toast";
 
 const PAGE_SIZE = 20;
 
@@ -51,12 +55,28 @@ function PatientsPagination({ page, pages, onChange }: { page: number; pages: nu
 
 export default function PatientsDirectory() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState<PatientSortBy>("createdAt");
   const [sortDir, setSortDir] = useState<SortDir>("DESC");
   const [filters, setFilters] = useState<Filters>({ gender: "", hasVisits: "", hasCedula: "" });
   const debouncedQuery = useDebounced(query, 350);
+
+  const [editingPatient, setEditingPatient] = useState<PatientListItem | null>(null);
+  const [deletingPatient, setDeletingPatient] = useState<PatientListItem | null>(null);
+  const [newConsultationFor, setNewConsultationFor] = useState<PatientListItem | null>(null);
+
+  const deleteMut = useMutation({
+    mutationFn: (id: string) => deletePatient(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["patients"] });
+      toast({ title: "Paciente eliminado" });
+      setDeletingPatient(null);
+    },
+    onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+  });
 
   useEffect(
     () => setPage(1),
@@ -145,7 +165,11 @@ export default function PatientsDirectory() {
                 </button>
               </div>
               {items.map((p, i) => (
-                <PatientCard key={p.id} p={p} navigate={navigate} idx={i} />
+                <PatientCard key={p.id} p={p} navigate={navigate} idx={i}
+                  onEdit={setEditingPatient}
+                  onDelete={setDeletingPatient}
+                  onNewConsultation={setNewConsultationFor}
+                />
               ))}
               {items.length === 0 && (
                 <div className="py-12 text-center text-muted-foreground text-sm">No se encontraron pacientes</div>
@@ -167,7 +191,11 @@ export default function PatientsDirectory() {
                   </thead>
                   <tbody>
                     {items.map((p, i) => (
-                      <PatientTableRow key={p.id} p={p} navigate={navigate} idx={i} />
+                      <PatientTableRow key={p.id} p={p} navigate={navigate} idx={i}
+                        onEdit={setEditingPatient}
+                        onDelete={setDeletingPatient}
+                        onNewConsultation={setNewConsultationFor}
+                      />
                     ))}
                   </tbody>
                 </table>
@@ -183,6 +211,31 @@ export default function PatientsDirectory() {
           </>
         )}
       </div>
+
+      {editingPatient && (
+        <EditPatientQuickDialog
+          patient={editingPatient}
+          open={!!editingPatient}
+          onOpenChange={(v) => !v && setEditingPatient(null)}
+        />
+      )}
+
+      <ConfirmDeleteDialog
+        open={!!deletingPatient}
+        onOpenChange={(v) => !v && setDeletingPatient(null)}
+        title="Eliminar paciente"
+        description={`Se eliminara "${deletingPatient ? `${deletingPatient.firstName} ${deletingPatient.lastName}` : ''}" y sus consultas. No se borrara permanentemente.`}
+        onConfirm={() => deletingPatient && deleteMut.mutate(deletingPatient.id)}
+        loading={deleteMut.isPending}
+      />
+
+      {newConsultationFor && (
+        <NewConsultationDialog
+          patientId={newConsultationFor.id}
+          open={!!newConsultationFor}
+          onOpenChange={(v) => !v && setNewConsultationFor(null)}
+        />
+      )}
     </div>
   );
 }
