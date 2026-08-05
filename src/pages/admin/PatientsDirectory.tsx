@@ -8,8 +8,10 @@ import {
   PaginationPrevious, PaginationNext,
 } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
-import { fetchPatients } from "@/lib/patients-api";
+import { fetchPatients, PatientSortBy, SortDir } from "@/lib/patients-api";
 import { PatientTableRow, PatientCard } from "@/components/patients/PatientRows";
+import { SortableHeader } from "@/components/patients/SortableHeader";
+import { PatientFilters, Filters } from "@/components/patients/PatientFilters";
 
 const PAGE_SIZE = 20;
 
@@ -51,13 +53,33 @@ export default function PatientsDirectory() {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState<PatientSortBy>("createdAt");
+  const [sortDir, setSortDir] = useState<SortDir>("DESC");
+  const [filters, setFilters] = useState<Filters>({ gender: "", hasVisits: "" });
   const debouncedQuery = useDebounced(query, 350);
 
-  useEffect(() => setPage(1), [debouncedQuery]);
+  useEffect(() => setPage(1), [debouncedQuery, sortBy, sortDir, filters.gender, filters.hasVisits]);
+
+  function handleSort(column: PatientSortBy) {
+    if (sortBy === column) {
+      setSortDir((d) => (d === "ASC" ? "DESC" : "ASC"));
+    } else {
+      setSortBy(column);
+      setSortDir("ASC");
+    }
+  }
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["patients", debouncedQuery, page],
-    queryFn: () => fetchPatients({ search: debouncedQuery || undefined, page, limit: PAGE_SIZE }),
+    queryKey: ["patients", debouncedQuery, page, sortBy, sortDir, filters],
+    queryFn: () => fetchPatients({
+      search: debouncedQuery || undefined,
+      page,
+      limit: PAGE_SIZE,
+      sortBy,
+      sortDir,
+      gender: filters.gender || undefined,
+      hasVisits: filters.hasVisits || undefined,
+    }),
   });
 
   const items = data?.items || [];
@@ -81,6 +103,7 @@ export default function PatientsDirectory() {
             className="pl-9 h-11 rounded-xl bg-muted border-0 text-sm"
           />
         </div>
+        <PatientFilters filters={filters} onChange={setFilters} />
       </div>
 
       <div className="flex-1 p-4">
@@ -97,6 +120,26 @@ export default function PatientsDirectory() {
         {!isLoading && !isError && (
           <>
             <div className="md:hidden space-y-3">
+              <div className="flex items-center gap-2">
+                <select
+                  value={sortBy}
+                  onChange={(e) => handleSort(e.target.value as PatientSortBy)}
+                  className="h-9 flex-1 rounded-lg bg-muted border-0 text-xs px-2.5"
+                >
+                  <option value="createdAt">Ordenar: más recientes</option>
+                  <option value="name">Ordenar: nombre</option>
+                  <option value="cedula">Ordenar: cédula</option>
+                  <option value="visitsCount">Ordenar: nº de consultas</option>
+                  <option value="lastVisit">Ordenar: última visita</option>
+                </select>
+                <button
+                  onClick={() => setSortDir((d) => (d === "ASC" ? "DESC" : "ASC"))}
+                  className="h-9 w-9 shrink-0 rounded-lg bg-muted flex items-center justify-center text-muted-foreground"
+                  aria-label="Invertir orden"
+                >
+                  {sortDir === "ASC" ? "↑" : "↓"}
+                </button>
+              </div>
               {items.map((p, i) => (
                 <PatientCard key={p.id} p={p} navigate={navigate} idx={i} />
               ))}
@@ -110,11 +153,11 @@ export default function PatientsDirectory() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-border bg-muted/50">
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">Paciente</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">Cédula</th>
+                      <SortableHeader label="Paciente" column="name" sortBy={sortBy} sortDir={sortDir} onSort={handleSort} />
+                      <SortableHeader label="Cédula" column="cedula" sortBy={sortBy} sortDir={sortDir} onSort={handleSort} />
                       <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">Teléfono</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">Consultas</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">Última Visita</th>
+                      <SortableHeader label="Consultas" column="visitsCount" sortBy={sortBy} sortDir={sortDir} onSort={handleSort} />
+                      <SortableHeader label="Última Visita" column="lastVisit" sortBy={sortBy} sortDir={sortDir} onSort={handleSort} />
                       <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">Acción</th>
                     </tr>
                   </thead>

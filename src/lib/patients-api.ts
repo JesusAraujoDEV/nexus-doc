@@ -54,11 +54,28 @@ export interface PatientDetail {
   clinicalRecords: ClinicalRecord[];
 }
 
-export function fetchPatients(params: { search?: string; page?: number; limit?: number }) {
+export type PatientSortBy = "name" | "cedula" | "createdAt" | "visitsCount" | "lastVisit";
+export type SortDir = "ASC" | "DESC";
+
+export interface PatientListParams {
+  search?: string;
+  page?: number;
+  limit?: number;
+  sortBy?: PatientSortBy;
+  sortDir?: SortDir;
+  gender?: "Femenino" | "Masculino";
+  hasVisits?: "true" | "false";
+}
+
+export function fetchPatients(params: PatientListParams) {
   const query = new URLSearchParams();
   if (params.search) query.set("search", params.search);
   if (params.page) query.set("page", String(params.page));
   if (params.limit) query.set("limit", String(params.limit));
+  if (params.sortBy) query.set("sortBy", params.sortBy);
+  if (params.sortDir) query.set("sortDir", params.sortDir);
+  if (params.gender) query.set("gender", params.gender);
+  if (params.hasVisits) query.set("hasVisits", params.hasVisits);
   return apiFetch<PatientListResponse>(`/patients?${query.toString()}`);
 }
 

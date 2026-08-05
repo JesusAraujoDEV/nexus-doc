@@ -53,3 +53,10 @@ export async function login(email: string, password: string) {
     { method: "POST", body: JSON.stringify({ email, password }) },
   );
 }
+
+export async function changePassword(currentPassword: string, newPassword: string) {
+  return apiFetch<{ message: string }>(
+    "/auth/change-password",
+    { method: "POST", body: JSON.stringify({ currentPassword, newPassword }) },
+  );
+}

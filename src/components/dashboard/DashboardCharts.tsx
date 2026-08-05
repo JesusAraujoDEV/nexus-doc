@@ -11,7 +11,7 @@ const TYPE_COLORS = [
 ];
 
 function titleCase(s: string) {
-  return s.length > 22 ? `${s.slice(0, 22)}…` : s;
+  return s.length > 16 ? `${s.slice(0, 16)}…` : s;
 }
 
 export function AgeDistributionChart({ data }: { data: StatsSummary["ageDistribution"] }) {
@@ -39,11 +39,11 @@ export function VisitTypesChart({ data }: { data: StatsSummary["topVisitTypes"] 
     <div className="medical-card p-4">
       <h3 className="text-sm font-bold text-foreground mb-3">Tipos de consulta más frecuentes</h3>
       <ResponsiveContainer width="100%" height={Math.max(200, chartData.length * 34)}>
-        <BarChart data={chartData} layout="vertical" margin={{ left: 10, right: 20 }}>
+        <BarChart data={chartData} layout="vertical" margin={{ left: 0, right: 20 }}>
           <XAxis type="number" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
           <YAxis
-            type="category" dataKey="label" width={150}
-            tick={{ fontSize: 10 }} stroke="hsl(var(--muted-foreground))"
+            type="category" dataKey="label" width={100}
+            tick={{ fontSize: 9 }} stroke="hsl(var(--muted-foreground))"
           />
           <Tooltip
             contentStyle={{ fontSize: 12, borderRadius: 8, border: "1px solid hsl(var(--border))" }}
