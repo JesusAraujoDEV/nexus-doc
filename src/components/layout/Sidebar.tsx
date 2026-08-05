@@ -1,16 +1,22 @@
-import { NavLink, useLocation } from "react-router-dom";
-import { LayoutDashboard, Users, Calendar, Settings, Stethoscope } from "lucide-react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { LayoutDashboard, Users, Calendar, Stethoscope, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { clearToken } from "@/lib/api";
 
 const navItems = [
   { to: "/admin", label: "Inicio", icon: LayoutDashboard, end: true },
   { to: "/admin/patients", label: "Pacientes", icon: Users },
   { to: "/admin/schedule", label: "Horarios", icon: Calendar },
-  { to: "/admin/settings", label: "Configuración", icon: Settings },
 ];
 
 export function Sidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  function logout() {
+    clearToken();
+    navigate("/admin/login", { replace: true });
+  }
 
   return (
     <aside className="hidden md:flex md:flex-col w-64 min-h-screen bg-card border-r border-border">
@@ -20,8 +26,8 @@ export function Sidebar() {
           <Stethoscope size={18} className="text-white" />
         </div>
         <div>
-          <p className="text-sm font-bold text-foreground">MediCare</p>
-          <p className="text-xs text-muted-foreground">Panel Admin</p>
+          <p className="text-sm font-bold text-foreground">NexusDoc</p>
+          <p className="text-xs text-muted-foreground">Panel Médico</p>
         </div>
       </div>
 
@@ -50,17 +56,15 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* Doctor info */}
+      {/* Logout */}
       <div className="px-4 py-4 border-t border-border">
-        <div className="flex items-center gap-3 p-3 rounded-xl bg-muted">
-          <div className="w-9 h-9 rounded-full gradient-primary flex items-center justify-center text-white text-sm font-bold">
-            DG
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-xs font-semibold text-foreground truncate">Dra. García</p>
-            <p className="text-[10px] text-muted-foreground">Médico General</p>
-          </div>
-        </div>
+        <button
+          onClick={logout}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
+        >
+          <LogOut size={18} strokeWidth={1.8} />
+          Cerrar sesión
+        </button>
       </div>
     </aside>
   );

@@ -1,16 +1,22 @@
-import { NavLink, useLocation } from "react-router-dom";
-import { LayoutDashboard, Users, Calendar, Settings } from "lucide-react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { LayoutDashboard, Users, Calendar, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { clearToken } from "@/lib/api";
 
 const navItems = [
   { to: "/admin", label: "Inicio", icon: LayoutDashboard, end: true },
   { to: "/admin/patients", label: "Pacientes", icon: Users },
   { to: "/admin/schedule", label: "Horarios", icon: Calendar },
-  { to: "/admin/settings", label: "Config", icon: Settings },
 ];
 
 export function BottomNav() {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  function logout() {
+    clearToken();
+    navigate("/admin/login", { replace: true });
+  }
 
   return (
     <nav className="bottom-nav md:hidden">
@@ -33,6 +39,10 @@ export function BottomNav() {
           </NavLink>
         );
       })}
+      <button onClick={logout} className="bottom-nav-item">
+        <LogOut size={20} strokeWidth={1.8} />
+        <span className="text-[10px]">Salir</span>
+      </button>
     </nav>
   );
 }

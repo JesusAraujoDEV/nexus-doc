@@ -4,12 +4,14 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AdminLayout } from "./components/layout/AdminLayout";
+import { RequireAuth } from "./components/layout/RequireAuth";
 import PatientLanding from "./pages/PatientLanding";
 import BookingFlow from "./pages/BookingFlow";
 import AdminDashboard from "./pages/admin/Dashboard";
 import PatientsDirectory from "./pages/admin/PatientsDirectory";
 import PatientProfile from "./pages/admin/PatientProfile";
 import ScheduleConfig from "./pages/admin/ScheduleConfig";
+import Login from "./pages/admin/Login";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,7 +29,15 @@ const App = () => (
           <Route path="/booking" element={<BookingFlow />} />
 
           {/* Admin Routes */}
-          <Route path="/admin" element={<AdminLayout />}>
+          <Route path="/admin/login" element={<Login />} />
+          <Route
+            path="/admin"
+            element={
+              <RequireAuth>
+                <AdminLayout />
+              </RequireAuth>
+            }
+          >
             <Route index element={<AdminDashboard />} />
             <Route path="patients" element={<PatientsDirectory />} />
             <Route path="patients/:id" element={<PatientProfile />} />
