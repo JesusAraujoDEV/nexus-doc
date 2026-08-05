@@ -1,174 +1,106 @@
-import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Star, MapPin, Phone, Clock, Award, ChevronRight, Stethoscope } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { MapPin, Phone, Award, ChevronRight, Stethoscope, MessageCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import doctorAvatar from "@/assets/doctor-avatar.jpg";
+import { fetchDoctor } from "@/lib/doctor-api";
 
-const doctorProfiles = {
-  "dra-rosana-arteaga": {
-    name: "Dra. Rosana Arteaga",
-    specialty: "Medicina General",
-    subtitle: "Especialista en Medicina General & Medicina Interna",
-    clinicName: "MediCare Clinic",
-    avatar: doctorAvatar,
-    showStats: false,
-    stats: [
-      { value: "10+", label: "Años exp." },
-      { value: "2,400+", label: "Pacientes" },
-      { value: "98%", label: "Satisfacción" },
-    ],
-    specialties: [
-      { icon: "🩺", name: "Medicina General", duration: "30 min", price: "$20" },
-      { icon: "❤️", name: "Cardiología Preventiva", duration: "45 min", price: "$35" },
-      { icon: "🧬", name: "Medicina Interna", duration: "40 min", price: "$30" },
-    ],
-    reviews: [
-      { name: "María L.", rating: 5, text: "Excelente atención, muy profesional." },
-      { name: "Carlos M.", rating: 5, text: "La mejor doctora, super recomendada." },
-    ],
-  },
-} as const;
+function waLink(phone: string) {
+  const digits = phone.replace(/\D/g, "");
+  const full = digits.startsWith("58") ? digits : `58${digits.replace(/^0/, "")}`;
+  return `https://wa.me/${full}?text=${encodeURIComponent("Hola, quisiera agendar una consulta.")}`;
+}
 
 export default function PatientLanding() {
   const navigate = useNavigate();
-  const [hovering, setHovering] = useState(false);
   const { doctorSlug } = useParams();
-  const profile = useMemo(() => {
-    if (doctorSlug && doctorSlug in doctorProfiles) {
-      return doctorProfiles[doctorSlug as keyof typeof doctorProfiles];
-    }
-    return doctorProfiles["dra-rosana-arteaga"];
-  }, [doctorSlug]);
+
+  const { data: doctor, isLoading, isError } = useQuery({
+    queryKey: ["doctor", doctorSlug],
+    queryFn: () => fetchDoctor(doctorSlug as string),
+    enabled: !!doctorSlug,
+  });
+
+  if (isLoading) {
+    return <div className="min-h-screen flex items-center justify-center text-muted-foreground"><Loader2 className="animate-spin" /></div>;
+  }
+  if (isError || !doctor) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-3 px-6 text-center">
+        <p className="text-sm text-muted-foreground">No se encontró el perfil del médico.</p>
+        <button onClick={() => navigate("/admin")} className="text-sm text-primary font-semibold">Acceder como Doctora</button>
+      </div>
+    );
+  }
+
+  const name = `Dra. ${doctor.firstName} ${doctor.lastName}`;
+  const initials = (doctor.firstName[0] || "") + (doctor.lastName[0] || "");
+  const services = doctor.services || [];
 
   return (
     <div className="min-h-screen bg-background pb-28">
-      {/* Hero Banner */}
       <div className="relative gradient-hero text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10"
-          style={{ backgroundImage: "radial-gradient(circle at 70% 50%, white 1px, transparent 1px)", backgroundSize: "32px 32px" }}
-        />
+          style={{ backgroundImage: "radial-gradient(circle at 70% 50%, white 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
         <div className="relative px-5 pt-12 pb-6">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
               <Stethoscope size={16} className="text-white" />
             </div>
-            <span className="text-white/80 text-sm font-medium">{profile.clinicName}</span>
+            <span className="text-white/80 text-sm font-medium">{doctor.clinicName}</span>
           </div>
 
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:gap-6">
             <div className="flex-1">
-              <h1 className="text-3xl md:text-4xl font-bold leading-tight mb-1">
-                {profile.name}
-              </h1>
-              <p className="text-white/80 text-sm md:text-base">{profile.subtitle}</p>
-
-              <div className="flex items-center gap-1 mt-3">
-                {[1,2,3,4,5].map(i => (
-                  <Star key={i} size={13} className="fill-accent text-accent" />
-                ))}
-                <span className="text-white/70 text-xs ml-1">4.9 (128 reseñas)</span>
-              </div>
+              <h1 className="text-3xl md:text-4xl font-bold leading-tight mb-1">{name}</h1>
+              <p className="text-white/80 text-sm md:text-base">Especialista en {doctor.specialty}</p>
+              {doctor.experienceYears > 0 && (
+                <p className="flex items-center gap-1.5 text-white/70 text-xs mt-3">
+                  <Award size={13} />{doctor.experienceYears}+ años de experiencia
+                </p>
+              )}
             </div>
 
             <div className="flex items-center gap-4">
-              <Button
-                className="hidden md:inline-flex"
-                onClick={() => navigate("/booking")}
-              >
-                Agendar consulta
-              </Button>
-
-              <div className="relative">
-              <div className="w-24 h-24 rounded-2xl overflow-hidden border-3 border-white/30 shadow-lg">
-                <img src={profile.avatar} alt={profile.name} className="w-full h-full object-cover" />
-              </div>
-              <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-accent flex items-center justify-center">
-                <span className="text-white text-[10px]">✓</span>
-              </div>
+              <a href={waLink(doctor.phone)} target="_blank" rel="noopener noreferrer" className="hidden md:inline-flex">
+                <Button>Agendar por WhatsApp</Button>
+              </a>
+              <div className="w-24 h-24 rounded-2xl bg-white/20 border-3 border-white/30 shadow-lg flex items-center justify-center text-3xl font-bold">
+                {initials}
               </div>
             </div>
           </div>
         </div>
-
-        {/* Stats strip (hide until real data exists) */}
-        {profile.showStats && (
-          <div className="flex border-t border-white/20 bg-white/10 backdrop-blur-sm">
-            {profile.stats.map((stat, i) => (
-              <div key={i} className="flex-1 py-3 text-center border-r border-white/20 last:border-0">
-                <p className="text-base font-bold text-white">{stat.value}</p>
-                <p className="text-[10px] text-white/70">{stat.label}</p>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
 
-      {/* Info cards */}
-      <div className="px-4 mt-5 space-y-4">
-        {/* Location & Contact */}
+      <div className="px-4 mt-5 space-y-4 max-w-2xl mx-auto">
         <div className="medical-card p-4 flex gap-3">
           <div className="w-10 h-10 rounded-xl bg-primary-light flex items-center justify-center shrink-0">
             <MapPin size={18} className="text-primary" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-foreground">Consultorio Principal</p>
-            <p className="text-xs text-muted-foreground mt-0.5">Av. Libertador 1250, Caracas</p>
-            <div className="flex items-center gap-3 mt-2">
-              <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Clock size={11} />
-                Lun–Vie 8am–5pm
-              </span>
-              <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Phone size={11} />
-                +58 412-5559999
-              </span>
+            <p className="text-sm font-semibold text-foreground">{doctor.clinicName}</p>
+            <a href={`tel:${doctor.phone.replace(/\D/g, "")}`} className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
+              <Phone size={11} />{doctor.phone}
+            </a>
+          </div>
+        </div>
+
+        {services.length > 0 && (
+          <div>
+            <h2 className="text-sm font-semibold text-foreground mb-3 px-1">Servicios</h2>
+            <div className="space-y-2">
+              {services.map((s) => (
+                <div key={s.id} className="medical-card p-3.5 flex items-center gap-3">
+                  <Stethoscope size={18} className="text-primary" />
+                  <span className="text-sm font-medium text-foreground">{s.name}</span>
+                  {s.durationMinutes && <span className="text-[11px] text-muted-foreground">⏱️ {s.durationMinutes} min</span>}
+                  {s.price != null && <span className="ml-auto text-sm font-semibold text-foreground">${s.price}</span>}
+                </div>
+              ))}
             </div>
           </div>
-        </div>
+        )}
 
-        {/* Specialties */}
-        <div>
-          <h2 className="text-sm font-semibold text-foreground mb-3 px-1">Especialidades</h2>
-          <div className="space-y-2">
-            {profile.specialties.map((s, i) => (
-              <div key={i} className="medical-card p-3.5 flex items-center gap-3">
-                <span className="text-xl">{s.icon}</span>
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium text-foreground">{s.name}</span>
-                  <span className="text-[11px] text-muted-foreground">
-                    ⏱️ {s.duration}{s.price ? ` • ${s.price}` : ""}
-                  </span>
-                </div>
-                <Award size={14} className="ml-auto text-accent" />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Reviews */}
-        <div>
-          <h2 className="text-sm font-semibold text-foreground mb-3 px-1">Reseñas recientes</h2>
-          <div className="space-y-2">
-            {profile.reviews.map((r, i) => (
-              <div key={i} className="medical-card p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-7 h-7 rounded-full gradient-primary flex items-center justify-center text-white text-xs font-bold">
-                    {r.name[0]}
-                  </div>
-                  <span className="text-xs font-semibold text-foreground">{r.name}</span>
-                  <div className="flex ml-auto">
-                    {[...Array(r.rating)].map((_, j) => (
-                      <Star key={j} size={10} className="fill-accent text-accent" />
-                    ))}
-                  </div>
-                </div>
-                <p className="text-xs text-muted-foreground">{r.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Admin link */}
         <button
           onClick={() => navigate("/admin")}
           className="w-full flex items-center justify-center gap-2 py-3 text-xs text-muted-foreground border border-dashed border-border rounded-xl hover:bg-muted transition-colors"
@@ -178,19 +110,12 @@ export default function PatientLanding() {
         </button>
       </div>
 
-      {/* Floating CTA */}
-      <button
-        className="cta-float md:hidden"
-        onClick={() => navigate("/booking")}
-        onMouseEnter={() => setHovering(true)}
-        onMouseLeave={() => setHovering(false)}
-      >
+      <a href={waLink(doctor.phone)} target="_blank" rel="noopener noreferrer" className="cta-float md:hidden">
         <span className="flex items-center justify-center gap-2">
-          <Stethoscope size={18} />
-          Agendar Consulta
-          <ChevronRight size={16} className={`transition-transform duration-200 ${hovering ? "translate-x-1" : ""}`} />
+          <MessageCircle size={18} />
+          Agendar por WhatsApp
         </span>
-      </button>
+      </a>
     </div>
   );
 }

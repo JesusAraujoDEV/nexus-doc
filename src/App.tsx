@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AdminLayout } from "./components/layout/AdminLayout";
 import { RequireAuth } from "./components/layout/RequireAuth";
 import PatientLanding from "./pages/PatientLanding";
-import BookingFlow from "./pages/BookingFlow";
 import AdminDashboard from "./pages/admin/Dashboard";
 import PatientsDirectory from "./pages/admin/PatientsDirectory";
 import PatientProfile from "./pages/admin/PatientProfile";
@@ -24,9 +23,8 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           {/* Public Patient Routes */}
-          <Route path="/" element={<Navigate to="/dra-rosana-arteaga" replace />} />
+          <Route path="/" element={<Navigate to="/rosana-arteaga" replace />} />
           <Route path="/:doctorSlug" element={<PatientLanding />} />
-          <Route path="/booking" element={<BookingFlow />} />
 
           {/* Admin Routes */}
           <Route path="/admin/login" element={<Login />} />
