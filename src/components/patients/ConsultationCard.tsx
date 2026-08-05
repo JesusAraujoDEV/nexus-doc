@@ -1,12 +1,9 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp, Stethoscope } from "lucide-react";
+import { ChevronDown, ChevronUp, Stethoscope, Pencil, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ClinicalRecord, consultationDate } from "@/lib/patients-api";
 
 function formatDate(iso: string) {
-  // visitDate llega como "YYYY-MM-DD" (DATEONLY). Parsearlo con new Date() lo
-  // trata como UTC y en Venezuela (UTC-4) restaría un día, así que se formatea
-  // a mano cuando no trae hora.
   const soloFecha = /^\d{4}-\d{2}-\d{2}$/.exec(iso);
   const d = soloFecha
     ? new Date(Number(iso.slice(0, 4)), Number(iso.slice(5, 7)) - 1, Number(iso.slice(8, 10)))
@@ -24,7 +21,15 @@ function Field({ label, value }: { label: string; value: string | null }) {
   );
 }
 
-export function ConsultationCard({ record, idx }: { record: ClinicalRecord; idx: number }) {
+interface Props {
+  record: ClinicalRecord;
+  idx: number;
+  patientId: string;
+  onEdit?: (record: ClinicalRecord) => void;
+  onDelete?: (record: ClinicalRecord) => void;
+}
+
+export function ConsultationCard({ record, idx, onEdit, onDelete }: Props) {
   const [open, setOpen] = useState(idx === 0);
   const hasDetail = record.diagnosis || record.treatment || record.labOrders || record.privateNotes;
 
@@ -55,6 +60,20 @@ export function ConsultationCard({ record, idx }: { record: ClinicalRecord; idx:
           <Field label="Tratamiento" value={record.treatment} />
           <Field label="Exámenes indicados" value={record.labOrders} />
           <Field label="Observaciones" value={record.privateNotes} />
+          {(onEdit || onDelete) && (
+            <div className="flex gap-2 pt-2 border-t border-border">
+              {onEdit && (
+                <button onClick={() => onEdit(record)} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                  <Pencil size={12} />Editar
+                </button>
+              )}
+              {onDelete && (
+                <button onClick={() => onDelete(record)} className="flex items-center gap-1 text-xs text-destructive hover:text-destructive/80 transition-colors">
+                  <Trash2 size={12} />Eliminar
+                </button>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>

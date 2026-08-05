@@ -84,3 +84,41 @@ export function fetchPatients(params: PatientListParams) {
 export function fetchPatient(id: string) {
   return apiFetch<PatientDetail>(`/patients/${id}`);
 }
+
+export function updatePatient(id: string, changes: Partial<Omit<PatientDetail, "id" | "clinicalRecords">>) {
+  return apiFetch<PatientDetail>(`/patients/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(changes),
+  });
+}
+
+export function deletePatient(id: string) {
+  return apiFetch<{ id: string; deleted: boolean }>(`/patients/${id}`, { method: "DELETE" });
+}
+
+export function updateClinicalRecord(id: string, changes: Partial<Omit<ClinicalRecord, "id" | "createdAt">>) {
+  return apiFetch<ClinicalRecord>(`/clinical-records/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(changes),
+  });
+}
+
+export function deleteClinicalRecord(id: string) {
+  return apiFetch<{ id: string; deleted: boolean }>(`/clinical-records/${id}`, { method: "DELETE" });
+}
+
+export function createClinicalRecord(data: {
+  patientId: string;
+  symptoms?: string;
+  diagnosis?: string;
+  treatment?: string;
+  labOrders?: string;
+  privateNotes?: string;
+  visitType?: string;
+  visitDate?: string;
+}) {
+  return apiFetch<ClinicalRecord>("/clinical-records", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}

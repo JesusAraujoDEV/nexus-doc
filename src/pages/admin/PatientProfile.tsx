@@ -1,19 +1,51 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { ChevronLeft, ClipboardList, Loader2 } from "lucide-react";
-import { fetchPatient, consultationDate } from "@/lib/patients-api";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { ChevronLeft, ClipboardList, Loader2, Plus } from "lucide-react";
+import { fetchPatient, consultationDate, deletePatient, deleteClinicalRecord, ClinicalRecord } from "@/lib/patients-api";
 import { PatientHeader } from "@/components/patients/PatientHeader";
 import { MedicalBackground } from "@/components/patients/MedicalBackground";
 import { ConsultationCard } from "@/components/patients/ConsultationCard";
+import { EditConsultationDialog } from "@/components/patients/EditConsultationDialog";
+import { ConfirmDeleteDialog } from "@/components/patients/ConfirmDeleteDialog";
+import { NewConsultationDialog } from "@/components/patients/NewConsultationDialog";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function PatientProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["patient", id],
     queryFn: () => fetchPatient(id as string),
     enabled: !!id,
+  });
+
+  const [editingRecord, setEditingRecord] = useState<ClinicalRecord | null>(null);
+  const [deletingRecord, setDeletingRecord] = useState<ClinicalRecord | null>(null);
+  const [showDeletePatient, setShowDeletePatient] = useState(false);
+  const [showNewConsultation, setShowNewConsultation] = useState(false);
+
+  const deletePatientMut = useMutation({
+    mutationFn: () => deletePatient(id as string),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["patients"] });
+      toast({ title: "Paciente eliminado" });
+      navigate("/admin/patients");
+    },
+    onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
+  });
+
+  const deleteRecordMut = useMutation({
+    mutationFn: (recordId: string) => deleteClinicalRecord(recordId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["patient", id] });
+      toast({ title: "Consulta eliminada" });
+      setDeletingRecord(null);
+    },
+    onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
   });
 
   const records = [...(data?.clinicalRecords || [])].sort((a, b) =>
@@ -41,15 +73,23 @@ export default function PatientProfile() {
 
         {data && (
           <>
-            <PatientHeader p={data} />
+            <PatientHeader p={data} onDelete={() => setShowDeletePatient(true)} />
             <MedicalBackground p={data} />
 
             <div>
-              <div className="flex items-center gap-2 mb-3">
-                <ClipboardList size={16} className="text-primary" />
-                <h3 className="text-sm font-bold text-foreground">
-                  Consultas <span className="text-muted-foreground font-normal">({records.length})</span>
-                </h3>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <ClipboardList size={16} className="text-primary" />
+                  <h3 className="text-sm font-bold text-foreground">
+                    Consultas <span className="text-muted-foreground font-normal">({records.length})</span>
+                  </h3>
+                </div>
+                <button
+                  onClick={() => setShowNewConsultation(true)}
+                  className="flex items-center gap-1 text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
+                >
+                  <Plus size={14} />Nueva consulta
+                </button>
               </div>
               {records.length === 0 ? (
                 <div className="medical-card p-4 text-sm text-muted-foreground text-center">
@@ -58,11 +98,53 @@ export default function PatientProfile() {
               ) : (
                 <div className="space-y-2.5">
                   {records.map((r, i) => (
-                    <ConsultationCard key={r.id} record={r} idx={i} />
+                    <ConsultationCard
+                      key={r.id}
+                      record={r}
+                      idx={i}
+                      patientId={data.id}
+                      onEdit={(rec) => setEditingRecord(rec)}
+                      onDelete={(rec) => setDeletingRecord(rec)}
+                    />
                   ))}
                 </div>
               )}
             </div>
+
+            {editingRecord && (
+              <EditConsultationDialog
+                record={editingRecord}
+                patientId={data.id}
+                open={!!editingRecord}
+                onOpenChange={(v) => !v && setEditingRecord(null)}
+              />
+            )}
+
+            <ConfirmDeleteDialog
+              open={!!deletingRecord}
+              onOpenChange={(v) => !v && setDeletingRecord(null)}
+              title="Eliminar consulta"
+              description="La consulta se marcara como eliminada. No se borrara permanentemente."
+              onConfirm={() => deletingRecord && deleteRecordMut.mutate(deletingRecord.id)}
+              loading={deleteRecordMut.isPending}
+            />
+
+            <ConfirmDeleteDialog
+              open={showDeletePatient}
+              onOpenChange={setShowDeletePatient}
+              title="Eliminar paciente"
+              description="El paciente y sus consultas se marcaran como eliminados. No se borraran permanentemente."
+              onConfirm={() => deletePatientMut.mutate()}
+              loading={deletePatientMut.isPending}
+            />
+
+            {showNewConsultation && (
+              <NewConsultationDialog
+                patientId={data.id}
+                open={showNewConsultation}
+                onOpenChange={setShowNewConsultation}
+              />
+            )}
           </>
         )}
       </div>
