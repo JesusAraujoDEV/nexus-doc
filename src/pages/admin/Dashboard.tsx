@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Users, ClipboardList, CalendarClock, CheckCircle2, Loader2, ArrowRight } from "lucide-react";
+import { Users, ClipboardList, CalendarClock, CheckCircle2, UserX, Loader2, ArrowRight } from "lucide-react";
 import { fetchStats } from "@/lib/stats-api";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { AgeDistributionChart, VisitTypesChart } from "@/components/dashboard/DashboardCharts";
+import { AnalysisSection } from "@/components/dashboard/AnalysisSection";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ export default function Dashboard() {
 
         {data && (
           <>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
               <StatCard label="Pacientes" value={data.totals.patients.toLocaleString("es-VE")}
                 icon={Users} color="bg-primary-light text-primary" hint="registrados en total" />
               <StatCard label="Consultas" value={data.totals.consultations.toLocaleString("es-VE")}
@@ -36,6 +37,9 @@ export default function Dashboard() {
                 hint={`${Math.round((data.totals.withBirthDate / data.totals.patients) * 100)}% del total`} />
               <StatCard label="Este mes" value={data.totals.consultationsThisMonth.toLocaleString("es-VE")}
                 icon={CalendarClock} color="bg-accent-light text-accent" hint="consultas registradas" />
+              <StatCard label="Inactivas" value={data.patientBehavior.inactivePatients.count.toLocaleString("es-VE")}
+                icon={UserX} color="bg-destructive/10 text-destructive"
+                hint={`+${data.patientBehavior.inactivePatients.months} meses sin venir`} />
             </div>
 
             <button
@@ -52,9 +56,11 @@ export default function Dashboard() {
             </button>
 
             <div className="grid lg:grid-cols-2 gap-4">
-              <AgeDistributionChart data={data.ageDistribution} />
+              <AgeDistributionChart current={data.ageDistribution} atFirstVisit={data.firstVisitAgeDistribution} />
               <VisitTypesChart data={data.topVisitTypes} />
             </div>
+
+            <AnalysisSection data={data} />
           </>
         )}
       </div>

@@ -1,7 +1,9 @@
+import { useState } from "react";
 import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell,
 } from "recharts";
 import { StatsSummary } from "@/lib/stats-api";
+import { cn } from "@/lib/utils";
 
 const AGE_COLOR = "hsl(var(--primary))";
 const TYPE_COLORS = [
@@ -14,10 +16,34 @@ function titleCase(s: string) {
   return s.length > 16 ? `${s.slice(0, 16)}…` : s;
 }
 
-export function AgeDistributionChart({ data }: { data: StatsSummary["ageDistribution"] }) {
+interface AgeDistributionChartProps {
+  current: StatsSummary["ageDistribution"];
+  atFirstVisit: StatsSummary["firstVisitAgeDistribution"];
+}
+
+export function AgeDistributionChart({ current, atFirstVisit }: AgeDistributionChartProps) {
+  const [mode, setMode] = useState<"current" | "first">("current");
+  const data = mode === "current" ? current : atFirstVisit;
+
   return (
     <div className="medical-card p-4">
-      <h3 className="text-sm font-bold text-foreground mb-3">Distribución por edad</h3>
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-sm font-bold text-foreground">Distribución por edad</h3>
+        <div className="flex gap-1 text-[11px]">
+          <button
+            onClick={() => setMode("current")}
+            className={cn("px-2 py-1 rounded-md", mode === "current" ? "bg-primary text-white" : "bg-muted text-muted-foreground")}
+          >
+            Actual
+          </button>
+          <button
+            onClick={() => setMode("first")}
+            className={cn("px-2 py-1 rounded-md", mode === "first" ? "bg-primary text-white" : "bg-muted text-muted-foreground")}
+          >
+            1ra consulta
+          </button>
+        </div>
+      </div>
       <ResponsiveContainer width="100%" height={200}>
         <BarChart data={data}>
           <XAxis dataKey="bucket" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
