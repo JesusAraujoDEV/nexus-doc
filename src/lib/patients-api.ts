@@ -21,9 +21,24 @@ export interface ClinicalRecord {
   id: string;
   symptoms: string | null;
   diagnosis: string | null;
+  treatment: string | null;
+  labOrders: string | null;
   privateNotes: string | null;
   visitType: string | null;
+  /** Fecha real de la consulta. Puede faltar en registros antiguos. */
+  visitDate: string | null;
+  /** Cuándo se creó la fila, no cuándo ocurrió la consulta. */
   createdAt: string;
+}
+
+/**
+ * Fecha que debe mostrarse para una consulta: la real si existe, y si no la de
+ * creación de la fila. Se centraliza acá para no repetir la decisión en cada
+ * componente: mostrar createdAt como fecha de consulta fue justamente el bug
+ * que hacía que toda la historia importada apareciera con la fecha de la carga.
+ */
+export function consultationDate(record: ClinicalRecord): string {
+  return record.visitDate || record.createdAt;
 }
 
 export interface PatientDetail {

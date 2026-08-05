@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ClipboardList, Loader2 } from "lucide-react";
-import { fetchPatient } from "@/lib/patients-api";
+import { fetchPatient, consultationDate } from "@/lib/patients-api";
 import { PatientHeader } from "@/components/patients/PatientHeader";
 import { MedicalBackground } from "@/components/patients/MedicalBackground";
 import { ConsultationCard } from "@/components/patients/ConsultationCard";
@@ -16,8 +16,8 @@ export default function PatientProfile() {
     enabled: !!id,
   });
 
-  const records = [...(data?.clinicalRecords || [])].sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  const records = [...(data?.clinicalRecords || [])].sort((a, b) =>
+    consultationDate(b).localeCompare(consultationDate(a)),
   );
 
   return (
