@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { ClinicalRecord, updateClinicalRecord } from "@/lib/patients-api";
 import { useToast } from "@/components/ui/use-toast";
+import { VisitTypeCombobox } from "./VisitTypeCombobox";
 
 interface Props {
   record: ClinicalRecord;
@@ -65,8 +66,8 @@ export function EditConsultationDialog({ record, patientId, open, onOpenChange }
         >
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label htmlFor="ec-type">Tipo de consulta</Label>
-              <Input id="ec-type" value={form.visitType} onChange={set("visitType")} />
+              <Label>Tipo de consulta</Label>
+              <VisitTypeCombobox value={form.visitType} onChange={(v) => setForm((f) => ({ ...f, visitType: v }))} />
             </div>
             <div>
               <Label htmlFor="ec-date">Fecha</Label>

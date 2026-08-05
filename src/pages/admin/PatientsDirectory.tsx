@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Search, Loader2 } from "lucide-react";
+import { Search, Loader2, UserPlus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Pagination, PaginationContent, PaginationItem,
@@ -15,6 +15,7 @@ import { PatientFilters, Filters } from "@/components/patients/PatientFilters";
 import { ConfirmDeleteDialog } from "@/components/patients/ConfirmDeleteDialog";
 import { NewConsultationDialog } from "@/components/patients/NewConsultationDialog";
 import { EditPatientQuickDialog } from "@/components/patients/EditPatientQuickDialog";
+import { NewPatientDialog } from "@/components/patients/NewPatientDialog";
 import { useToast } from "@/components/ui/use-toast";
 
 const PAGE_SIZE = 20;
@@ -67,6 +68,7 @@ export default function PatientsDirectory() {
   const [editingPatient, setEditingPatient] = useState<PatientListItem | null>(null);
   const [deletingPatient, setDeletingPatient] = useState<PatientListItem | null>(null);
   const [newConsultationFor, setNewConsultationFor] = useState<PatientListItem | null>(null);
+  const [showNewPatient, setShowNewPatient] = useState(false);
 
   const deleteMut = useMutation({
     mutationFn: (id: string) => deletePatient(id),
@@ -116,7 +118,15 @@ export default function PatientsDirectory() {
             <h1 className="text-lg font-bold text-foreground">Pacientes</h1>
             <p className="text-xs text-muted-foreground">{data?.total ?? "…"} registros totales</p>
           </div>
-          {!!data && <div className="badge-primary text-xs">{data.total} resultados</div>}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowNewPatient(true)}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary text-white text-xs font-semibold hover:opacity-90 transition-opacity"
+            >
+              <UserPlus size={14} />Nueva paciente
+            </button>
+            {!!data && <div className="badge-primary text-xs">{data.total} resultados</div>}
+          </div>
         </div>
         <div className="relative">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -236,6 +246,8 @@ export default function PatientsDirectory() {
           onOpenChange={(v) => !v && setNewConsultationFor(null)}
         />
       )}
+
+      <NewPatientDialog open={showNewPatient} onOpenChange={setShowNewPatient} />
     </div>
   );
 }
