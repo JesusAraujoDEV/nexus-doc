@@ -23,6 +23,8 @@ export interface ClinicalRecord {
   /** Hallazgos de ecografía (útero, ovarios, biometría fetal). Null si no se hizo ecografía. */
   ultrasoundFindings: Record<string, string | number> | null;
   nextAppointmentDate: string | null;
+  category: "gynecology" | "obstetrics";
+  pregnancyId: string | null;
 }
 
 /**
@@ -81,6 +83,8 @@ export function createClinicalRecord(data: {
   recipeItems?: RecipeItem[];
   ultrasoundFindings?: Record<string, string | number>;
   nextAppointmentDate?: string;
+  category?: "gynecology" | "obstetrics";
+  pregnancyId?: string;
 }) {
   return apiFetch<ClinicalRecord>("/clinical-records", {
     method: "POST",

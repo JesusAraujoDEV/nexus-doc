@@ -5,6 +5,7 @@ export interface Filters {
   gender: "" | "Femenino" | "Masculino";
   hasVisits: "" | "true" | "false";
   hasCedula: "" | "true" | "false";
+  pregnant: "" | "true";
 }
 
 interface Props {
@@ -16,7 +17,7 @@ const selectClass =
   "h-9 rounded-lg bg-muted border-0 text-xs px-2.5 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40";
 
 export function PatientFilters({ filters, onChange }: Props) {
-  const activeCount = Number(!!filters.gender) + Number(!!filters.hasVisits) + Number(!!filters.hasCedula);
+  const activeCount = Number(!!filters.gender) + Number(!!filters.hasVisits) + Number(!!filters.hasCedula) + Number(!!filters.pregnant);
   return (
     <div className="flex items-center gap-2 flex-wrap mt-3">
       <span className={cn("flex items-center gap-1 text-xs text-muted-foreground", activeCount > 0 && "text-primary")}>
@@ -49,6 +50,14 @@ export function PatientFilters({ filters, onChange }: Props) {
         <option value="">Cédula: todas</option>
         <option value="true">Con cédula</option>
         <option value="false">Sin cédula</option>
+      </select>
+      <select
+        value={filters.pregnant}
+        onChange={(e) => onChange({ ...filters, pregnant: e.target.value as Filters["pregnant"] })}
+        className={selectClass}
+      >
+        <option value="">Embarazo: todas</option>
+        <option value="true">Embarazadas ahora</option>
       </select>
     </div>
   );

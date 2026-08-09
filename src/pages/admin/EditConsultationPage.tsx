@@ -21,6 +21,8 @@ export default function EditConsultationPage() {
   const mutation = useMutation({
     mutationFn: (form: ConsultationFormValues) =>
       updateClinicalRecord(recordId as string, {
+        category: form.category,
+        pregnancyId: form.category === "obstetrics" ? (form.pregnancyId || null) : null,
         visitType: form.visitType || null,
         visitDate: form.visitDate || null,
         symptoms: form.symptoms || null,
@@ -48,6 +50,8 @@ export default function EditConsultationPage() {
   }
 
   const initialValues: ConsultationFormValues = {
+    category: record.category || "gynecology",
+    pregnancyId: record.pregnancyId || "",
     visitType: record.visitType || "",
     visitDate: record.visitDate || "",
     symptoms: record.symptoms || "",
@@ -63,6 +67,7 @@ export default function EditConsultationPage() {
   return (
     <ConsultationForm
       title="Editar consulta"
+      patientId={patientId as string}
       initialValues={initialValues}
       onBack={goBack}
       onSubmit={(form) => mutation.mutate(form)}

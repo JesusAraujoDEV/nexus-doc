@@ -32,7 +32,7 @@ export default function PatientsDirectory() {
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState<PatientSortBy>("createdAt");
   const [sortDir, setSortDir] = useState<SortDir>("DESC");
-  const [filters, setFilters] = useState<Filters>({ gender: "", hasVisits: "", hasCedula: "" });
+  const [filters, setFilters] = useState<Filters>({ gender: "", hasVisits: "", hasCedula: "", pregnant: "" });
   const debouncedQuery = useDebounced(query, 350);
 
   const [editingPatient, setEditingPatient] = useState<PatientListItem | null>(null);
@@ -51,7 +51,7 @@ export default function PatientsDirectory() {
 
   useEffect(
     () => setPage(1),
-    [debouncedQuery, sortBy, sortDir, filters.gender, filters.hasVisits, filters.hasCedula],
+    [debouncedQuery, sortBy, sortDir, filters.gender, filters.hasVisits, filters.hasCedula, filters.pregnant],
   );
 
   function handleSort(column: PatientSortBy) {
@@ -76,6 +76,7 @@ export default function PatientsDirectory() {
       gender: filters.gender || undefined,
       hasVisits: filters.hasVisits || undefined,
       hasCedula: filters.hasCedula || undefined,
+      pregnant: filters.pregnant || undefined,
     }),
   });
 

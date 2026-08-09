@@ -6,7 +6,7 @@ import { fetchPatient, deletePatient } from "@/lib/patients-api";
 import { consultationDate, deleteClinicalRecord, ClinicalRecord } from "@/lib/clinical-records-api";
 import { PatientHeader } from "@/components/patients/PatientHeader";
 import { MedicalBackground } from "@/components/patients/MedicalBackground";
-import { PregnancyBanner } from "@/components/patients/PregnancyBanner";
+import { PregnancySection } from "@/components/patients/PregnancySection";
 import { ConsultationCard } from "@/components/patients/ConsultationCard";
 import { ConfirmDeleteDialog } from "@/components/patients/ConfirmDeleteDialog";
 import { useToast } from "@/components/ui/use-toast";
@@ -72,7 +72,7 @@ export default function PatientProfile() {
         {data && (
           <>
             <PatientHeader p={data} onDelete={() => setShowDeletePatient(true)} />
-            <PregnancyBanner records={data.clinicalRecords} />
+            <PregnancySection patientId={data.id} />
             <MedicalBackground p={data} />
 
             <div>

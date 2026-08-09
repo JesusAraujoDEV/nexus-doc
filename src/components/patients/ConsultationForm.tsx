@@ -1,20 +1,18 @@
 import { useState } from "react";
-import { ChevronLeft, Printer } from "lucide-react";
+import { Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { RecipeItem, openClinicalRecordPdf } from "@/lib/clinical-records-api";
+import { ConsultationFormHeader, ConsultationTab } from "@/components/patients/ConsultationFormHeader";
 import { ConsultationPrincipalFields } from "@/components/patients/ConsultationPrincipalFields";
 import { RecipeItemsEditor } from "@/components/patients/RecipeItemsEditor";
 import { UltrasoundFieldsEditor, UltrasoundValues } from "@/components/patients/UltrasoundFieldsEditor";
+import { PregnancyPicker } from "@/components/patients/PregnancyPicker";
 
-type Tab = "principal" | "recipe" | "ultrasonido";
-const TABS: { key: Tab; label: string }[] = [
-  { key: "principal", label: "Principal" },
-  { key: "recipe", label: "Récipe" },
-  { key: "ultrasonido", label: "Ultrasonido" },
-];
+export type ConsultationCategory = "gynecology" | "obstetrics";
 
 export interface ConsultationFormValues {
+  category: ConsultationCategory;
+  pregnancyId: string;
   visitType: string;
   visitDate: string;
   symptoms: string;
@@ -29,6 +27,7 @@ export interface ConsultationFormValues {
 
 interface Props {
   title: string;
+  patientId: string;
   initialValues: ConsultationFormValues;
   onBack: () => void;
   onSubmit: (values: ConsultationFormValues) => void;
@@ -56,8 +55,8 @@ function PrintButton({ recordId, kind, label }: { recordId: string; kind: "presc
  * modal) con tabs horizontales porque la consulta real tiene demasiados módulos
  * (motivo/diagnóstico, récipe, ultrasonido) para un modal con scroll infinito.
  */
-export function ConsultationForm({ title, initialValues, onBack, onSubmit, submitting, submitLabel, recordId }: Props) {
-  const [tab, setTab] = useState<Tab>("principal");
+export function ConsultationForm({ title, patientId, initialValues, onBack, onSubmit, submitting, submitLabel, recordId }: Props) {
+  const [tab, setTab] = useState<ConsultationTab>("principal");
   const [form, setForm] = useState(initialValues);
   const [diagnosisMissing, setDiagnosisMissing] = useState(false);
 
@@ -78,29 +77,20 @@ export function ConsultationForm({ title, initialValues, onBack, onSubmit, submi
 
   return (
     <div className="flex flex-col min-h-full">
-      <div className="px-5 pt-6 pb-4 border-b border-border bg-card sticky top-0 z-10 space-y-3">
-        <button onClick={onBack} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
-          <ChevronLeft size={16} />Volver a la paciente
-        </button>
-        <h1 className="text-lg font-bold text-foreground">{title}</h1>
-        <div className="flex gap-2">
-          {TABS.map((t) => (
-            <button
-              key={t.key}
-              onClick={() => setTab(t.key)}
-              className={cn(
-                "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
-                tab === t.key ? "bg-primary text-white" : "bg-muted text-muted-foreground hover:bg-secondary",
-              )}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      <ConsultationFormHeader
+        title={title}
+        onBack={onBack}
+        category={form.category}
+        onCategoryChange={(category) => setForm((f) => ({ ...f, category }))}
+        tab={tab}
+        onTabChange={setTab}
+      />
 
       <form onSubmit={handleSubmit} className="flex-1 flex flex-col" noValidate>
         <div className="flex-1 p-4 max-w-2xl w-full mx-auto space-y-4">
+          {form.category === "obstetrics" && (
+            <PregnancyPicker patientId={patientId} pregnancyId={form.pregnancyId} onChange={(pregnancyId) => setForm((f) => ({ ...f, pregnancyId }))} />
+          )}
           {tab === "principal" && (
             <ConsultationPrincipalFields
               form={form}
@@ -118,7 +108,7 @@ export function ConsultationForm({ title, initialValues, onBack, onSubmit, submi
           {tab === "ultrasonido" && (
             <>
               {recordId && <PrintButton recordId={recordId} kind="ultrasound" label="Imprimir ecografía" />}
-              <UltrasoundFieldsEditor values={form.ultrasound} onChange={(ultrasound) => setForm((f) => ({ ...f, ultrasound }))} />
+              <UltrasoundFieldsEditor category={form.category} values={form.ultrasound} onChange={(ultrasound) => setForm((f) => ({ ...f, ultrasound }))} />
             </>
           )}
         </div>
