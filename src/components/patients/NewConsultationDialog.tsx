@@ -5,9 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { createClinicalRecord } from "@/lib/patients-api";
+import { createClinicalRecord, RecipeItem } from "@/lib/patients-api";
 import { useToast } from "@/components/ui/use-toast";
 import { VisitTypeCombobox } from "./VisitTypeCombobox";
+import { RecipeItemsEditor } from "./RecipeItemsEditor";
+import { UltrasoundFieldsEditor, UltrasoundValues } from "./UltrasoundFieldsEditor";
 
 interface Props {
   patientId: string;
@@ -26,6 +28,8 @@ export function NewConsultationDialog({ patientId, open, onOpenChange }: Props) 
     labOrders: "",
     privateNotes: "",
   });
+  const [recipeItems, setRecipeItems] = useState<RecipeItem[]>([]);
+  const [ultrasound, setUltrasound] = useState<UltrasoundValues>({});
 
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -41,6 +45,8 @@ export function NewConsultationDialog({ patientId, open, onOpenChange }: Props) 
         treatment: form.treatment || undefined,
         labOrders: form.labOrders || undefined,
         privateNotes: form.privateNotes || undefined,
+        recipeItems: recipeItems.filter((i) => i.nombre?.trim()).length ? recipeItems.filter((i) => i.nombre?.trim()) : undefined,
+        ultrasoundFindings: Object.keys(ultrasound).length ? ultrasound : undefined,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patient", patientId] });
@@ -55,7 +61,7 @@ export function NewConsultationDialog({ patientId, open, onOpenChange }: Props) 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Nueva consulta</DialogTitle>
         </DialogHeader>
@@ -93,6 +99,10 @@ export function NewConsultationDialog({ patientId, open, onOpenChange }: Props) 
             <Label htmlFor="nc-notes">Observaciones</Label>
             <Textarea id="nc-notes" value={form.privateNotes} onChange={set("privateNotes")} rows={2} />
           </div>
+
+          <RecipeItemsEditor items={recipeItems} onChange={setRecipeItems} />
+          <UltrasoundFieldsEditor values={ultrasound} onChange={setUltrasound} />
+
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
             <Button type="submit" disabled={mutation.isPending}>

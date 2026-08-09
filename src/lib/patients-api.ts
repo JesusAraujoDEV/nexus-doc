@@ -50,6 +50,8 @@ export function consultationDate(record: ClinicalRecord): string {
   return record.visitDate || record.createdAt;
 }
 
+export type ReferredByType = "redes" | "otro_doctor" | "colega" | "amigo" | "otro";
+
 export interface PatientDetail {
   id: string;
   firstName: string;
@@ -60,7 +62,28 @@ export interface PatientDetail {
   gender: string | null;
   address: string | null;
   medicalBackground: Record<string, unknown> | null;
+  referredByType: ReferredByType | null;
+  referredByDetail: string | null;
   clinicalRecords: ClinicalRecord[];
+}
+
+export interface CreatePatientData {
+  firstName: string;
+  lastName: string;
+  cedula: string;
+  phone: string;
+  birthDate?: string;
+  address?: string;
+  referredByType?: ReferredByType;
+  referredByDetail?: string;
+  medicalBackground?: Record<string, unknown>;
+}
+
+export function createPatient(data: CreatePatientData) {
+  return apiFetch<PatientDetail>("/patients", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
 }
 
 export type PatientSortBy = "name" | "cedula" | "createdAt" | "visitsCount" | "lastVisit";
@@ -144,9 +167,30 @@ export function createClinicalRecord(data: {
   privateNotes?: string;
   visitType?: string;
   visitDate?: string;
+  recipeItems?: RecipeItem[];
+  ultrasoundFindings?: Record<string, string | number>;
 }) {
   return apiFetch<ClinicalRecord>("/clinical-records", {
     method: "POST",
     body: JSON.stringify(data),
   });
+}
+
+export interface UltrasoundFieldSuggestion {
+  value: string;
+  count: number;
+}
+
+export function fetchUltrasoundSuggestions(field: string) {
+  return apiFetch<UltrasoundFieldSuggestion[]>(`/clinical-records/suggestions/ultrasound?field=${encodeURIComponent(field)}`);
+}
+
+export interface MedicationSuggestion {
+  nombre: string;
+  posologia: string | null;
+  count: number;
+}
+
+export function fetchMedicationSuggestions(q: string) {
+  return apiFetch<MedicationSuggestion[]>(`/clinical-records/suggestions/medications?q=${encodeURIComponent(q)}`);
 }
