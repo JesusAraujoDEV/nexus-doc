@@ -8,20 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createPatient, ReferredByType } from "@/lib/patients-api";
 import { useToast } from "@/components/ui/use-toast";
+import { REFERIDO_LABEL } from "@/lib/referred-by";
 import { PatientAntecedentesFields, AntecedentesForm, ANTECEDENTES_VACIO, buildMedicalBackground } from "./PatientAntecedentesFields";
 
 interface Props {
   open: boolean;
   onOpenChange: (v: boolean) => void;
 }
-
-const REFERIDO_LABEL: Record<ReferredByType, string> = {
-  redes: "Redes sociales",
-  otro_doctor: "Otro doctor",
-  colega: "Colega",
-  amigo: "Amigo/familiar",
-  otro: "Otro",
-};
 
 export function NewPatientDialog({ open, onOpenChange }: Props) {
   const [form, setForm] = useState({

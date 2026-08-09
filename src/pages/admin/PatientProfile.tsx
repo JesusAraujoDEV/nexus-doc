@@ -8,7 +8,6 @@ import { MedicalBackground } from "@/components/patients/MedicalBackground";
 import { ConsultationCard } from "@/components/patients/ConsultationCard";
 import { EditConsultationDialog } from "@/components/patients/EditConsultationDialog";
 import { ConfirmDeleteDialog } from "@/components/patients/ConfirmDeleteDialog";
-import { NewConsultationDialog } from "@/components/patients/NewConsultationDialog";
 import { useToast } from "@/components/ui/use-toast";
 
 export default function PatientProfile() {
@@ -26,7 +25,6 @@ export default function PatientProfile() {
   const [editingRecord, setEditingRecord] = useState<ClinicalRecord | null>(null);
   const [deletingRecord, setDeletingRecord] = useState<ClinicalRecord | null>(null);
   const [showDeletePatient, setShowDeletePatient] = useState(false);
-  const [showNewConsultation, setShowNewConsultation] = useState(false);
 
   const deletePatientMut = useMutation({
     mutationFn: () => deletePatient(id as string),
@@ -85,7 +83,7 @@ export default function PatientProfile() {
                   </h3>
                 </div>
                 <button
-                  onClick={() => setShowNewConsultation(true)}
+                  onClick={() => navigate(`/admin/patients/${data.id}/consultations/new`)}
                   className="flex items-center gap-1 text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
                 >
                   <Plus size={14} />Nueva consulta
@@ -137,14 +135,6 @@ export default function PatientProfile() {
               onConfirm={() => deletePatientMut.mutate()}
               loading={deletePatientMut.isPending}
             />
-
-            {showNewConsultation && (
-              <NewConsultationDialog
-                patientId={data.id}
-                open={showNewConsultation}
-                onOpenChange={setShowNewConsultation}
-              />
-            )}
           </>
         )}
       </div>

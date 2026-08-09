@@ -9,8 +9,10 @@ import PatientLanding from "./pages/PatientLanding";
 import AdminDashboard from "./pages/admin/Dashboard";
 import PatientsDirectory from "./pages/admin/PatientsDirectory";
 import PatientProfile from "./pages/admin/PatientProfile";
+import NewConsultationPage from "./pages/admin/NewConsultationPage";
 import ScheduleConfig from "./pages/admin/ScheduleConfig";
 import Catalogs from "./pages/admin/Catalogs";
+import Trash from "./pages/admin/Trash";
 import ChangePassword from "./pages/admin/ChangePassword";
 import Login from "./pages/admin/Login";
 import NotFound from "./pages/NotFound";
@@ -41,7 +43,9 @@ const App = () => (
             <Route index element={<AdminDashboard />} />
             <Route path="patients" element={<PatientsDirectory />} />
             <Route path="patients/:id" element={<PatientProfile />} />
+            <Route path="patients/:id/consultations/new" element={<NewConsultationPage />} />
             <Route path="catalogs" element={<Catalogs />} />
+            <Route path="trash" element={<Trash />} />
             <Route path="change-password" element={<ChangePassword />} />
             <Route path="schedule" element={<ScheduleConfig />} />
           </Route>

@@ -25,6 +25,28 @@ export const ANTECEDENTES_VACIO: AntecedentesForm = {
   fum: "", fechaUltimaCitologia: "", cirugiasPrevias: "", alergias: "", antecedentesPatologicos: "",
 };
 
+/** Inversa de buildMedicalBackground: precarga el formulario a partir de lo que ya tenga la paciente. */
+export function parseMedicalBackground(bg: Record<string, unknown> | null | undefined): AntecedentesForm {
+  const g = (bg?.antecedentesGinecoObs || {}) as Record<string, unknown>;
+  const str = (v: unknown) => (v === undefined || v === null ? "" : String(v));
+  return {
+    lugarNacimiento: str(bg?.lugarNacimiento),
+    menarquia: str(g.menarquia),
+    irs: str(g.irs),
+    parejasSexuales: str(g.parejasSexuales),
+    gestas: str(g.gestas),
+    partos: str(g.partos),
+    cesareas: str(g.cesareas),
+    abortos: str(g.abortos),
+    embarazoEctopico: str(g.embarazoEctopico),
+    fum: str(g.fum),
+    fechaUltimaCitologia: str(g.fechaUltimaCitologia),
+    cirugiasPrevias: str(bg?.cirugiasPrevias),
+    alergias: str(bg?.alergias),
+    antecedentesPatologicos: str(bg?.antecedentesPatologicos),
+  };
+}
+
 /** Arma el medical_background JSONB a partir del formulario plano. Omite campos vacíos. */
 export function buildMedicalBackground(a: AntecedentesForm): Record<string, unknown> {
   const gineco: Record<string, unknown> = {};

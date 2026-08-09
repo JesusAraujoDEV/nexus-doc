@@ -1,5 +1,5 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Users, Calendar, BookOpen, Stethoscope, LogOut, KeyRound } from "lucide-react";
+import { LayoutDashboard, Users, Calendar, BookOpen, Stethoscope, LogOut, KeyRound, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { clearToken } from "@/lib/api";
 
@@ -8,6 +8,7 @@ const navItems = [
   { to: "/admin/patients", label: "Pacientes", icon: Users },
   { to: "/admin/catalogs", label: "Catálogos", icon: BookOpen },
   { to: "/admin/schedule", label: "Horarios", icon: Calendar },
+  { to: "/admin/trash", label: "Papelera", icon: Trash2 },
 ];
 
 export function Sidebar() {
