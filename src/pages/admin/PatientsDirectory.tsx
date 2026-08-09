@@ -3,19 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Search, Loader2, UserPlus } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import {
-  Pagination, PaginationContent, PaginationItem,
-  PaginationPrevious, PaginationNext,
-} from "@/components/ui/pagination";
-import { cn } from "@/lib/utils";
-import { fetchPatients, PatientSortBy, SortDir, PatientListItem, deletePatient, updatePatient } from "@/lib/patients-api";
-import { PatientTableRow, PatientCard } from "@/components/patients/PatientRows";
-import { SortableHeader } from "@/components/patients/SortableHeader";
+import { fetchPatients, PatientSortBy, SortDir, PatientListItem, deletePatient } from "@/lib/patients-api";
+import { PatientsMobileList } from "@/components/patients/PatientsMobileList";
+import { PatientsTable } from "@/components/patients/PatientsTable";
 import { PatientFilters, Filters } from "@/components/patients/PatientFilters";
 import { ConfirmDeleteDialog } from "@/components/patients/ConfirmDeleteDialog";
-import { NewConsultationDialog } from "@/components/patients/NewConsultationDialog";
 import { EditPatientQuickDialog } from "@/components/patients/EditPatientQuickDialog";
 import { NewPatientDialog } from "@/components/patients/NewPatientDialog";
+import { PatientsPagination } from "@/components/patients/PatientsPagination";
 import { useToast } from "@/components/ui/use-toast";
 
 const PAGE_SIZE = 20;
@@ -27,31 +22,6 @@ function useDebounced<T>(value: T, delayMs: number) {
     return () => clearTimeout(t);
   }, [value, delayMs]);
   return debounced;
-}
-
-function PatientsPagination({ page, pages, onChange }: { page: number; pages: number; onChange: (p: number) => void }) {
-  if (pages <= 1) return null;
-  return (
-    <Pagination className="mt-4">
-      <PaginationContent>
-        <PaginationItem>
-          <PaginationPrevious
-            className={cn("cursor-pointer", page <= 1 && "pointer-events-none opacity-40")}
-            onClick={() => onChange(Math.max(1, page - 1))}
-          />
-        </PaginationItem>
-        <PaginationItem>
-          <span className="px-3 text-xs text-muted-foreground">Página {page} de {pages}</span>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationNext
-            className={cn("cursor-pointer", page >= pages && "pointer-events-none opacity-40")}
-            onClick={() => onChange(Math.min(pages, page + 1))}
-          />
-        </PaginationItem>
-      </PaginationContent>
-    </Pagination>
-  );
 }
 
 export default function PatientsDirectory() {
@@ -67,7 +37,6 @@ export default function PatientsDirectory() {
 
   const [editingPatient, setEditingPatient] = useState<PatientListItem | null>(null);
   const [deletingPatient, setDeletingPatient] = useState<PatientListItem | null>(null);
-  const [newConsultationFor, setNewConsultationFor] = useState<PatientListItem | null>(null);
   const [showNewPatient, setShowNewPatient] = useState(false);
 
   const deleteMut = useMutation({
@@ -93,6 +62,8 @@ export default function PatientsDirectory() {
       setSortDir("ASC");
     }
   }
+
+  const onNewConsultation = (p: PatientListItem) => navigate(`/admin/patients/${p.id}/consultations/new`);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["patients", debouncedQuery, page, sortBy, sortDir, filters],
@@ -153,70 +124,16 @@ export default function PatientsDirectory() {
 
         {!isLoading && !isError && (
           <>
-            <div className="md:hidden space-y-3">
-              <div className="flex items-center gap-2">
-                <select
-                  value={sortBy}
-                  onChange={(e) => handleSort(e.target.value as PatientSortBy)}
-                  className="h-9 flex-1 rounded-lg bg-muted border-0 text-xs px-2.5"
-                >
-                  <option value="createdAt">Ordenar: más recientes</option>
-                  <option value="name">Ordenar: nombre</option>
-                  <option value="cedula">Ordenar: cédula</option>
-                  <option value="visitsCount">Ordenar: nº de consultas</option>
-                  <option value="lastVisit">Ordenar: última visita</option>
-                </select>
-                <button
-                  onClick={() => setSortDir((d) => (d === "ASC" ? "DESC" : "ASC"))}
-                  className="h-9 w-9 shrink-0 rounded-lg bg-muted flex items-center justify-center text-muted-foreground"
-                  aria-label="Invertir orden"
-                >
-                  {sortDir === "ASC" ? "↑" : "↓"}
-                </button>
-              </div>
-              {items.map((p, i) => (
-                <PatientCard key={p.id} p={p} navigate={navigate} idx={i}
-                  onEdit={setEditingPatient}
-                  onDelete={setDeletingPatient}
-                  onNewConsultation={setNewConsultationFor}
-                />
-              ))}
-              {items.length === 0 && (
-                <div className="py-12 text-center text-muted-foreground text-sm">No se encontraron pacientes</div>
-              )}
-            </div>
-
-            <div className="hidden md:block">
-              <div className="medical-card overflow-hidden">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-border bg-muted/50">
-                      <SortableHeader label="Paciente" column="name" sortBy={sortBy} sortDir={sortDir} onSort={handleSort} />
-                      <SortableHeader label="Cédula" column="cedula" sortBy={sortBy} sortDir={sortDir} onSort={handleSort} />
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">Teléfono</th>
-                      <SortableHeader label="Consultas" column="visitsCount" sortBy={sortBy} sortDir={sortDir} onSort={handleSort} />
-                      <SortableHeader label="Última Visita" column="lastVisit" sortBy={sortBy} sortDir={sortDir} onSort={handleSort} />
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wide">Acción</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {items.map((p, i) => (
-                      <PatientTableRow key={p.id} p={p} navigate={navigate} idx={i}
-                        onEdit={setEditingPatient}
-                        onDelete={setDeletingPatient}
-                        onNewConsultation={setNewConsultationFor}
-                      />
-                    ))}
-                  </tbody>
-                </table>
-                {items.length === 0 && (
-                  <div className="py-12 text-center text-muted-foreground text-sm">
-                    No se encontraron pacientes para "<span className="font-medium">{query}</span>"
-                  </div>
-                )}
-              </div>
-            </div>
-
+            <PatientsMobileList
+              items={items} navigate={navigate} sortBy={sortBy} sortDir={sortDir}
+              onSort={handleSort} onSortDirToggle={() => setSortDir((d) => (d === "ASC" ? "DESC" : "ASC"))}
+              onEdit={setEditingPatient} onDelete={setDeletingPatient} onNewConsultation={onNewConsultation}
+            />
+            <PatientsTable
+              items={items} navigate={navigate} sortBy={sortBy} sortDir={sortDir} onSort={handleSort}
+              onEdit={setEditingPatient} onDelete={setDeletingPatient} onNewConsultation={onNewConsultation}
+              emptyQuery={query}
+            />
             {data && <PatientsPagination page={data.page} pages={data.pages} onChange={setPage} />}
           </>
         )}
@@ -238,14 +155,6 @@ export default function PatientsDirectory() {
         onConfirm={() => deletingPatient && deleteMut.mutate(deletingPatient.id)}
         loading={deleteMut.isPending}
       />
-
-      {newConsultationFor && (
-        <NewConsultationDialog
-          patientId={newConsultationFor.id}
-          open={!!newConsultationFor}
-          onOpenChange={(v) => !v && setNewConsultationFor(null)}
-        />
-      )}
 
       <NewPatientDialog open={showNewPatient} onOpenChange={setShowNewPatient} />
     </div>
