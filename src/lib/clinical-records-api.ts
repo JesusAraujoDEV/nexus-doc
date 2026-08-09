@@ -99,6 +99,7 @@ export function fetchUltrasoundSuggestions(field: string) {
 
 export interface MedicationSuggestion {
   nombre: string;
+  comercial: string | null;
   posologia: string | null;
   count: number;
 }

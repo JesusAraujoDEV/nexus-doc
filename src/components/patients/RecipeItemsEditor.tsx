@@ -50,10 +50,10 @@ function MedicationNameInput({ item, onUpdate }: { item: RecipeItem; onUpdate: (
                 <CommandItem
                   key={`${s.nombre}-${i}`}
                   value={`${s.nombre}-${i}`}
-                  onSelect={() => { onUpdate({ nombre: s.nombre, posologia: s.posologia }); setOpen(false); }}
+                  onSelect={() => { onUpdate({ nombre: s.nombre, comercial: s.comercial, posologia: s.posologia }); setOpen(false); }}
                 >
                   <div className="min-w-0">
-                    <p className="truncate font-medium">{s.nombre}</p>
+                    <p className="truncate font-medium">{s.nombre}{s.comercial ? ` (${s.comercial})` : ""}</p>
                     {s.posologia && <p className="truncate text-xs text-muted-foreground">{s.posologia}</p>}
                   </div>
                   <span className="ml-auto text-xs text-muted-foreground">{s.count}</span>

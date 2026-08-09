@@ -1,12 +1,9 @@
 import { useState } from "react";
 import { ChevronLeft, Printer } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { RecipeItem, openClinicalRecordPdf } from "@/lib/clinical-records-api";
-import { VisitTypeCombobox } from "@/components/patients/VisitTypeCombobox";
+import { ConsultationPrincipalFields } from "@/components/patients/ConsultationPrincipalFields";
 import { RecipeItemsEditor } from "@/components/patients/RecipeItemsEditor";
 import { UltrasoundFieldsEditor, UltrasoundValues } from "@/components/patients/UltrasoundFieldsEditor";
 
@@ -62,9 +59,22 @@ function PrintButton({ recordId, kind, label }: { recordId: string; kind: "presc
 export function ConsultationForm({ title, initialValues, onBack, onSubmit, submitting, submitLabel, recordId }: Props) {
   const [tab, setTab] = useState<Tab>("principal");
   const [form, setForm] = useState(initialValues);
+  const [diagnosisMissing, setDiagnosisMissing] = useState(false);
 
-  const set = (field: keyof ConsultationFormValues) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-    setForm((f) => ({ ...f, [field]: e.target.value }));
+  // El diagnóstico es obligatorio pero su campo vive en el tab "Principal" - si la
+  // doctora está en Récipe/Ultrasonido y le da guardar, el submit fallaba en
+  // silencio (un toast que nadie conecta con "te falta llenar otra pestaña").
+  // Ahora se valida ANTES de mandar, y si falta, salta directo a esa pestaña.
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!form.diagnosis.trim()) {
+      setTab("principal");
+      setDiagnosisMissing(true);
+      return;
+    }
+    setDiagnosisMissing(false);
+    onSubmit(form);
+  }
 
   return (
     <div className="flex flex-col min-h-full">
@@ -89,21 +99,15 @@ export function ConsultationForm({ title, initialValues, onBack, onSubmit, submi
         </div>
       </div>
 
-      <form onSubmit={(e) => { e.preventDefault(); onSubmit(form); }} className="flex-1 flex flex-col">
+      <form onSubmit={handleSubmit} className="flex-1 flex flex-col" noValidate>
         <div className="flex-1 p-4 max-w-2xl w-full mx-auto space-y-4">
           {tab === "principal" && (
-            <>
-              <div className="grid grid-cols-2 gap-3">
-                <div><Label>Tipo de consulta</Label><VisitTypeCombobox value={form.visitType} onChange={(v) => setForm((f) => ({ ...f, visitType: v }))} /></div>
-                <div><Label htmlFor="cf-date">Fecha</Label><Input id="cf-date" type="date" value={form.visitDate} onChange={set("visitDate")} /></div>
-              </div>
-              <div><Label htmlFor="cf-symp">Motivo</Label><Textarea id="cf-symp" value={form.symptoms} onChange={set("symptoms")} rows={2} /></div>
-              <div><Label htmlFor="cf-diag">Diagnóstico *</Label><Textarea id="cf-diag" value={form.diagnosis} onChange={set("diagnosis")} rows={2} required /></div>
-              <div><Label htmlFor="cf-treat">Tratamiento</Label><Textarea id="cf-treat" value={form.treatment} onChange={set("treatment")} rows={3} /></div>
-              <div><Label htmlFor="cf-lab">Examenes indicados</Label><Textarea id="cf-lab" value={form.labOrders} onChange={set("labOrders")} rows={2} /></div>
-              <div><Label htmlFor="cf-notes">Observaciones</Label><Textarea id="cf-notes" value={form.privateNotes} onChange={set("privateNotes")} rows={2} /></div>
-              <div><Label htmlFor="cf-next">Próxima consulta</Label><Input id="cf-next" type="date" value={form.nextAppointmentDate} onChange={set("nextAppointmentDate")} /></div>
-            </>
+            <ConsultationPrincipalFields
+              form={form}
+              onChange={setForm}
+              diagnosisMissing={diagnosisMissing}
+              onDiagnosisEdited={() => setDiagnosisMissing(false)}
+            />
           )}
           {tab === "recipe" && (
             <>

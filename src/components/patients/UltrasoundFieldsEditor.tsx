@@ -30,6 +30,12 @@ function detectMode(values: UltrasoundValues): Mode {
 export function UltrasoundFieldsEditor({ values, onChange }: FieldProps) {
   const [mode, setMode] = useState<Mode>(() => detectMode(values));
 
+  function selectMode(m: Mode) {
+    setMode(m);
+    // 1er trimestre no necesita preguntar - lo marca solo. 2do/3er sí lo elige la doctora.
+    if (m === "obst1") onChange({ ...values, TRIMESTRE: 1 });
+  }
+
   return (
     <div className="space-y-4 rounded-lg border border-border p-4">
       <p className="text-sm font-semibold text-foreground">Ultrasonido</p>
@@ -38,7 +44,7 @@ export function UltrasoundFieldsEditor({ values, onChange }: FieldProps) {
           <button
             key={m.key}
             type="button"
-            onClick={() => setMode(m.key)}
+            onClick={() => selectMode(m.key)}
             className={cn(
               "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
               mode === m.key ? "bg-primary text-white" : "bg-muted text-muted-foreground hover:bg-secondary",
