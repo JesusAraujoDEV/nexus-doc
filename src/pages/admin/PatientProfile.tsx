@@ -2,12 +2,12 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ChevronLeft, ClipboardList, Loader2, Plus } from "lucide-react";
-import { fetchPatient, consultationDate, deletePatient, deleteClinicalRecord, ClinicalRecord } from "@/lib/patients-api";
+import { fetchPatient, deletePatient } from "@/lib/patients-api";
+import { consultationDate, deleteClinicalRecord, ClinicalRecord } from "@/lib/clinical-records-api";
 import { PatientHeader } from "@/components/patients/PatientHeader";
 import { MedicalBackground } from "@/components/patients/MedicalBackground";
 import { PregnancyBanner } from "@/components/patients/PregnancyBanner";
 import { ConsultationCard } from "@/components/patients/ConsultationCard";
-import { EditConsultationDialog } from "@/components/patients/EditConsultationDialog";
 import { ConfirmDeleteDialog } from "@/components/patients/ConfirmDeleteDialog";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -23,7 +23,6 @@ export default function PatientProfile() {
     enabled: !!id,
   });
 
-  const [editingRecord, setEditingRecord] = useState<ClinicalRecord | null>(null);
   const [deletingRecord, setDeletingRecord] = useState<ClinicalRecord | null>(null);
   const [showDeletePatient, setShowDeletePatient] = useState(false);
 
@@ -103,22 +102,13 @@ export default function PatientProfile() {
                       record={r}
                       idx={i}
                       patientId={data.id}
-                      onEdit={(rec) => setEditingRecord(rec)}
+                      onEdit={(rec) => navigate(`/admin/patients/${data.id}/consultations/${rec.id}/edit`)}
                       onDelete={(rec) => setDeletingRecord(rec)}
                     />
                   ))}
                 </div>
               )}
             </div>
-
-            {editingRecord && (
-              <EditConsultationDialog
-                record={editingRecord}
-                patientId={data.id}
-                open={!!editingRecord}
-                onOpenChange={(v) => !v && setEditingRecord(null)}
-              />
-            )}
 
             <ConfirmDeleteDialog
               open={!!deletingRecord}

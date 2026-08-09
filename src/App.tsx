@@ -10,6 +10,7 @@ import AdminDashboard from "./pages/admin/Dashboard";
 import PatientsDirectory from "./pages/admin/PatientsDirectory";
 import PatientProfile from "./pages/admin/PatientProfile";
 import NewConsultationPage from "./pages/admin/NewConsultationPage";
+import EditConsultationPage from "./pages/admin/EditConsultationPage";
 import ScheduleConfig from "./pages/admin/ScheduleConfig";
 import Catalogs from "./pages/admin/Catalogs";
 import Trash from "./pages/admin/Trash";
@@ -44,6 +45,7 @@ const App = () => (
             <Route path="patients" element={<PatientsDirectory />} />
             <Route path="patients/:id" element={<PatientProfile />} />
             <Route path="patients/:id/consultations/new" element={<NewConsultationPage />} />
+            <Route path="patients/:id/consultations/:recordId/edit" element={<EditConsultationPage />} />
             <Route path="catalogs" element={<Catalogs />} />
             <Route path="trash" element={<Trash />} />
             <Route path="change-password" element={<ChangePassword />} />

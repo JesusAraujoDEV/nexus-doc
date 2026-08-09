@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ChevronDown, ChevronUp, Stethoscope, Pencil, Trash2, Printer } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ClinicalRecord, consultationDate, openClinicalRecordPdf } from "@/lib/patients-api";
+import { ClinicalRecord, consultationDate, openClinicalRecordPdf } from "@/lib/clinical-records-api";
 
 function formatDate(iso: string) {
   const soloFecha = /^\d{4}-\d{2}-\d{2}$/.exec(iso);

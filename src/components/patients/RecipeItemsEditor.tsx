@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandList, CommandGroup, CommandItem, CommandEmpty } from "@/components/ui/command";
-import { RecipeItem, fetchMedicationSuggestions } from "@/lib/patients-api";
+import { RecipeItem, fetchMedicationSuggestions } from "@/lib/clinical-records-api";
 
 interface Props {
   items: RecipeItem[];

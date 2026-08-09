@@ -2,7 +2,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { SuggestCombobox } from "./SuggestCombobox";
-import { fetchUltrasoundSuggestions } from "@/lib/patients-api";
+import { fetchUltrasoundSuggestions } from "@/lib/clinical-records-api";
 
 export type UltrasoundValues = Record<string, string | number>;
 

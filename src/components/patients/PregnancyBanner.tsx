@@ -1,5 +1,5 @@
 import { Baby } from "lucide-react";
-import { ClinicalRecord } from "@/lib/patients-api";
+import { ClinicalRecord } from "@/lib/clinical-records-api";
 import { currentPregnancyStatus } from "@/lib/pregnancy";
 
 function formatDate(d: Date) {

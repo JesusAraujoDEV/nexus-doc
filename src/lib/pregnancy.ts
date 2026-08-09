@@ -1,4 +1,4 @@
-import { ClinicalRecord, consultationDate } from "@/lib/patients-api";
+import { ClinicalRecord, consultationDate } from "@/lib/clinical-records-api";
 
 export interface PregnancyStatus {
   weeksToday: number;
