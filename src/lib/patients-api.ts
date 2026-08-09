@@ -1,4 +1,4 @@
-import { apiFetch } from "@/lib/api";
+import { apiFetch, API_URL, getToken, ApiError } from "@/lib/api";
 
 export interface PatientListItem {
   id: string;
@@ -17,6 +17,11 @@ export interface PatientListResponse {
   pages: number;
 }
 
+export interface RecipeItem {
+  nombre: string | null;
+  posologia: string | null;
+}
+
 export interface ClinicalRecord {
   id: string;
   symptoms: string | null;
@@ -29,6 +34,10 @@ export interface ClinicalRecord {
   visitDate: string | null;
   /** Cuándo se creó la fila, no cuándo ocurrió la consulta. */
   createdAt: string;
+  /** Récipe como items separados. Null si la consulta no tuvo récipe. */
+  recipeItems: RecipeItem[] | null;
+  /** Hallazgos de ecografía (útero, ovarios, biometría fetal). Null si no se hizo ecografía. */
+  ultrasoundFindings: Record<string, string | number> | null;
 }
 
 /**
@@ -105,6 +114,25 @@ export function updateClinicalRecord(id: string, changes: Partial<Omit<ClinicalR
 
 export function deleteClinicalRecord(id: string) {
   return apiFetch<{ id: string; deleted: boolean }>(`/clinical-records/${id}`, { method: "DELETE" });
+}
+
+/**
+ * Abre en una pestaña nueva el récipe o el informe de ecografía de una consulta, en PDF.
+ * La pestaña se abre ANTES del fetch (sincrónico con el click) porque los navegadores
+ * bloquean window.open() si se llama después de un await.
+ */
+export async function openClinicalRecordPdf(id: string, kind: "prescription" | "ultrasound") {
+  const tab = window.open("", "_blank");
+  const token = getToken();
+  const res = await fetch(`${API_URL}/clinical-records/${id}/${kind}-pdf`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  if (!res.ok) {
+    tab?.close();
+    throw new ApiError(res.status, `No se pudo generar el PDF (${res.status})`);
+  }
+  const blob = await res.blob();
+  if (tab) tab.location.href = URL.createObjectURL(blob);
 }
 
 export function createClinicalRecord(data: {

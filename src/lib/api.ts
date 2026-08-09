@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 const TOKEN_KEY = "nexusdoc_token";
 
 export function getToken() {

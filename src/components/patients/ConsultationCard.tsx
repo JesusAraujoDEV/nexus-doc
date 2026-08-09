@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp, Stethoscope, Pencil, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Stethoscope, Pencil, Trash2, Printer } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ClinicalRecord, consultationDate } from "@/lib/patients-api";
+import { ClinicalRecord, consultationDate, openClinicalRecordPdf } from "@/lib/patients-api";
 
 function formatDate(iso: string) {
   const soloFecha = /^\d{4}-\d{2}-\d{2}$/.exec(iso);
@@ -32,6 +32,8 @@ interface Props {
 export function ConsultationCard({ record, idx, onEdit, onDelete }: Props) {
   const [open, setOpen] = useState(idx === 0);
   const hasDetail = record.diagnosis || record.treatment || record.labOrders || record.privateNotes;
+  const hasRecipe = !!record.recipeItems?.length;
+  const hasUltrasound = !!record.ultrasoundFindings && Object.keys(record.ultrasoundFindings).length > 0;
 
   return (
     <div className="medical-card overflow-hidden">
@@ -50,18 +52,28 @@ export function ConsultationCard({ record, idx, onEdit, onDelete }: Props) {
             <p className="text-xs text-muted-foreground">{formatDate(consultationDate(record))}</p>
           </div>
         </div>
-        {hasDetail && (open ? <ChevronUp size={16} className="text-muted-foreground shrink-0" /> : <ChevronDown size={16} className="text-muted-foreground shrink-0" />)}
+        {(hasDetail || hasRecipe || hasUltrasound) && (open ? <ChevronUp size={16} className="text-muted-foreground shrink-0" /> : <ChevronDown size={16} className="text-muted-foreground shrink-0" />)}
       </button>
 
-      {open && hasDetail && (
+      {open && (hasDetail || hasRecipe || hasUltrasound) && (
         <div className={cn("px-4 pb-4 space-y-3 border-t border-border pt-3")}>
           <Field label="Motivo" value={record.symptoms} />
           <Field label="Diagnóstico" value={record.diagnosis} />
           <Field label="Tratamiento" value={record.treatment} />
           <Field label="Exámenes indicados" value={record.labOrders} />
           <Field label="Observaciones" value={record.privateNotes} />
-          {(onEdit || onDelete) && (
-            <div className="flex gap-2 pt-2 border-t border-border">
+          {(onEdit || onDelete || hasRecipe || hasUltrasound) && (
+            <div className="flex flex-wrap gap-3 pt-2 border-t border-border">
+              {hasRecipe && (
+                <button onClick={() => openClinicalRecordPdf(record.id, "prescription")} className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors">
+                  <Printer size={12} />Imprimir récipe
+                </button>
+              )}
+              {hasUltrasound && (
+                <button onClick={() => openClinicalRecordPdf(record.id, "ultrasound")} className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors">
+                  <Printer size={12} />Imprimir ecografía
+                </button>
+              )}
               {onEdit && (
                 <button onClick={() => onEdit(record)} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
                   <Pencil size={12} />Editar
