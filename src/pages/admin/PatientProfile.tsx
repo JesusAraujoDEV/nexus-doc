@@ -5,6 +5,7 @@ import { ChevronLeft, ClipboardList, Loader2, Plus } from "lucide-react";
 import { fetchPatient, consultationDate, deletePatient, deleteClinicalRecord, ClinicalRecord } from "@/lib/patients-api";
 import { PatientHeader } from "@/components/patients/PatientHeader";
 import { MedicalBackground } from "@/components/patients/MedicalBackground";
+import { PregnancyBanner } from "@/components/patients/PregnancyBanner";
 import { ConsultationCard } from "@/components/patients/ConsultationCard";
 import { EditConsultationDialog } from "@/components/patients/EditConsultationDialog";
 import { ConfirmDeleteDialog } from "@/components/patients/ConfirmDeleteDialog";
@@ -72,6 +73,7 @@ export default function PatientProfile() {
         {data && (
           <>
             <PatientHeader p={data} onDelete={() => setShowDeletePatient(true)} />
+            <PregnancyBanner records={data.clinicalRecords} />
             <MedicalBackground p={data} />
 
             <div>

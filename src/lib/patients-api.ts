@@ -19,6 +19,7 @@ export interface PatientListResponse {
 
 export interface RecipeItem {
   nombre: string | null;
+  comercial: string | null;
   posologia: string | null;
 }
 
@@ -38,6 +39,7 @@ export interface ClinicalRecord {
   recipeItems: RecipeItem[] | null;
   /** Hallazgos de ecografía (útero, ovarios, biometría fetal). Null si no se hizo ecografía. */
   ultrasoundFindings: Record<string, string | number> | null;
+  nextAppointmentDate: string | null;
 }
 
 /**
@@ -169,6 +171,7 @@ export function createClinicalRecord(data: {
   visitDate?: string;
   recipeItems?: RecipeItem[];
   ultrasoundFindings?: Record<string, string | number>;
+  nextAppointmentDate?: string;
 }) {
   return apiFetch<ClinicalRecord>("/clinical-records", {
     method: "POST",

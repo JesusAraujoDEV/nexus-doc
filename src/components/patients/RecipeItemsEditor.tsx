@@ -4,7 +4,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Command, CommandInput, CommandList, CommandGroup, CommandItem, CommandEmpty } from "@/components/ui/command";
+import { Command, CommandList, CommandGroup, CommandItem, CommandEmpty } from "@/components/ui/command";
 import { RecipeItem, fetchMedicationSuggestions } from "@/lib/patients-api";
 
 interface Props {
@@ -34,9 +34,15 @@ function MedicationNameInput({ item, onUpdate }: { item: RecipeItem; onUpdate: (
           onFocus={() => setOpen(true)}
         />
       </PopoverTrigger>
-      <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+      <PopoverContent
+        className="w-[--radix-popover-trigger-width] p-0"
+        align="start"
+        // Sin esto, Radix mueve el foco adentro del popover en cuanto abre y la
+        // paciente no puede seguir escribiendo en el input de afuera - eso era
+        // el bug de "no deja escribir".
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <Command shouldFilter={false}>
-          <CommandInput className="hidden" value="" />
           <CommandList>
             <CommandEmpty>Sin coincidencias</CommandEmpty>
             <CommandGroup heading="Ya recetados">
@@ -65,7 +71,7 @@ function MedicationNameInput({ item, onUpdate }: { item: RecipeItem; onUpdate: (
 export function RecipeItemsEditor({ items, onChange }: Props) {
   const update = (i: number, item: RecipeItem) => onChange(items.map((it, idx) => (idx === i ? item : it)));
   const remove = (i: number) => onChange(items.filter((_, idx) => idx !== i));
-  const add = () => onChange([...items, { nombre: "", posologia: "" }]);
+  const add = () => onChange([...items, { nombre: "", comercial: "", posologia: "" }]);
 
   return (
     <div className="space-y-3 rounded-lg border border-border p-4">
@@ -79,6 +85,13 @@ export function RecipeItemsEditor({ items, onChange }: Props) {
         <div key={i} className="flex gap-2 items-start">
           <div className="flex-1">
             <MedicationNameInput item={item} onUpdate={(v) => update(i, v)} />
+          </div>
+          <div className="flex-1">
+            <Input
+              placeholder="Nombre comercial"
+              value={item.comercial || ""}
+              onChange={(e) => update(i, { ...item, comercial: e.target.value })}
+            />
           </div>
           <div className="flex-1">
             <Input

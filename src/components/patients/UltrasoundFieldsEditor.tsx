@@ -52,6 +52,17 @@ export function UltrasoundFieldsEditor({ values, onChange }: Props) {
     <div className="space-y-4 rounded-lg border border-border p-4">
       <p className="text-sm font-semibold text-foreground">Ultrasonido</p>
 
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Embarazo (si aplica)</p>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <Label>F.U.M</Label>
+            <Input type="date" value={String(values.FUM ?? "")} onChange={(e) => onChange({ ...values, FUM: e.target.value })} />
+          </div>
+          <NumberField label="Semanas de gestación (hoy)" field="EDAD-GEST-SEM" {...p} />
+        </div>
+      </div>
+
       <CatalogField label="Transductor" field="TIP-TRANS" {...p} />
 
       <div>
@@ -105,14 +116,7 @@ export function UltrasoundFieldsEditor({ values, onChange }: Props) {
           rows={2}
         />
       </div>
-      <div>
-        <Label>IDx (impresión diagnóstica)</Label>
-        <Textarea
-          value={String(values["IDX-FET-TXT"] ?? "")}
-          onChange={(e) => onChange({ ...values, "IDX-FET-TXT": e.target.value })}
-          rows={2}
-        />
-      </div>
+      <CatalogField label="IDx (impresión diagnóstica)" field="IDX-FET-TXT" {...p} />
     </div>
   );
 }

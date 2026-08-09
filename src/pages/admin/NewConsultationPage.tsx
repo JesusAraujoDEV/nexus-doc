@@ -34,7 +34,7 @@ export default function NewConsultationPage() {
 
   const today = new Date().toISOString().slice(0, 10);
   const [form, setForm] = useState({
-    visitType: "", visitDate: today, symptoms: "", diagnosis: "", treatment: "", labOrders: "", privateNotes: "",
+    visitType: "", visitDate: today, symptoms: "", diagnosis: "", treatment: "", labOrders: "", privateNotes: "", nextAppointmentDate: "",
   });
   const [recipeItems, setRecipeItems] = useState<RecipeItem[]>([]);
   const [ultrasound, setUltrasound] = useState<UltrasoundValues>({});
@@ -53,6 +53,7 @@ export default function NewConsultationPage() {
         treatment: form.treatment || undefined,
         labOrders: form.labOrders || undefined,
         privateNotes: form.privateNotes || undefined,
+        nextAppointmentDate: form.nextAppointmentDate || undefined,
         recipeItems: recipeItems.filter((i) => i.nombre?.trim()).length ? recipeItems.filter((i) => i.nombre?.trim()) : undefined,
         ultrasoundFindings: Object.keys(ultrasound).length ? ultrasound : undefined,
       }),
@@ -103,6 +104,7 @@ export default function NewConsultationPage() {
               <div><Label htmlFor="nc-treat">Tratamiento</Label><Textarea id="nc-treat" value={form.treatment} onChange={set("treatment")} rows={3} /></div>
               <div><Label htmlFor="nc-lab">Examenes indicados</Label><Textarea id="nc-lab" value={form.labOrders} onChange={set("labOrders")} rows={2} /></div>
               <div><Label htmlFor="nc-notes">Observaciones</Label><Textarea id="nc-notes" value={form.privateNotes} onChange={set("privateNotes")} rows={2} /></div>
+              <div><Label htmlFor="nc-next">Próxima consulta</Label><Input id="nc-next" type="date" value={form.nextAppointmentDate} onChange={set("nextAppointmentDate")} /></div>
             </>
           )}
           {tab === "recipe" && <RecipeItemsEditor items={recipeItems} onChange={setRecipeItems} />}

@@ -31,7 +31,7 @@ interface Props {
 
 export function ConsultationCard({ record, idx, onEdit, onDelete }: Props) {
   const [open, setOpen] = useState(idx === 0);
-  const hasDetail = record.diagnosis || record.treatment || record.labOrders || record.privateNotes;
+  const hasDetail = record.diagnosis || record.treatment || record.labOrders || record.privateNotes || record.nextAppointmentDate;
   const hasRecipe = !!record.recipeItems?.length;
   const hasUltrasound = !!record.ultrasoundFindings && Object.keys(record.ultrasoundFindings).length > 0;
 
@@ -62,6 +62,7 @@ export function ConsultationCard({ record, idx, onEdit, onDelete }: Props) {
           <Field label="Tratamiento" value={record.treatment} />
           <Field label="Exámenes indicados" value={record.labOrders} />
           <Field label="Observaciones" value={record.privateNotes} />
+          <Field label="Próxima consulta" value={record.nextAppointmentDate ? formatDate(record.nextAppointmentDate) : null} />
           {(onEdit || onDelete || hasRecipe || hasUltrasound) && (
             <div className="flex flex-wrap gap-3 pt-2 border-t border-border">
               {hasRecipe && (
