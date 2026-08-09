@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Plus, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverAnchor } from "@/components/ui/popover";
 import { Command, CommandList, CommandGroup, CommandItem, CommandEmpty } from "@/components/ui/command";
 import { RecipeItem, fetchMedicationSuggestions } from "@/lib/clinical-records-api";
 
@@ -26,14 +26,14 @@ function MedicationNameInput({ item, onUpdate }: { item: RecipeItem; onUpdate: (
 
   return (
     <Popover open={open && suggestions.length > 0} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+      <PopoverAnchor asChild>
         <Input
           placeholder="Nombre del medicamento"
           value={item.nombre || ""}
           onChange={(e) => { onUpdate({ ...item, nombre: e.target.value }); setOpen(true); }}
           onFocus={() => setOpen(true)}
         />
-      </PopoverTrigger>
+      </PopoverAnchor>
       <PopoverContent
         className="w-[--radix-popover-trigger-width] p-0"
         align="start"

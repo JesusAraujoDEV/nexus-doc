@@ -1,122 +1,57 @@
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { SuggestCombobox } from "./SuggestCombobox";
-import { fetchUltrasoundSuggestions } from "@/lib/clinical-records-api";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { UltrasoundValues, FieldProps } from "./ultrasound-field-inputs";
+import { UltrasoundGinecoFields } from "./UltrasoundGinecoFields";
+import { UltrasoundObstetrico1erFields } from "./UltrasoundObstetrico1erFields";
+import { UltrasoundObstetrico23Fields } from "./UltrasoundObstetrico23Fields";
 
-export type UltrasoundValues = Record<string, string | number>;
+export type { UltrasoundValues } from "./ultrasound-field-inputs";
 
-interface Props {
-  values: UltrasoundValues;
-  onChange: (values: UltrasoundValues) => void;
-}
+type Mode = "gineco" | "obst1" | "obst23";
+const MODES: { key: Mode; label: string }[] = [
+  { key: "gineco", label: "Ginecológico" },
+  { key: "obst1", label: "Obstétrico - 1er trimestre" },
+  { key: "obst23", label: "Obstétrico - 2do/3er trimestre" },
+];
 
-/** Campo de catálogo: sugiere lo que ya se ha escrito antes para esa clave de MedDig. */
-function CatalogField({ label, field, values, onChange }: { label: string; field: string } & Props) {
-  return (
-    <div>
-      <Label>{label}</Label>
-      <SuggestCombobox
-        value={String(values[field] ?? "")}
-        onChange={(v) => onChange({ ...values, [field]: v })}
-        suggestionsKey={`ultrasound-${field}`}
-        fetchSuggestions={() => fetchUltrasoundSuggestions(field)}
-      />
-    </div>
-  );
-}
-
-/** Campo numérico (dimensiones en mm). */
-function NumberField({ label, field, values, onChange }: { label: string; field: string } & Props) {
-  return (
-    <div>
-      <Label>{label}</Label>
-      <Input
-        type="number"
-        step="1"
-        value={values[field] ?? ""}
-        onChange={(e) => onChange({ ...values, [field]: e.target.value === "" ? "" : Number(e.target.value) })}
-      />
-    </div>
-  );
+/** Si ya hay datos cargados (editando), abre en el modo que corresponda a lo que se guardó. */
+function detectMode(values: UltrasoundValues): Mode {
+  if (["PRESENT", "SITUAC", "DBP", "CIR-ABD"].some((f) => values[f] !== undefined)) return "obst23";
+  if (["SAC-GES", "EMBRION", "SAC-VIT"].some((f) => values[f] !== undefined)) return "obst1";
+  return "gineco";
 }
 
 /**
- * Formulario de ecografía dentro de una consulta: mismos campos que la pestaña
- * "Ultrasonido" de MedDig (útero, dimensiones, endométrio, anexos/ovarios).
- * Cada campo de catálogo sugiere lo ya escrito antes, en vez de un picklist fijo.
+ * Formulario de ecografía dentro de una consulta. La Dra. Arteaga usa 3 formatos
+ * distintos en MedDig según el tipo de examen: ginecológico normal, obstétrico de
+ * 1er trimestre (saco gestacional/embrión) y obstétrico de 2do-3er trimestre
+ * (biometría fetal completa) - comparten motivo/récipe pero no el ultrasonido.
  */
-export function UltrasoundFieldsEditor({ values, onChange }: Props) {
-  const p = { values, onChange };
+export function UltrasoundFieldsEditor({ values, onChange }: FieldProps) {
+  const [mode, setMode] = useState<Mode>(() => detectMode(values));
+
   return (
     <div className="space-y-4 rounded-lg border border-border p-4">
       <p className="text-sm font-semibold text-foreground">Ultrasonido</p>
-
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Embarazo (si aplica)</p>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <Label>F.U.M</Label>
-            <Input type="date" value={String(values.FUM ?? "")} onChange={(e) => onChange({ ...values, FUM: e.target.value })} />
-          </div>
-          <NumberField label="Semanas de gestación (hoy)" field="EDAD-GEST-SEM" {...p} />
-        </div>
+      <div className="flex gap-2 flex-wrap">
+        {MODES.map((m) => (
+          <button
+            key={m.key}
+            type="button"
+            onClick={() => setMode(m.key)}
+            className={cn(
+              "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
+              mode === m.key ? "bg-primary text-white" : "bg-muted text-muted-foreground hover:bg-secondary",
+            )}
+          >
+            {m.label}
+          </button>
+        ))}
       </div>
 
-      <CatalogField label="Transductor" field="TIP-TRANS" {...p} />
-
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Útero</p>
-        <div className="grid grid-cols-2 gap-3">
-          <CatalogField label="Posición" field="UTERO-POS" {...p} />
-          <CatalogField label="Forma" field="UTERO-FOR" {...p} />
-          <CatalogField label="Bordes" field="UTERO-BOR" {...p} />
-          <CatalogField label="Miometrio" field="MIOMETRIO" {...p} />
-        </div>
-      </div>
-
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Dimensiones (mm)</p>
-        <div className="grid grid-cols-3 gap-3">
-          <NumberField label="Long" field="LONG-MIOM" {...p} />
-          <NumberField label="Transv" field="LONG-TRANSV-MIOM" {...p} />
-          <NumberField label="Ant-Post" field="LONG-ANT-POST-MIOM" {...p} />
-        </div>
-      </div>
-
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Endométrio</p>
-        <div className="grid grid-cols-2 gap-3">
-          <NumberField label="Espesor (mm)" field="ESP-END" {...p} />
-          <CatalogField label="Características" field="ENDOMETRIO" {...p} />
-        </div>
-      </div>
-
-      <CatalogField label="F.S. Douglas" field="FS-DOUGLAS" {...p} />
-
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Anexos</p>
-        <div className="grid grid-cols-2 gap-3">
-          <CatalogField label="Ovario derecho" field="OV-DER" {...p} />
-          <CatalogField label="Ovario izquierdo" field="OV-IZQ" {...p} />
-          <NumberField label="Ov. D. dim 1" field="OV-DER-M1" {...p} />
-          <NumberField label="Ov. I. dim 1" field="OV-IZQ-M1" {...p} />
-          <NumberField label="Ov. D. dim 2" field="OV-DER-M2" {...p} />
-          <NumberField label="Ov. I. dim 2" field="OV-IZQ-M2" {...p} />
-          <NumberField label="Ov. D. dim 3" field="OV-DER-M3" {...p} />
-          <NumberField label="Ov. I. dim 3" field="OV-IZQ-M3" {...p} />
-        </div>
-      </div>
-
-      <div>
-        <Label>Otros hallazgos y Doppler</Label>
-        <Textarea
-          value={String(values["O-HALL-DOP"] ?? "")}
-          onChange={(e) => onChange({ ...values, "O-HALL-DOP": e.target.value })}
-          rows={2}
-        />
-      </div>
-      <CatalogField label="IDx (impresión diagnóstica)" field="IDX-FET-TXT" {...p} />
+      {mode === "gineco" && <UltrasoundGinecoFields values={values} onChange={onChange} />}
+      {mode === "obst1" && <UltrasoundObstetrico1erFields values={values} onChange={onChange} />}
+      {mode === "obst23" && <UltrasoundObstetrico23Fields values={values} onChange={onChange} />}
     </div>
   );
 }

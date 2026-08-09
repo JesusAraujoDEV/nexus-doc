@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Printer } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { RecipeItem } from "@/lib/clinical-records-api";
+import { RecipeItem, openClinicalRecordPdf } from "@/lib/clinical-records-api";
 import { VisitTypeCombobox } from "@/components/patients/VisitTypeCombobox";
 import { RecipeItemsEditor } from "@/components/patients/RecipeItemsEditor";
 import { UltrasoundFieldsEditor, UltrasoundValues } from "@/components/patients/UltrasoundFieldsEditor";
@@ -37,6 +37,20 @@ interface Props {
   onSubmit: (values: ConsultationFormValues) => void;
   submitting: boolean;
   submitLabel: string;
+  /** Solo en edición: ya existe una fila guardada, así que se puede imprimir. */
+  recordId?: string;
+}
+
+function PrintButton({ recordId, kind, label }: { recordId: string; kind: "prescription" | "ultrasound"; label: string }) {
+  return (
+    <button
+      type="button"
+      onClick={() => openClinicalRecordPdf(recordId, kind)}
+      className="flex items-center gap-1 text-xs font-semibold text-primary hover:text-primary/80 transition-colors mb-2"
+    >
+      <Printer size={14} />{label}
+    </button>
+  );
 }
 
 /**
@@ -45,7 +59,7 @@ interface Props {
  * modal) con tabs horizontales porque la consulta real tiene demasiados módulos
  * (motivo/diagnóstico, récipe, ultrasonido) para un modal con scroll infinito.
  */
-export function ConsultationForm({ title, initialValues, onBack, onSubmit, submitting, submitLabel }: Props) {
+export function ConsultationForm({ title, initialValues, onBack, onSubmit, submitting, submitLabel, recordId }: Props) {
   const [tab, setTab] = useState<Tab>("principal");
   const [form, setForm] = useState(initialValues);
 
@@ -91,8 +105,18 @@ export function ConsultationForm({ title, initialValues, onBack, onSubmit, submi
               <div><Label htmlFor="cf-next">Próxima consulta</Label><Input id="cf-next" type="date" value={form.nextAppointmentDate} onChange={set("nextAppointmentDate")} /></div>
             </>
           )}
-          {tab === "recipe" && <RecipeItemsEditor items={form.recipeItems} onChange={(recipeItems) => setForm((f) => ({ ...f, recipeItems }))} />}
-          {tab === "ultrasonido" && <UltrasoundFieldsEditor values={form.ultrasound} onChange={(ultrasound) => setForm((f) => ({ ...f, ultrasound }))} />}
+          {tab === "recipe" && (
+            <>
+              {recordId && <PrintButton recordId={recordId} kind="prescription" label="Imprimir récipe" />}
+              <RecipeItemsEditor items={form.recipeItems} onChange={(recipeItems) => setForm((f) => ({ ...f, recipeItems }))} />
+            </>
+          )}
+          {tab === "ultrasonido" && (
+            <>
+              {recordId && <PrintButton recordId={recordId} kind="ultrasound" label="Imprimir ecografía" />}
+              <UltrasoundFieldsEditor values={form.ultrasound} onChange={(ultrasound) => setForm((f) => ({ ...f, ultrasound }))} />
+            </>
+          )}
         </div>
 
         <div className="sticky bottom-0 bg-card border-t border-border p-4 flex justify-end gap-2">

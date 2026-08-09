@@ -68,6 +68,7 @@ export default function EditConsultationPage() {
       onSubmit={(form) => mutation.mutate(form)}
       submitting={mutation.isPending}
       submitLabel="Guardar cambios"
+      recordId={record.id}
     />
   );
 }

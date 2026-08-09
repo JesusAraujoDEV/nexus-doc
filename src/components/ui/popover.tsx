@@ -6,6 +6,10 @@ import { cn } from "@/lib/utils";
 const Popover = PopoverPrimitive.Root;
 
 const PopoverTrigger = PopoverPrimitive.Trigger;
+// Ancla la posición del popover a un elemento SIN convertirlo en botón - Trigger
+// fuerza type="button" incluso con asChild, lo que rompe un <input> de texto
+// libre (deja de aceptar texto, se vuelve un botón). Anchor no toca el elemento.
+const PopoverAnchor = PopoverPrimitive.Anchor;
 
 const PopoverContent = React.forwardRef<
   React.ElementRef<typeof PopoverPrimitive.Content>,
@@ -26,4 +30,4 @@ const PopoverContent = React.forwardRef<
 ));
 PopoverContent.displayName = PopoverPrimitive.Content.displayName;
 
-export { Popover, PopoverTrigger, PopoverContent };
+export { Popover, PopoverTrigger, PopoverAnchor, PopoverContent };
