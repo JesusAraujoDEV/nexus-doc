@@ -32,6 +32,8 @@ export interface PatientDetail {
   medicalBackground: Record<string, unknown> | null;
   referredByType: ReferredByType | null;
   referredByDetail: string | null;
+  weightKg: number | null;
+  heightCm: number | null;
   clinicalRecords: ClinicalRecord[];
 }
 
@@ -45,6 +47,8 @@ export interface CreatePatientData {
   referredByType?: ReferredByType;
   referredByDetail?: string;
   medicalBackground?: Record<string, unknown>;
+  weightKg?: number;
+  heightCm?: number;
 }
 
 export function createPatient(data: CreatePatientData) {

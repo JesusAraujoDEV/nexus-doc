@@ -19,6 +19,7 @@ interface Props {
 export function NewPatientDialog({ open, onOpenChange }: Props) {
   const [form, setForm] = useState({
     firstName: "", lastName: "", cedula: "", phone: "", birthDate: "", address: "",
+    weightKg: "", heightCm: "",
   });
   const [referredByType, setReferredByType] = useState<ReferredByType | "">("");
   const [referredByDetail, setReferredByDetail] = useState("");
@@ -40,6 +41,8 @@ export function NewPatientDialog({ open, onOpenChange }: Props) {
         referredByType: referredByType || undefined,
         referredByDetail: referredByDetail || undefined,
         medicalBackground: buildMedicalBackground(antecedentes),
+        weightKg: form.weightKg ? Number(form.weightKg) : undefined,
+        heightCm: form.heightCm ? Number(form.heightCm) : undefined,
       }),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["patients"] });
@@ -73,6 +76,10 @@ export function NewPatientDialog({ open, onOpenChange }: Props) {
           <div className="grid grid-cols-2 gap-3">
             <div><Label htmlFor="np-bd">Fecha de nacimiento</Label><Input id="np-bd" type="date" value={form.birthDate} onChange={set("birthDate")} /></div>
             <div><Label htmlFor="np-addr">Dirección</Label><Input id="np-addr" value={form.address} onChange={set("address")} /></div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div><Label htmlFor="np-weight">Peso (kg)</Label><Input id="np-weight" type="number" step="0.1" min="0" value={form.weightKg} onChange={set("weightKg")} /></div>
+            <div><Label htmlFor="np-height">Altura (cm)</Label><Input id="np-height" type="number" step="0.1" min="0" value={form.heightCm} onChange={set("heightCm")} /></div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">

@@ -25,6 +25,8 @@ export function EditPatientDialog({ patient, open, onOpenChange }: Props) {
     phone: patient.phone || "",
     birthDate: patient.birthDate || "",
     address: patient.address || "",
+    weightKg: patient.weightKg != null ? String(patient.weightKg) : "",
+    heightCm: patient.heightCm != null ? String(patient.heightCm) : "",
   });
   const [referredByType, setReferredByType] = useState<ReferredByType | "">(patient.referredByType || "");
   const [referredByDetail, setReferredByDetail] = useState(patient.referredByDetail || "");
@@ -45,6 +47,8 @@ export function EditPatientDialog({ patient, open, onOpenChange }: Props) {
         referredByType: referredByType || null,
         referredByDetail: referredByDetail || null,
         medicalBackground: buildMedicalBackground(antecedentes),
+        weightKg: form.weightKg ? Number(form.weightKg) : null,
+        heightCm: form.heightCm ? Number(form.heightCm) : null,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patient", patient.id] });
@@ -78,6 +82,10 @@ export function EditPatientDialog({ patient, open, onOpenChange }: Props) {
           <div className="grid grid-cols-2 gap-3">
             <div><Label htmlFor="ep-bd">Fecha nac.</Label><Input id="ep-bd" type="date" value={form.birthDate} onChange={set("birthDate")} /></div>
             <div><Label htmlFor="ep-addr">Dirección</Label><Input id="ep-addr" value={form.address} onChange={set("address")} /></div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div><Label htmlFor="ep-weight">Peso (kg)</Label><Input id="ep-weight" type="number" step="0.1" min="0" value={form.weightKg} onChange={set("weightKg")} /></div>
+            <div><Label htmlFor="ep-height">Altura (cm)</Label><Input id="ep-height" type="number" step="0.1" min="0" value={form.heightCm} onChange={set("heightCm")} /></div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
