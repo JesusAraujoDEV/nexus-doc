@@ -33,6 +33,8 @@ export default function EditConsultationPage() {
         nextAppointmentDate: form.nextAppointmentDate || null,
         recipeItems: form.recipeItems.filter((i) => i.nombre?.trim()),
         ultrasoundFindings: form.ultrasound,
+        indicatesPrescription: form.indicatesPrescription,
+        indicatesImagingStudy: form.indicatesImagingStudy,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patient", patientId] });
@@ -62,6 +64,8 @@ export default function EditConsultationPage() {
     nextAppointmentDate: record.nextAppointmentDate || "",
     recipeItems: record.recipeItems || [],
     ultrasound: record.ultrasoundFindings || {},
+    indicatesPrescription: record.indicatesPrescription || false,
+    indicatesImagingStudy: record.indicatesImagingStudy || false,
   };
 
   return (

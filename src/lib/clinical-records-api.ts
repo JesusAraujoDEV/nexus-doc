@@ -25,6 +25,8 @@ export interface ClinicalRecord {
   nextAppointmentDate: string | null;
   category: "gynecology" | "obstetrics";
   pregnancyId: string | null;
+  indicatesPrescription: boolean;
+  indicatesImagingStudy: boolean;
 }
 
 /**
@@ -85,6 +87,8 @@ export function createClinicalRecord(data: {
   nextAppointmentDate?: string;
   category?: "gynecology" | "obstetrics";
   pregnancyId?: string;
+  indicatesPrescription?: boolean;
+  indicatesImagingStudy?: boolean;
 }) {
   return apiFetch<ClinicalRecord>("/clinical-records", {
     method: "POST",

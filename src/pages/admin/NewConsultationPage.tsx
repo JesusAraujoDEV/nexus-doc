@@ -18,6 +18,8 @@ function buildEmpty(pregnancyId: string | null): ConsultationFormValues {
     nextAppointmentDate: "",
     recipeItems: [],
     ultrasound: {},
+    indicatesPrescription: false,
+    indicatesImagingStudy: false,
   };
 }
 
@@ -45,6 +47,8 @@ export default function NewConsultationPage() {
         nextAppointmentDate: form.nextAppointmentDate || undefined,
         recipeItems: form.recipeItems.filter((i) => i.nombre?.trim()).length ? form.recipeItems.filter((i) => i.nombre?.trim()) : undefined,
         ultrasoundFindings: Object.keys(form.ultrasound).length ? form.ultrasound : undefined,
+        indicatesPrescription: form.indicatesPrescription,
+        indicatesImagingStudy: form.indicatesImagingStudy,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patient", patientId] });

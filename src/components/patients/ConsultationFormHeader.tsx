@@ -2,11 +2,13 @@ import { ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ConsultationCategory } from "./ConsultationForm";
 
-export type ConsultationTab = "principal" | "recipe" | "ultrasonido";
+export type ConsultationTab = "principal" | "recipe" | "ultrasonido" | "labExams" | "generalUltrasound";
 const TABS: { key: ConsultationTab; label: string }[] = [
   { key: "principal", label: "Principal" },
   { key: "recipe", label: "Récipe" },
   { key: "ultrasonido", label: "Ultrasonido" },
+  { key: "labExams", label: "Lab. exámenes" },
+  { key: "generalUltrasound", label: "Eco. general" },
 ];
 
 interface Props {

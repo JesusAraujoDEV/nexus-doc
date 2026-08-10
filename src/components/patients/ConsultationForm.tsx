@@ -7,6 +7,8 @@ import { ConsultationPrincipalFields } from "@/components/patients/ConsultationP
 import { RecipeItemsEditor } from "@/components/patients/RecipeItemsEditor";
 import { UltrasoundFieldsEditor, UltrasoundValues } from "@/components/patients/UltrasoundFieldsEditor";
 import { PregnancyPicker } from "@/components/patients/PregnancyPicker";
+import { LabExamsTab } from "@/components/patients/LabExamsTab";
+import { GeneralUltrasoundTab } from "@/components/patients/GeneralUltrasoundTab";
 
 export type ConsultationCategory = "gynecology" | "obstetrics";
 
@@ -23,6 +25,8 @@ export interface ConsultationFormValues {
   nextAppointmentDate: string;
   recipeItems: RecipeItem[];
   ultrasound: UltrasoundValues;
+  indicatesPrescription: boolean;
+  indicatesImagingStudy: boolean;
 }
 
 interface Props {
@@ -111,6 +115,16 @@ export function ConsultationForm({ title, patientId, initialValues, onBack, onSu
               <UltrasoundFieldsEditor category={form.category} values={form.ultrasound} onChange={(ultrasound) => setForm((f) => ({ ...f, ultrasound }))} />
             </>
           )}
+          {tab === "labExams" && (
+            <LabExamsTab
+              patientId={patientId}
+              recordId={recordId}
+              indicatesPrescription={form.indicatesPrescription}
+              indicatesImagingStudy={form.indicatesImagingStudy}
+              onChangeFlags={(flags) => setForm((f) => ({ ...f, ...flags }))}
+            />
+          )}
+          {tab === "generalUltrasound" && <GeneralUltrasoundTab recordId={recordId} />}
         </div>
 
         <div className="sticky bottom-0 bg-card border-t border-border p-4 flex justify-end gap-2">
