@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { createPatient, ReferredByType } from "@/lib/patients-api";
 import { useToast } from "@/components/ui/use-toast";
 import { REFERIDO_LABEL } from "@/lib/referred-by";
+import { fetchReferringDoctors, createReferringDoctor } from "@/lib/referring-doctors-api";
+import { CatalogComboBox } from "./CatalogComboBox";
 import { PatientAntecedentesFields, AntecedentesForm, ANTECEDENTES_VACIO, buildMedicalBackground } from "./PatientAntecedentesFields";
 
 interface Props {
@@ -23,6 +25,7 @@ export function NewPatientDialog({ open, onOpenChange }: Props) {
   });
   const [referredByType, setReferredByType] = useState<ReferredByType | "">("");
   const [referredByDetail, setReferredByDetail] = useState("");
+  const [referredByDoctorId, setReferredByDoctorId] = useState<string | null>(null);
   const [antecedentes, setAntecedentes] = useState<AntecedentesForm>(ANTECEDENTES_VACIO);
 
   const navigate = useNavigate();
@@ -40,6 +43,7 @@ export function NewPatientDialog({ open, onOpenChange }: Props) {
         address: form.address || undefined,
         referredByType: referredByType || undefined,
         referredByDetail: referredByDetail || undefined,
+        referredByDoctorId: referredByDoctorId || undefined,
         medicalBackground: buildMedicalBackground(antecedentes),
         weightKg: form.weightKg ? Number(form.weightKg) : undefined,
         heightCm: form.heightCm ? Number(form.heightCm) : undefined,
@@ -55,8 +59,6 @@ export function NewPatientDialog({ open, onOpenChange }: Props) {
 
   const set = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [field]: e.target.value }));
-
-  const necesitaDetalle = referredByType === "otro_doctor" || referredByType === "otro";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -94,9 +96,29 @@ export function NewPatientDialog({ open, onOpenChange }: Props) {
                 </SelectContent>
               </Select>
             </div>
-            {necesitaDetalle && (
+            {referredByType === "otro_doctor" && (
               <div>
-                <Label>{referredByType === "otro_doctor" ? "Nombre del doctor" : "Detalle"}</Label>
+                <Label>Médico</Label>
+                <CatalogComboBox
+                  value={referredByDetail}
+                  onTextChange={(v) => { setReferredByDetail(v); setReferredByDoctorId(null); }}
+                  onSelect={(o) => { setReferredByDetail(o.name); setReferredByDoctorId(o.id); }}
+                  queryKey="referring-doctors"
+                  fetchOptions={async (search) => {
+                    const res = await fetchReferringDoctors({ search, limit: 20 });
+                    return res.items.map((d) => ({ id: d.id, name: d.name, subtitle: d.specialty }));
+                  }}
+                  onCreate={async (name) => {
+                    const created = await createReferringDoctor({ name });
+                    return { id: created.id, name: created.name, subtitle: created.specialty };
+                  }}
+                  placeholder="Buscar médico..."
+                />
+              </div>
+            )}
+            {referredByType === "otro" && (
+              <div>
+                <Label>Detalle</Label>
                 <Input value={referredByDetail} onChange={(e) => setReferredByDetail(e.target.value)} />
               </div>
             )}

@@ -9,6 +9,7 @@ import { UltrasoundFieldsEditor, UltrasoundValues } from "@/components/patients/
 import { PregnancyPicker } from "@/components/patients/PregnancyPicker";
 import { LabExamsTab } from "@/components/patients/LabExamsTab";
 import { GeneralUltrasoundTab } from "@/components/patients/GeneralUltrasoundTab";
+import { MedicalReportsTab } from "@/components/patients/MedicalReportsTab";
 
 export type ConsultationCategory = "gynecology" | "obstetrics";
 
@@ -125,6 +126,7 @@ export function ConsultationForm({ title, patientId, initialValues, onBack, onSu
             />
           )}
           {tab === "generalUltrasound" && <GeneralUltrasoundTab recordId={recordId} />}
+          {tab === "medicalReports" && <MedicalReportsTab patientId={patientId} recordId={recordId} />}
         </div>
 
         <div className="sticky bottom-0 bg-card border-t border-border p-4 flex justify-end gap-2">
