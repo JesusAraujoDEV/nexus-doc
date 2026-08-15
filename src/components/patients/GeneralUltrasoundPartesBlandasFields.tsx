@@ -7,7 +7,7 @@ export function GeneralUltrasoundPartesBlandasFields(p: GuFieldProps) {
       <GuField label="Zona de interés" field="EC-PB-ZONA" {...p} />
       <GuField label="Piel y tejidos subcutáneos" field="EC-PB-PYTS" {...p} />
       <GuField label="Planos musculares y trayectos fibrilares" field="EC-PB-PMTF" {...p} />
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         <GuField label="Glándulas submaxilares" field="EC-PB-GLSU" {...p} />
         <GuField label="Glándulas tiroidea" field="EC-PB-GLTI" {...p} />
         <GuField label="Glándulas parótidas" field="EC-PB-GLPA" {...p} />

@@ -5,7 +5,7 @@ export function GeneralUltrasoundAbdominalFields(p: GuFieldProps) {
   return (
     <div className="space-y-4">
       <GuField label="Hígado" field="EC-HIG" {...p} />
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <GuNumberField label="Lóbulo der (mm)" field="EC-HIG-LD" {...p} />
         <GuNumberField label="Lóbulo izq (mm)" field="EC-HIG-LI" {...p} />
         <GuNumberField label="Porta hepática (mm)" field="EC-HIG-PH" {...p} />
@@ -18,7 +18,7 @@ export function GeneralUltrasoundAbdominalFields(p: GuFieldProps) {
       </div>
       <GuField label="Vías biliares" field="EC-VIB" {...p} />
       <GuField label="Páncreas" field="EC-PAN" {...p} />
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         <GuNumberField label="Cabeza (mm)" field="EC-PAN-CAB" {...p} />
         <GuNumberField label="Cuerpo (mm)" field="EC-PAN-CUE" {...p} />
         <GuNumberField label="Cola (mm)" field="EC-PAN-COL" {...p} />
@@ -34,7 +34,7 @@ export function GeneralUltrasoundAbdominalFields(p: GuFieldProps) {
       <div>
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Riñón derecho</p>
         <GuField label="Riñón der" field="EC-RIN-D" {...p} />
-        <div className="grid grid-cols-4 gap-3 mt-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-2">
           <GuNumberField label="Longitud (mm)" field="EC-RIN-D-L" {...p} />
           <GuNumberField label="Transverso (mm)" field="EC-RIN-D-T" {...p} />
           <GuNumberField label="Ántero-post (mm)" field="EC-RIN-D-AP" {...p} />
@@ -44,7 +44,7 @@ export function GeneralUltrasoundAbdominalFields(p: GuFieldProps) {
       <div>
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Riñón izquierdo</p>
         <GuField label="Riñón izq" field="EC-RIN-I" {...p} />
-        <div className="grid grid-cols-4 gap-3 mt-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-2">
           <GuNumberField label="Longitud (mm)" field="EC-RIN-I-L" {...p} />
           <GuNumberField label="Transverso (mm)" field="EC-RIN-I-T" {...p} />
           <GuNumberField label="Ántero-post (mm)" field="EC-RIN-I-AP" {...p} />

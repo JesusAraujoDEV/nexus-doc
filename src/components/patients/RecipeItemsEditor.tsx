@@ -82,7 +82,10 @@ export function RecipeItemsEditor({ items, onChange }: Props) {
         </Button>
       </div>
       {items.map((item, i) => (
-        <div key={i} className="flex gap-2 items-start">
+        <div
+          key={i}
+          className="flex flex-col gap-2 rounded-md border border-border/40 p-3 sm:flex-row sm:items-start sm:rounded-none sm:border-0 sm:p-0"
+        >
           <div className="flex-1">
             <MedicationNameInput item={item} onUpdate={(v) => update(i, v)} />
           </div>
@@ -93,16 +96,16 @@ export function RecipeItemsEditor({ items, onChange }: Props) {
               onChange={(e) => update(i, { ...item, comercial: e.target.value })}
             />
           </div>
-          <div className="flex-1">
+          <div className="flex flex-1 items-center gap-2">
             <Input
               placeholder="Indicaciones (ej: 1 tableta cada 12 horas x 7 días)"
               value={item.posologia || ""}
               onChange={(e) => update(i, { ...item, posologia: e.target.value })}
             />
+            <Button type="button" variant="ghost" size="icon" onClick={() => remove(i)}>
+              <Trash2 size={14} className="text-destructive" />
+            </Button>
           </div>
-          <Button type="button" variant="ghost" size="icon" onClick={() => remove(i)}>
-            <Trash2 size={14} className="text-destructive" />
-          </Button>
         </div>
       ))}
       {!items.length && <p className="text-xs text-muted-foreground">Sin medicamentos agregados.</p>}

@@ -6,7 +6,7 @@ function LobuloFields({ side, label, ...p }: { side: "LD" | "LI"; label: string 
     <div>
       <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">{label}</p>
       <GuField label={label} field={`EC-TIR-${side}`} {...p} />
-      <div className="grid grid-cols-3 gap-3 mt-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2">
         <GuNumberField label="Longitud (mm)" field={`EC-TIR-${side}-L`} {...p} />
         <GuNumberField label="Ántero-post (mm)" field={`EC-TIR-${side}-AP`} {...p} />
         <GuNumberField label="Transverso (mm)" field={`EC-TIR-${side}-T`} {...p} />

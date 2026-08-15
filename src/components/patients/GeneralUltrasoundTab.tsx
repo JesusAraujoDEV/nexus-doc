@@ -87,7 +87,7 @@ export function GeneralUltrasoundTab({ recordId }: Props) {
       ) : (
         <GeneralUltrasoundGenericFields subType={subType} values={values} onChange={setValues} />
       )}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
         <Button type="button" variant="outline" disabled>Generar Informe (próximamente)</Button>
         <Button type="button" onClick={() => save.mutate()} disabled={save.isPending}>
           {save.isPending ? "Guardando..." : "Guardar hallazgos"}

@@ -7,7 +7,7 @@ export function GeneralUltrasoundRenalFields(p: GuFieldProps) {
       <div>
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Riñón derecho</p>
         <GuField label="Riñón der" field="EC-RIN-D" {...p} />
-        <div className="grid grid-cols-4 gap-3 mt-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-2">
           <GuNumberField label="Longitud (mm)" field="EC-RIN-D-L" {...p} />
           <GuNumberField label="Transverso (mm)" field="EC-RIN-D-T" {...p} />
           <GuNumberField label="Ántero-post (mm)" field="EC-RIN-D-AP" {...p} />
@@ -17,7 +17,7 @@ export function GeneralUltrasoundRenalFields(p: GuFieldProps) {
       <div>
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Riñón izquierdo</p>
         <GuField label="Riñón izq" field="EC-RIN-I" {...p} />
-        <div className="grid grid-cols-4 gap-3 mt-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-2">
           <GuNumberField label="Longitud (mm)" field="EC-RIN-I-L" {...p} />
           <GuNumberField label="Transverso (mm)" field="EC-RIN-I-T" {...p} />
           <GuNumberField label="Ántero-post (mm)" field="EC-RIN-I-AP" {...p} />

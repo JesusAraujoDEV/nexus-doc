@@ -43,13 +43,13 @@ export function ConsultationFormHeader({ title, onBack, category, onCategoryChan
           </button>
         ))}
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-2 overflow-x-auto -mx-5 px-5">
         {TABS.map((t) => (
           <button
             key={t.key}
             onClick={() => onTabChange(t.key)}
             className={cn(
-              "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
+              "shrink-0 whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
               tab === t.key ? "bg-primary text-white" : "bg-muted text-muted-foreground hover:bg-secondary",
             )}
           >

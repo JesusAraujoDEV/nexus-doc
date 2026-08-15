@@ -25,7 +25,7 @@ function GinecoRow({ g }: { g: Gineco }) {
   return (
     <div>
       <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">Antecedentes gineco-obstétricos</p>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         {present.map(([label, v]) => (
           <div key={label} className="bg-muted rounded-lg p-2 text-center">
             <p className="text-base font-bold text-foreground">{v}</p>

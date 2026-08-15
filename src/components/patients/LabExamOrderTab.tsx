@@ -58,11 +58,11 @@ export function LabExamOrderTab({ patientId, recordId, indicatesPrescription, in
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-4 items-center">
+      <div className="flex flex-wrap gap-4 items-center">
         <label className="flex items-center gap-2 text-sm"><Checkbox checked={indicatesPrescription} onCheckedChange={(v) => onChangeFlags({ indicatesPrescription: !!v, indicatesImagingStudy })} />Se indican Rx</label>
         <label className="flex items-center gap-2 text-sm"><Checkbox checked={indicatesImagingStudy} onCheckedChange={(v) => onChangeFlags({ indicatesPrescription, indicatesImagingStudy: !!v })} />Se indica estudio de imágenes</label>
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Input placeholder="Buscar examen..." value={search} onChange={(e) => setSearch(e.target.value)} />
           <div className="flex gap-1 flex-wrap">
@@ -80,7 +80,7 @@ export function LabExamOrderTab({ patientId, recordId, indicatesPrescription, in
             ))}
             {!items.length && <p className="text-xs text-muted-foreground p-2">Sin resultados</p>}
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <Input placeholder="Nombre del examen nuevo" value={newName} onChange={(e) => setNewName(e.target.value)} />
             <Button type="button" size="sm" disabled={!newName.trim() || createExam.isPending} onClick={() => createExam.mutate()}>
               <Plus size={14} className="mr-1" />Crear examen

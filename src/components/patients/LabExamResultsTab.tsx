@@ -15,7 +15,7 @@ function ResultRow({ order, recordId, onSaved }: { order: LabExamOrder; recordId
   });
 
   return (
-    <div className="grid grid-cols-[1fr_1fr_1fr_1fr_auto] gap-2 items-end border-b border-border py-2">
+    <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_1fr_1fr_auto] gap-2 sm:items-end border-b border-border py-3 sm:py-2">
       <p className="text-sm font-medium">{order.exam.name}</p>
       <div><Input type="date" value={performedDate} onChange={(e) => setPerformedDate(e.target.value)} placeholder="Fecha realizada" /></div>
       <div><Input value={value} onChange={(e) => setValue(e.target.value)} placeholder="Valor" /></div>

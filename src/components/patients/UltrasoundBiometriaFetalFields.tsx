@@ -16,7 +16,7 @@ export function UltrasoundBiometriaFetalFields(p: FieldProps) {
       </div>
       <div>
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Huesos largos (mm)</p>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           <NumberField label="L. Húmero" field="L-HUMER-VAL" {...p} />
           <NumberField label="Fémur" field="FEMUR-VAL" {...p} />
           <NumberField label="Tibia" field="TIBIA-VAL" {...p} />

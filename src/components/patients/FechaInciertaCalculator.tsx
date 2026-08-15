@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -45,7 +45,7 @@ export function FechaInciertaCalculator({ open, onOpenChange, onConfirm }: Props
         {preview && (
           <p className="text-sm">F.U.M aproximada: <span className="font-semibold text-primary">{preview}</span></p>
         )}
-        <div className="flex justify-end gap-2 pt-2">
+        <DialogFooter className="pt-2">
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
           <Button
             type="button"
@@ -54,7 +54,7 @@ export function FechaInciertaCalculator({ open, onOpenChange, onConfirm }: Props
           >
             Establecer como F.U.M
           </Button>
-        </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
