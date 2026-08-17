@@ -12,6 +12,7 @@ function secondaryText(key: CatalogKey, item: CatalogItem) {
   if (key === "medications") return [item.genericName, item.presentation].filter(Boolean).join(" · ");
   if (key === "lab-exams") return item.isGroup ? "Grupo de exámenes" : "Examen individual";
   if (key === "icd10") return item.code;
+  if (key === "referring-doctors") return item.specialty;
   return null;
 }
 

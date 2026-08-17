@@ -17,6 +17,7 @@ const TABS: { key: CatalogKey; label: string }[] = [
   { key: "lab-exams", label: "Exámenes" },
   { key: "labs", label: "Laboratorios" },
   { key: "icd10", label: "CIE-10" },
+  { key: "referring-doctors", label: "Médicos referidos" },
 ];
 
 function useDebounced<T>(value: T, delayMs: number) {

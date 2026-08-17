@@ -1,6 +1,13 @@
 import { apiFetch } from "@/lib/api";
 
-export type CatalogKey = "medical-centers" | "diagnoses" | "medications" | "lab-exams" | "labs" | "icd10";
+export type CatalogKey =
+  | "medical-centers"
+  | "diagnoses"
+  | "medications"
+  | "lab-exams"
+  | "labs"
+  | "icd10"
+  | "referring-doctors";
 
 export interface CatalogItem {
   id: string;
@@ -13,6 +20,7 @@ export interface CatalogItem {
   isGroup?: boolean;
   code?: string;
   title?: string;
+  specialty?: string | null;
 }
 
 export interface CatalogResponse {
