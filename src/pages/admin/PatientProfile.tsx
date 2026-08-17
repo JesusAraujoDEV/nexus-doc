@@ -9,6 +9,7 @@ import { PatientHeader } from "@/components/patients/PatientHeader";
 import { PatientInfoTab } from "@/components/patients/PatientInfoTab";
 import { MedicalBackground } from "@/components/patients/MedicalBackground";
 import { PregnancySection } from "@/components/patients/PregnancySection";
+import { PregnancyBanner } from "@/components/patients/PregnancyBanner";
 import { PatientConsultationsTab } from "@/components/patients/PatientConsultationsTab";
 import { PatientLabExamsTab } from "@/components/patients/PatientLabExamsTab";
 import { ConfirmDeleteDialog } from "@/components/patients/ConfirmDeleteDialog";
@@ -74,6 +75,7 @@ export default function PatientProfile() {
         {data && (
           <>
             <PatientHeader p={data} onDelete={() => setShowDeletePatient(true)} />
+            <PregnancyBanner patientId={data.id} />
 
             <div className="flex gap-2 overflow-x-auto -mx-4 px-4">
               {TABS.map((t) => (
