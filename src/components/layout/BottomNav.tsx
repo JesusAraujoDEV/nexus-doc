@@ -1,13 +1,17 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Users, Calendar, BookOpen, LogOut } from "lucide-react";
+import { LayoutDashboard, Users, Calendar, BookOpen, Clock, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { clearToken } from "@/lib/api";
 
+// ponytail: la papelera y "cambiar contraseña" quedan fuera del bottom nav (ya
+// era así antes de este cambio) — el resto sí, flex-1 reparte el ancho entre
+// los items sin desbordar a 375px.
 const navItems = [
   { to: "/admin", label: "Inicio", icon: LayoutDashboard, end: true },
   { to: "/admin/patients", label: "Pacientes", icon: Users },
+  { to: "/admin/calendar", label: "Calendario", icon: Calendar },
   { to: "/admin/catalogs", label: "Catálogos", icon: BookOpen },
-  { to: "/admin/schedule", label: "Horarios", icon: Calendar },
+  { to: "/admin/schedule", label: "Horarios", icon: Clock },
 ];
 
 export function BottomNav() {

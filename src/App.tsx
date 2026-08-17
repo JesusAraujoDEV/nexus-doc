@@ -12,6 +12,7 @@ import PatientProfile from "./pages/admin/PatientProfile";
 import NewConsultationPage from "./pages/admin/NewConsultationPage";
 import EditConsultationPage from "./pages/admin/EditConsultationPage";
 import ScheduleConfig from "./pages/admin/ScheduleConfig";
+import CalendarPage from "./pages/admin/CalendarPage";
 import Catalogs from "./pages/admin/Catalogs";
 import Trash from "./pages/admin/Trash";
 import ChangePassword from "./pages/admin/ChangePassword";
@@ -50,6 +51,7 @@ const App = () => (
             <Route path="trash" element={<Trash />} />
             <Route path="change-password" element={<ChangePassword />} />
             <Route path="schedule" element={<ScheduleConfig />} />
+            <Route path="calendar" element={<CalendarPage />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />

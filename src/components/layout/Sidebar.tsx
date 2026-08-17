@@ -1,13 +1,14 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Users, Calendar, BookOpen, Stethoscope, LogOut, KeyRound, Trash2 } from "lucide-react";
+import { LayoutDashboard, Users, Calendar, BookOpen, Clock, Stethoscope, LogOut, KeyRound, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { clearToken } from "@/lib/api";
 
 const navItems = [
   { to: "/admin", label: "Inicio", icon: LayoutDashboard, end: true },
   { to: "/admin/patients", label: "Pacientes", icon: Users },
+  { to: "/admin/calendar", label: "Calendario", icon: Calendar },
   { to: "/admin/catalogs", label: "Catálogos", icon: BookOpen },
-  { to: "/admin/schedule", label: "Horarios", icon: Calendar },
+  { to: "/admin/schedule", label: "Horarios", icon: Clock },
   { to: "/admin/trash", label: "Papelera", icon: Trash2 },
 ];
 
