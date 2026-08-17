@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Search, Loader2 } from "lucide-react";
+import { Search, Loader2, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import {
-  Pagination, PaginationContent, PaginationItem,
-  PaginationPrevious, PaginationNext,
-} from "@/components/ui/pagination";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { fetchCatalog, CatalogKey } from "@/lib/catalogs-api";
 import { CatalogRow } from "@/components/catalogs/CatalogRow";
+import { CatalogPagination } from "@/components/catalogs/CatalogPagination";
+import { CatalogItemDialog } from "@/components/catalogs/CatalogItemDialog";
 
 const TABS: { key: CatalogKey; label: string }[] = [
   { key: "medical-centers", label: "Centros médicos" },
@@ -33,6 +32,7 @@ export default function Catalogs() {
   const [tab, setTab] = useState<CatalogKey>("medical-centers");
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
+  const [createOpen, setCreateOpen] = useState(false);
   const debouncedQuery = useDebounced(query, 350);
 
   useEffect(() => setPage(1), [debouncedQuery, tab]);
@@ -47,7 +47,12 @@ export default function Catalogs() {
   return (
     <div className="flex flex-col min-h-full">
       <div className="px-5 pt-6 pb-4 border-b border-border bg-card sticky top-0 z-10">
-        <h1 className="text-lg font-bold text-foreground mb-3">Catálogos</h1>
+        <div className="flex items-center justify-between mb-3">
+          <h1 className="text-lg font-bold text-foreground">Catálogos</h1>
+          <Button size="sm" className="h-8 gap-1" onClick={() => setCreateOpen(true)}>
+            <Plus size={16} /> Nuevo
+          </Button>
+        </div>
 
         <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1">
           {TABS.map((t) => (
@@ -95,30 +100,12 @@ export default function Catalogs() {
               )}
             </div>
 
-            {data && data.pages > 1 && (
-              <Pagination className="mt-4">
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                      className={cn("cursor-pointer", data.page <= 1 && "pointer-events-none opacity-40")}
-                      onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    />
-                  </PaginationItem>
-                  <PaginationItem>
-                    <span className="px-3 text-xs text-muted-foreground">Página {data.page} de {data.pages}</span>
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationNext
-                      className={cn("cursor-pointer", data.page >= data.pages && "pointer-events-none opacity-40")}
-                      onClick={() => setPage((p) => Math.min(data.pages, p + 1))}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            )}
+            {data && <CatalogPagination page={data.page} pages={data.pages} onChange={setPage} />}
           </>
         )}
       </div>
+
+      <CatalogItemDialog catalogKey={tab} item={null} open={createOpen} onOpenChange={setCreateOpen} />
     </div>
   );
 }

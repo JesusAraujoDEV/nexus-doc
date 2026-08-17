@@ -37,3 +37,15 @@ export function fetchCatalog(key: CatalogKey, params: { search?: string; page?: 
   if (params.limit) query.set("limit", String(params.limit));
   return apiFetch<CatalogResponse>(`/catalogs/${key}?${query.toString()}`);
 }
+
+export function createCatalogItem(key: CatalogKey, data: Partial<CatalogItem>) {
+  return apiFetch<CatalogItem>(`/catalogs/${key}`, { method: "POST", body: JSON.stringify(data) });
+}
+
+export function updateCatalogItem(key: CatalogKey, id: string, data: Partial<CatalogItem>) {
+  return apiFetch<CatalogItem>(`/catalogs/${key}/${id}`, { method: "PATCH", body: JSON.stringify(data) });
+}
+
+export function deleteCatalogItem(key: CatalogKey, id: string) {
+  return apiFetch<{ id: string; deleted: boolean }>(`/catalogs/${key}/${id}`, { method: "DELETE" });
+}
