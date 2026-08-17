@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { fetchPatients, PatientSortBy, SortDir, PatientListItem, deletePatient } from "@/lib/patients-api";
 import { PatientsMobileList } from "@/components/patients/PatientsMobileList";
 import { PatientsTable } from "@/components/patients/PatientsTable";
-import { PatientFilters, Filters } from "@/components/patients/PatientFilters";
+import { PatientFilters, Filters, EMPTY_FILTERS } from "@/components/patients/PatientFilters";
 import { ConfirmDeleteDialog } from "@/components/patients/ConfirmDeleteDialog";
 import { EditPatientQuickDialog } from "@/components/patients/EditPatientQuickDialog";
 import { NewPatientDialog } from "@/components/patients/NewPatientDialog";
@@ -32,7 +32,7 @@ export default function PatientsDirectory() {
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState<PatientSortBy>("createdAt");
   const [sortDir, setSortDir] = useState<SortDir>("DESC");
-  const [filters, setFilters] = useState<Filters>({ gender: "", hasVisits: "", hasCedula: "", pregnant: "" });
+  const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
   const debouncedQuery = useDebounced(query, 350);
 
   const [editingPatient, setEditingPatient] = useState<PatientListItem | null>(null);
@@ -51,7 +51,7 @@ export default function PatientsDirectory() {
 
   useEffect(
     () => setPage(1),
-    [debouncedQuery, sortBy, sortDir, filters.gender, filters.hasVisits, filters.hasCedula, filters.pregnant],
+    [debouncedQuery, sortBy, sortDir, filters.gender, filters.hasVisits, filters.hasCedula, filters.pregnant, filters.labsPending],
   );
 
   function handleSort(column: PatientSortBy) {
@@ -77,6 +77,7 @@ export default function PatientsDirectory() {
       hasVisits: filters.hasVisits || undefined,
       hasCedula: filters.hasCedula || undefined,
       pregnant: filters.pregnant || undefined,
+      labsPending: filters.labsPending || undefined,
     }),
   });
 

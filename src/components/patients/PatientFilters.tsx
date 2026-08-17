@@ -1,12 +1,21 @@
-import { SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface Filters {
   gender: "" | "Femenino" | "Masculino";
   hasVisits: "" | "true" | "false";
   hasCedula: "" | "true" | "false";
-  pregnant: "" | "true";
+  pregnant: "" | "true" | "history";
+  labsPending: "" | "true";
 }
+
+export const EMPTY_FILTERS: Filters = {
+  gender: "",
+  hasVisits: "",
+  hasCedula: "",
+  pregnant: "",
+  labsPending: "",
+};
 
 interface Props {
   filters: Filters;
@@ -17,10 +26,11 @@ const selectClass =
   "h-9 rounded-lg bg-muted border-0 text-xs px-2.5 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40";
 
 export function PatientFilters({ filters, onChange }: Props) {
-  const activeCount = Number(!!filters.gender) + Number(!!filters.hasVisits) + Number(!!filters.hasCedula) + Number(!!filters.pregnant);
+  const activeCount = Object.values(filters).filter(Boolean).length;
+
   return (
-    <div className="flex items-center gap-2 flex-wrap mt-3">
-      <span className={cn("flex items-center gap-1 text-xs text-muted-foreground", activeCount > 0 && "text-primary")}>
+    <div className="flex items-center gap-2 flex-wrap mt-3 p-2 rounded-xl bg-muted/40">
+      <span className={cn("flex items-center gap-1 text-xs text-muted-foreground shrink-0", activeCount > 0 && "text-primary")}>
         <SlidersHorizontal size={13} />
         Filtros{activeCount > 0 ? ` (${activeCount})` : ""}
       </span>
@@ -58,7 +68,25 @@ export function PatientFilters({ filters, onChange }: Props) {
       >
         <option value="">Embarazo: todas</option>
         <option value="true">Embarazadas ahora</option>
+        <option value="history">Embarazadas (historial)</option>
       </select>
+      <select
+        value={filters.labsPending}
+        onChange={(e) => onChange({ ...filters, labsPending: e.target.value as Filters["labsPending"] })}
+        className={selectClass}
+      >
+        <option value="">Exámenes: todos</option>
+        <option value="true">Con exámenes pendientes</option>
+      </select>
+      {activeCount > 0 && (
+        <button
+          onClick={() => onChange(EMPTY_FILTERS)}
+          className="flex items-center gap-1 h-9 px-2.5 rounded-lg text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+        >
+          <X size={13} />
+          Limpiar filtros
+        </button>
+      )}
     </div>
   );
 }

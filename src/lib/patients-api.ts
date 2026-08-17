@@ -72,7 +72,8 @@ export interface PatientListParams {
   gender?: "Femenino" | "Masculino";
   hasVisits?: "true" | "false";
   hasCedula?: "true" | "false";
-  pregnant?: "true" | "false";
+  pregnant?: "true" | "history";
+  labsPending?: "true";
 }
 
 export function fetchPatients(params: PatientListParams) {
@@ -86,6 +87,7 @@ export function fetchPatients(params: PatientListParams) {
   if (params.hasVisits) query.set("hasVisits", params.hasVisits);
   if (params.hasCedula) query.set("hasCedula", params.hasCedula);
   if (params.pregnant) query.set("pregnant", params.pregnant);
+  if (params.labsPending) query.set("labsPending", params.labsPending);
   return apiFetch<PatientListResponse>(`/patients?${query.toString()}`);
 }
 
