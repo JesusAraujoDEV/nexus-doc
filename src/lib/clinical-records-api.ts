@@ -59,7 +59,7 @@ export function deleteClinicalRecord(id: string) {
  * La pestaña se abre ANTES del fetch (sincrónico con el click) porque los navegadores
  * bloquean window.open() si se llama después de un await.
  */
-export async function openClinicalRecordPdf(id: string, kind: "prescription" | "ultrasound") {
+export async function openClinicalRecordPdf(id: string, kind: "prescription" | "ultrasound" | "general-ultrasound" | "lab-exam") {
   const tab = window.open("", "_blank");
   const token = getToken();
   const res = await fetch(`${API_URL}/clinical-records/${id}/${kind}-pdf`, {

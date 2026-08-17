@@ -42,7 +42,7 @@ interface Props {
   recordId?: string;
 }
 
-function PrintButton({ recordId, kind, label }: { recordId: string; kind: "prescription" | "ultrasound"; label: string }) {
+function PrintButton({ recordId, kind, label }: { recordId: string; kind: "prescription" | "ultrasound" | "general-ultrasound" | "lab-exam"; label: string }) {
   return (
     <button
       type="button"
@@ -63,20 +63,9 @@ function PrintButton({ recordId, kind, label }: { recordId: string; kind: "presc
 export function ConsultationForm({ title, patientId, initialValues, onBack, onSubmit, submitting, submitLabel, recordId }: Props) {
   const [tab, setTab] = useState<ConsultationTab>("principal");
   const [form, setForm] = useState(initialValues);
-  const [diagnosisMissing, setDiagnosisMissing] = useState(false);
 
-  // El diagnóstico es obligatorio pero su campo vive en el tab "Principal" - si la
-  // doctora está en Récipe/Ultrasonido y le da guardar, el submit fallaba en
-  // silencio (un toast que nadie conecta con "te falta llenar otra pestaña").
-  // Ahora se valida ANTES de mandar, y si falta, salta directo a esa pestaña.
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.diagnosis.trim()) {
-      setTab("principal");
-      setDiagnosisMissing(true);
-      return;
-    }
-    setDiagnosisMissing(false);
     onSubmit(form);
   }
 
@@ -97,12 +86,7 @@ export function ConsultationForm({ title, patientId, initialValues, onBack, onSu
             <PregnancyPicker patientId={patientId} pregnancyId={form.pregnancyId} onChange={(pregnancyId) => setForm((f) => ({ ...f, pregnancyId }))} />
           )}
           {tab === "principal" && (
-            <ConsultationPrincipalFields
-              form={form}
-              onChange={setForm}
-              diagnosisMissing={diagnosisMissing}
-              onDiagnosisEdited={() => setDiagnosisMissing(false)}
-            />
+            <ConsultationPrincipalFields form={form} onChange={setForm} />
           )}
           {tab === "recipe" && (
             <>
@@ -117,15 +101,23 @@ export function ConsultationForm({ title, patientId, initialValues, onBack, onSu
             </>
           )}
           {tab === "labExams" && (
-            <LabExamsTab
-              patientId={patientId}
-              recordId={recordId}
-              indicatesPrescription={form.indicatesPrescription}
-              indicatesImagingStudy={form.indicatesImagingStudy}
-              onChangeFlags={(flags) => setForm((f) => ({ ...f, ...flags }))}
-            />
+            <>
+              {recordId && <PrintButton recordId={recordId} kind="lab-exam" label="Imprimir exámenes de laboratorio" />}
+              <LabExamsTab
+                patientId={patientId}
+                recordId={recordId}
+                indicatesPrescription={form.indicatesPrescription}
+                indicatesImagingStudy={form.indicatesImagingStudy}
+                onChangeFlags={(flags) => setForm((f) => ({ ...f, ...flags }))}
+              />
+            </>
           )}
-          {tab === "generalUltrasound" && <GeneralUltrasoundTab recordId={recordId} />}
+          {tab === "generalUltrasound" && (
+            <>
+              {recordId && <PrintButton recordId={recordId} kind="general-ultrasound" label="Imprimir ultrasonido general" />}
+              <GeneralUltrasoundTab recordId={recordId} />
+            </>
+          )}
           {tab === "medicalReports" && <MedicalReportsTab patientId={patientId} recordId={recordId} />}
         </div>
 

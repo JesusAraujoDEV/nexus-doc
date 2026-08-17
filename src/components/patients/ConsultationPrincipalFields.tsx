@@ -1,18 +1,15 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
 import { VisitTypeCombobox } from "@/components/patients/VisitTypeCombobox";
 import { ConsultationFormValues } from "./ConsultationForm";
 
 interface Props {
   form: ConsultationFormValues;
   onChange: (form: ConsultationFormValues) => void;
-  diagnosisMissing: boolean;
-  onDiagnosisEdited: () => void;
 }
 
-export function ConsultationPrincipalFields({ form, onChange, diagnosisMissing, onDiagnosisEdited }: Props) {
+export function ConsultationPrincipalFields({ form, onChange }: Props) {
   const set = (field: keyof ConsultationFormValues) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     onChange({ ...form, [field]: e.target.value });
 
@@ -24,15 +21,8 @@ export function ConsultationPrincipalFields({ form, onChange, diagnosisMissing, 
       </div>
       <div><Label htmlFor="cf-symp">Motivo</Label><Textarea id="cf-symp" value={form.symptoms} onChange={set("symptoms")} rows={2} /></div>
       <div>
-        <Label htmlFor="cf-diag">Diagnóstico *</Label>
-        <Textarea
-          id="cf-diag"
-          value={form.diagnosis}
-          onChange={(e) => { set("diagnosis")(e); onDiagnosisEdited(); }}
-          rows={2}
-          className={cn(diagnosisMissing && "border-destructive focus-visible:ring-destructive")}
-        />
-        {diagnosisMissing && <p className="text-xs text-destructive mt-1">Falta el diagnóstico - es obligatorio para guardar.</p>}
+        <Label htmlFor="cf-diag">Diagnóstico</Label>
+        <Textarea id="cf-diag" value={form.diagnosis} onChange={set("diagnosis")} rows={2} />
       </div>
       <div><Label htmlFor="cf-treat">Tratamiento</Label><Textarea id="cf-treat" value={form.treatment} onChange={set("treatment")} rows={3} /></div>
       <div><Label htmlFor="cf-lab">Examenes indicados</Label><Textarea id="cf-lab" value={form.labOrders} onChange={set("labOrders")} rows={2} /></div>
