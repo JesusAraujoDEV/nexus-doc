@@ -1,21 +1,34 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ChevronLeft, ClipboardList, Loader2, Plus } from "lucide-react";
+import { ChevronLeft, Loader2 } from "lucide-react";
 import { fetchPatient, deletePatient } from "@/lib/patients-api";
-import { consultationDate, deleteClinicalRecord, ClinicalRecord } from "@/lib/clinical-records-api";
+import { consultationDate } from "@/lib/clinical-records-api";
+import { cn } from "@/lib/utils";
 import { PatientHeader } from "@/components/patients/PatientHeader";
+import { PatientInfoTab } from "@/components/patients/PatientInfoTab";
 import { MedicalBackground } from "@/components/patients/MedicalBackground";
 import { PregnancySection } from "@/components/patients/PregnancySection";
-import { ConsultationCard } from "@/components/patients/ConsultationCard";
+import { PatientConsultationsTab } from "@/components/patients/PatientConsultationsTab";
+import { PatientLabExamsTab } from "@/components/patients/PatientLabExamsTab";
 import { ConfirmDeleteDialog } from "@/components/patients/ConfirmDeleteDialog";
 import { useToast } from "@/components/ui/use-toast";
+
+type ProfileTab = "info" | "background" | "pregnancies" | "consultations" | "labExams";
+const TABS: { key: ProfileTab; label: string }[] = [
+  { key: "info", label: "Info" },
+  { key: "background", label: "Antecedentes" },
+  { key: "pregnancies", label: "Embarazos" },
+  { key: "consultations", label: "Consultas" },
+  { key: "labExams", label: "Lab. exámenes" },
+];
 
 export default function PatientProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const [tab, setTab] = useState<ProfileTab>("info");
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["patient", id],
@@ -23,7 +36,6 @@ export default function PatientProfile() {
     enabled: !!id,
   });
 
-  const [deletingRecord, setDeletingRecord] = useState<ClinicalRecord | null>(null);
   const [showDeletePatient, setShowDeletePatient] = useState(false);
 
   const deletePatientMut = useMutation({
@@ -32,16 +44,6 @@ export default function PatientProfile() {
       queryClient.invalidateQueries({ queryKey: ["patients"] });
       toast({ title: "Paciente eliminado" });
       navigate("/admin/patients");
-    },
-    onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
-  });
-
-  const deleteRecordMut = useMutation({
-    mutationFn: (recordId: string) => deleteClinicalRecord(recordId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["patient", id] });
-      toast({ title: "Consulta eliminada" });
-      setDeletingRecord(null);
     },
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
   });
@@ -72,52 +74,27 @@ export default function PatientProfile() {
         {data && (
           <>
             <PatientHeader p={data} onDelete={() => setShowDeletePatient(true)} />
-            <PregnancySection patientId={data.id} />
-            <MedicalBackground p={data} />
 
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <ClipboardList size={16} className="text-primary" />
-                  <h3 className="text-sm font-bold text-foreground">
-                    Consultas <span className="text-muted-foreground font-normal">({records.length})</span>
-                  </h3>
-                </div>
+            <div className="flex gap-2 overflow-x-auto -mx-4 px-4">
+              {TABS.map((t) => (
                 <button
-                  onClick={() => navigate(`/admin/patients/${data.id}/consultations/new`)}
-                  className="flex items-center gap-1 text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
+                  key={t.key}
+                  onClick={() => setTab(t.key)}
+                  className={cn(
+                    "shrink-0 whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
+                    tab === t.key ? "bg-primary text-white" : "bg-muted text-muted-foreground hover:bg-secondary",
+                  )}
                 >
-                  <Plus size={14} />Nueva consulta
+                  {t.label}
                 </button>
-              </div>
-              {records.length === 0 ? (
-                <div className="medical-card p-4 text-sm text-muted-foreground text-center">
-                  Esta paciente no tiene consultas registradas.
-                </div>
-              ) : (
-                <div className="space-y-2.5">
-                  {records.map((r, i) => (
-                    <ConsultationCard
-                      key={r.id}
-                      record={r}
-                      idx={i}
-                      patientId={data.id}
-                      onEdit={(rec) => navigate(`/admin/patients/${data.id}/consultations/${rec.id}/edit`)}
-                      onDelete={(rec) => setDeletingRecord(rec)}
-                    />
-                  ))}
-                </div>
-              )}
+              ))}
             </div>
 
-            <ConfirmDeleteDialog
-              open={!!deletingRecord}
-              onOpenChange={(v) => !v && setDeletingRecord(null)}
-              title="Eliminar consulta"
-              description="La consulta se marcara como eliminada. No se borrara permanentemente."
-              onConfirm={() => deletingRecord && deleteRecordMut.mutate(deletingRecord.id)}
-              loading={deleteRecordMut.isPending}
-            />
+            {tab === "info" && <PatientInfoTab p={data} />}
+            {tab === "background" && <MedicalBackground p={data} />}
+            {tab === "pregnancies" && <PregnancySection patientId={data.id} />}
+            {tab === "consultations" && <PatientConsultationsTab patientId={data.id} records={records} />}
+            {tab === "labExams" && <PatientLabExamsTab patientId={data.id} active={tab === "labExams"} />}
 
             <ConfirmDeleteDialog
               open={showDeletePatient}

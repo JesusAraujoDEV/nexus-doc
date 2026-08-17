@@ -53,6 +53,11 @@ export function fetchPendingLabExamOrders(patientId: string) {
   return apiFetch<LabExamOrder[]>(`/lab-exam-orders/patient/${patientId}/pending`);
 }
 
+/** Historial completo (pendientes + con resultado) para la pestaña "Lab. exámenes" del perfil de la paciente. */
+export function fetchLabExamOrdersByPatient(patientId: string) {
+  return apiFetch<LabExamOrder[]>(`/lab-exam-orders/patient/${patientId}`);
+}
+
 export function fetchLabExamOrdersByRecord(recordId: string) {
   return apiFetch<LabExamOrder[]>(`/lab-exam-orders/record/${recordId}`);
 }
