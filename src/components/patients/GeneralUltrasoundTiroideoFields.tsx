@@ -11,11 +11,11 @@ function LobuloFields({ side, label, ...p }: { side: "LD" | "LI"; label: string 
         <GuNumberField label="Ántero-post (mm)" field={`EC-TIR-${side}-AP`} {...p} />
         <GuNumberField label="Transverso (mm)" field={`EC-TIR-${side}-T`} {...p} />
       </div>
-      <div className="grid grid-cols-2 gap-3 mt-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
         <GuField label="Parénquima" field={`EC-TIR-${side}-PAR`} {...p} />
         <GuField label="Carótida" field={`EC-TIR-${side}-CAR`} {...p} />
       </div>
-      <div className="grid grid-cols-2 gap-3 mt-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
         <GuField label="Yugular" field={`EC-TIR-${side}-YUG`} {...p} />
         <GuField label="Relaciones musculares" field={`EC-TIR-${side}-R-M`} {...p} />
       </div>

@@ -5,12 +5,10 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { fetchPatientsTrash, restorePatient, fetchClinicalRecordsTrash, restoreClinicalRecord } from "@/lib/trash-api";
+import { formatApiDate as formatDate } from "@/lib/calendar-date";
+import { AttachmentsTrash } from "@/components/attachments/AttachmentsTrash";
 
-type Tab = "patients" | "records";
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("es-VE", { day: "2-digit", month: "long", year: "numeric" });
-}
+type Tab = "patients" | "records" | "files";
 
 function PatientsTrash() {
   const queryClient = useQueryClient();
@@ -95,12 +93,12 @@ export default function Trash() {
     <div className="p-5 space-y-4">
       <h1 className="text-lg font-bold text-foreground">Papelera</h1>
       <div className="flex gap-2">
-        {([["patients", "Pacientes"], ["records", "Consultas"]] as [Tab, string][]).map(([key, label]) => (
+        {([["patients", "Pacientes"], ["records", "Consultas"], ["files", "Archivos"]] as [Tab, string][]).map(([key, label]) => (
           <button
             key={key}
             onClick={() => setTab(key)}
             className={cn(
-              "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
+              "px-4 min-h-11 md:min-h-0 md:px-3 md:py-1.5 rounded-full text-sm md:text-xs font-medium transition-colors",
               tab === key ? "bg-primary text-white" : "bg-muted text-muted-foreground hover:bg-secondary",
             )}
           >
@@ -108,7 +106,9 @@ export default function Trash() {
           </button>
         ))}
       </div>
-      {tab === "patients" ? <PatientsTrash /> : <RecordsTrash />}
+      {tab === "patients" && <PatientsTrash />}
+      {tab === "records" && <RecordsTrash />}
+      {tab === "files" && <AttachmentsTrash />}
     </div>
   );
 }

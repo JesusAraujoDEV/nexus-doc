@@ -41,8 +41,9 @@ export interface PatientDetail {
 export interface CreatePatientData {
   firstName: string;
   lastName: string;
-  cedula: string;
-  phone: string;
+  /** Opcional: menores sin cédula. El backend acepta null o "". */
+  cedula?: string | null;
+  phone?: string | null;
   birthDate?: string;
   address?: string;
   referredByType?: ReferredByType;

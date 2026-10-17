@@ -23,7 +23,8 @@ interface Props {
 }
 
 const selectClass =
-  "h-9 rounded-lg bg-muted border-0 text-xs px-2.5 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40";
+  // 16px en teléfono: con < 16px iOS hace zoom al enfocar el <select>.
+  "h-11 md:h-9 rounded-lg bg-muted border-0 text-base md:text-xs px-2.5 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40";
 
 export function PatientFilters({ filters, onChange }: Props) {
   const activeCount = Object.values(filters).filter(Boolean).length;
@@ -81,7 +82,7 @@ export function PatientFilters({ filters, onChange }: Props) {
       {activeCount > 0 && (
         <button
           onClick={() => onChange(EMPTY_FILTERS)}
-          className="flex items-center gap-1 h-9 px-2.5 rounded-lg text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+          className="flex items-center gap-1 h-11 md:h-9 px-2.5 rounded-lg text-sm md:text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
         >
           <X size={13} />
           Limpiar filtros

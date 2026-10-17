@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -43,8 +43,16 @@ export function GeneralUltrasoundTab({ recordId }: Props) {
     enabled: !!recordId,
   });
   const current = saved.find((s) => s.subType === subType);
+  const formKey = `${recordId}:${subType}`;
+  const initializedFor = useRef<string | null>(null);
 
-  useEffect(() => setValues(current?.findings || {}), [current]);
+  // Se carga el form solo al cambiar de consulta o de subtipo, una vez que hay
+  // datos. Un refetch (foco, invalidación tras guardar) NO pisa lo que se escribe.
+  useEffect(() => {
+    if (isLoading || initializedFor.current === formKey) return;
+    initializedFor.current = formKey;
+    setValues(current?.findings || {});
+  }, [formKey, isLoading, current]);
 
   const save = useMutation({
     mutationFn: () => saveGeneralUltrasound({ clinicalRecordId: recordId as string, subType, findings: values }),
@@ -71,7 +79,7 @@ export function GeneralUltrasoundTab({ recordId }: Props) {
             type="button"
             onClick={() => setSubType(s)}
             className={cn(
-              "px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
+              "px-4 min-h-11 md:min-h-0 md:px-3 md:py-1.5 rounded-full text-sm md:text-xs font-medium transition-colors",
               subType === s ? "bg-primary text-white" : "bg-muted text-muted-foreground hover:bg-secondary",
               saved.some((x) => x.subType === s) && subType !== s && "ring-1 ring-primary/40",
             )}

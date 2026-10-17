@@ -2,14 +2,7 @@ import { useState } from "react";
 import { ChevronDown, ChevronUp, Stethoscope, Pencil, Trash2, Printer } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ClinicalRecord, consultationDate, openClinicalRecordPdf } from "@/lib/clinical-records-api";
-
-function formatDate(iso: string) {
-  const soloFecha = /^\d{4}-\d{2}-\d{2}$/.exec(iso);
-  const d = soloFecha
-    ? new Date(Number(iso.slice(0, 4)), Number(iso.slice(5, 7)) - 1, Number(iso.slice(8, 10)))
-    : new Date(iso);
-  return d.toLocaleDateString("es-VE", { day: "2-digit", month: "long", year: "numeric" });
-}
+import { formatApiDate as formatDate } from "@/lib/calendar-date";
 
 function Field({ label, value }: { label: string; value: string | null }) {
   if (!value) return null;
@@ -66,22 +59,22 @@ export function ConsultationCard({ record, idx, onEdit, onDelete }: Props) {
           {(onEdit || onDelete || hasRecipe || hasUltrasound) && (
             <div className="flex flex-wrap gap-3 pt-2 border-t border-border">
               {hasRecipe && (
-                <button onClick={() => openClinicalRecordPdf(record.id, "prescription")} className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors">
+                <button onClick={() => openClinicalRecordPdf(record.id, "prescription")} className="flex items-center gap-1 min-h-11 md:min-h-0 text-sm md:text-xs text-primary hover:text-primary/80 transition-colors">
                   <Printer size={12} />Imprimir récipe
                 </button>
               )}
               {hasUltrasound && (
-                <button onClick={() => openClinicalRecordPdf(record.id, "ultrasound")} className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors">
+                <button onClick={() => openClinicalRecordPdf(record.id, "ultrasound")} className="flex items-center gap-1 min-h-11 md:min-h-0 text-sm md:text-xs text-primary hover:text-primary/80 transition-colors">
                   <Printer size={12} />Imprimir ecografía
                 </button>
               )}
               {onEdit && (
-                <button onClick={() => onEdit(record)} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                <button onClick={() => onEdit(record)} className="flex items-center gap-1 min-h-11 md:min-h-0 text-sm md:text-xs text-muted-foreground hover:text-foreground transition-colors">
                   <Pencil size={12} />Editar
                 </button>
               )}
               {onDelete && (
-                <button onClick={() => onDelete(record)} className="flex items-center gap-1 text-xs text-destructive hover:text-destructive/80 transition-colors">
+                <button onClick={() => onDelete(record)} className="flex items-center gap-1 min-h-11 md:min-h-0 text-sm md:text-xs text-destructive hover:text-destructive/80 transition-colors">
                   <Trash2 size={12} />Eliminar
                 </button>
               )}

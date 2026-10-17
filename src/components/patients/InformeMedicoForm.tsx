@@ -46,7 +46,7 @@ export function InformeMedicoForm({ patientId, recordId, onSaved }: Props) {
       <div><Label>Título</Label><Input value={title} onChange={(e) => setTitle(e.target.value)} /></div>
       <div>
         <Label>Referencia a:</Label>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <Label className="text-xs text-muted-foreground">Médico/Esp.</Label>
             <CatalogComboBox

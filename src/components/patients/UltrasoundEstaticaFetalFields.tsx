@@ -3,7 +3,7 @@ import { CatalogField, NumberField, FieldProps } from "./ultrasound-field-inputs
 /** Estática fetal: cómo está posicionado el feto y estado de sus órganos, tal como lo mira la doctora en la pantalla. */
 export function UltrasoundEstaticaFetalFields(p: FieldProps) {
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
       <CatalogField label="Presentación" field="PRESENT" {...p} />
       <CatalogField label="Riñones" field="RIÑONES" {...p} />
       <CatalogField label="Situación" field="SITUAC" {...p} />

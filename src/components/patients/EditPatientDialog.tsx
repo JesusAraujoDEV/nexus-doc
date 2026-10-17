@@ -73,24 +73,24 @@ export function EditPatientDialog({ patient, open, onOpenChange }: Props) {
           <DialogTitle>Editar paciente</DialogTitle>
         </DialogHeader>
         <form onSubmit={(e) => { e.preventDefault(); mutation.mutate(); }} className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div><Label htmlFor="ep-fn">Nombre</Label><Input id="ep-fn" value={form.firstName} onChange={set("firstName")} required /></div>
             <div><Label htmlFor="ep-ln">Apellido</Label><Input id="ep-ln" value={form.lastName} onChange={set("lastName")} required /></div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div><Label htmlFor="ep-ced">Cedula</Label><Input id="ep-ced" value={form.cedula} onChange={set("cedula")} /></div>
             <div><Label htmlFor="ep-phone">Telefono</Label><Input id="ep-phone" value={form.phone} onChange={set("phone")} /></div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div><Label htmlFor="ep-bd">Fecha nac.</Label><Input id="ep-bd" type="date" value={form.birthDate} onChange={set("birthDate")} /></div>
             <div><Label htmlFor="ep-addr">Dirección</Label><Input id="ep-addr" value={form.address} onChange={set("address")} /></div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div><Label htmlFor="ep-weight">Peso (kg)</Label><Input id="ep-weight" type="number" step="0.1" min="0" value={form.weightKg} onChange={set("weightKg")} /></div>
             <div><Label htmlFor="ep-height">Altura (cm)</Label><Input id="ep-height" type="number" step="0.1" min="0" value={form.heightCm} onChange={set("heightCm")} /></div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <Label>Referido por</Label>
               <Select value={referredByType} onValueChange={(v) => setReferredByType(v as ReferredByType)}>

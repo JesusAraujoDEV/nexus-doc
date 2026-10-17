@@ -6,7 +6,7 @@ export function UltrasoundUteroFields(p: FieldProps) {
     <>
       <div>
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Útero</p>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <CatalogField label="Posición" field="UTERO-POS" {...p} />
           <CatalogField label="Forma" field="UTERO-FOR" {...p} />
           <CatalogField label="Bordes" field="UTERO-BOR" {...p} />

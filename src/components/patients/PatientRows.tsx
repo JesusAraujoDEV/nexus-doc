@@ -1,6 +1,7 @@
 import { MessageCircle, Eye, Pencil, Trash2, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PatientListItem } from "@/lib/patients-api";
+import { formatApiDate } from "@/lib/calendar-date";
 
 export function fullName(p: PatientListItem) {
   return `${p.firstName} ${p.lastName}`.trim();
@@ -12,7 +13,7 @@ function initials(p: PatientListItem) {
 
 function formatDate(iso: string | null) {
   if (!iso) return "Sin consultas";
-  return new Date(iso).toLocaleDateString("es-VE", { day: "2-digit", month: "short", year: "numeric" });
+  return formatApiDate(iso, { day: "2-digit", month: "short", year: "numeric" });
 }
 
 function getVisitLabel(n: number) {
@@ -22,6 +23,10 @@ function getVisitLabel(n: number) {
 }
 
 const avatarColors = ["gradient-primary", "gradient-accent", "gradient-primary", "gradient-accent"];
+
+// Áreas táctiles: 44px en la tarjeta (teléfono), 40px en la tabla (tablet/escritorio).
+const ICON_BTN_MOBILE = "h-11 w-11 flex items-center justify-center rounded-lg transition-colors";
+const ICON_BTN_TABLE = "h-10 w-10 flex items-center justify-center rounded-lg transition-colors";
 
 function WhatsAppLink({ phone, className, children }: { phone: string | null; className?: string; children: React.ReactNode }) {
   if (!phone) return <span className={cn(className, "opacity-40")}>{children}</span>;
@@ -77,27 +82,30 @@ export function PatientTableRow({ p, navigate, idx, onEdit, onDelete, onNewConsu
             <button
               onClick={() => onNewConsultation(p)}
               title="Nueva consulta"
-              className="p-1.5 rounded-lg hover:bg-accent-light transition-colors"
+              aria-label="Nueva consulta"
+              className={ICON_BTN_TABLE + " hover:bg-accent-light"}
             >
-              <Plus size={14} className="text-accent" />
+              <Plus size={16} className="text-accent" />
             </button>
           )}
           {onEdit && (
             <button
               onClick={() => onEdit(p)}
               title="Editar paciente"
-              className="p-1.5 rounded-lg hover:bg-muted transition-colors"
+              aria-label="Editar paciente"
+              className={ICON_BTN_TABLE + " hover:bg-muted"}
             >
-              <Pencil size={14} className="text-muted-foreground" />
+              <Pencil size={16} className="text-muted-foreground" />
             </button>
           )}
           {onDelete && (
             <button
               onClick={() => onDelete(p)}
               title="Eliminar paciente"
-              className="p-1.5 rounded-lg hover:bg-destructive/10 transition-colors"
+              aria-label="Eliminar paciente"
+              className={ICON_BTN_TABLE + " hover:bg-destructive/10"}
             >
-              <Trash2 size={14} className="text-destructive" />
+              <Trash2 size={16} className="text-destructive" />
             </button>
           )}
         </div>
@@ -125,18 +133,18 @@ export function PatientCard({ p, navigate, idx, onEdit, onDelete, onNewConsultat
         </div>
         <div className="flex items-center gap-0.5 shrink-0">
           {onNewConsultation && (
-            <button onClick={() => onNewConsultation(p)} title="Nueva consulta" className="p-1.5 rounded hover:bg-accent-light transition-colors">
-              <Plus size={14} className="text-accent" />
+            <button onClick={() => onNewConsultation(p)} title="Nueva consulta" aria-label="Nueva consulta" className={ICON_BTN_MOBILE + " hover:bg-accent-light"}>
+              <Plus size={18} className="text-accent" />
             </button>
           )}
           {onEdit && (
-            <button onClick={() => onEdit(p)} title="Editar" className="p-1.5 rounded hover:bg-muted transition-colors">
-              <Pencil size={13} className="text-muted-foreground" />
+            <button onClick={() => onEdit(p)} title="Editar" aria-label="Editar paciente" className={ICON_BTN_MOBILE + " hover:bg-muted"}>
+              <Pencil size={17} className="text-muted-foreground" />
             </button>
           )}
           {onDelete && (
-            <button onClick={() => onDelete(p)} title="Eliminar" className="p-1.5 rounded hover:bg-destructive/10 transition-colors">
-              <Trash2 size={13} className="text-destructive" />
+            <button onClick={() => onDelete(p)} title="Eliminar" aria-label="Eliminar paciente" className={ICON_BTN_MOBILE + " hover:bg-destructive/10"}>
+              <Trash2 size={17} className="text-destructive" />
             </button>
           )}
         </div>

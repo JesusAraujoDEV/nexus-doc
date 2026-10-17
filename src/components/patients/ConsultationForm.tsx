@@ -1,15 +1,16 @@
 import { useState } from "react";
-import { Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { RecipeItem, openClinicalRecordPdf } from "@/lib/clinical-records-api";
+import { RecipeItem } from "@/lib/clinical-records-api";
 import { ConsultationFormHeader, ConsultationTab } from "@/components/patients/ConsultationFormHeader";
 import { ConsultationPrincipalFields } from "@/components/patients/ConsultationPrincipalFields";
+import { ConsultationPrintButton as PrintButton } from "@/components/patients/ConsultationPrintButton";
 import { RecipeItemsEditor } from "@/components/patients/RecipeItemsEditor";
 import { UltrasoundFieldsEditor, UltrasoundValues } from "@/components/patients/UltrasoundFieldsEditor";
 import { PregnancyPicker } from "@/components/patients/PregnancyPicker";
 import { LabExamsTab } from "@/components/patients/LabExamsTab";
 import { GeneralUltrasoundTab } from "@/components/patients/GeneralUltrasoundTab";
 import { MedicalReportsTab } from "@/components/patients/MedicalReportsTab";
+import { AttachmentsSection } from "@/components/attachments/AttachmentsSection";
 
 export type ConsultationCategory = "gynecology" | "obstetrics";
 
@@ -33,25 +34,21 @@ export interface ConsultationFormValues {
 interface Props {
   title: string;
   patientId: string;
+  /**
+   * Se leen UNA vez al montar (el form es estado local de edición). Para cargar
+   * otros valores el padre remonta el form con otra `key`; así un refetch en
+   * segundo plano nunca pisa lo que la doctora está escribiendo.
+   */
   initialValues: ConsultationFormValues;
+  initialTab?: ConsultationTab;
   onBack: () => void;
   onSubmit: (values: ConsultationFormValues) => void;
+  /** Solo en consulta nueva: guarda y reabre la consulta en "Adjuntos". */
+  onSubmitAndAttach?: (values: ConsultationFormValues) => void;
   submitting: boolean;
   submitLabel: string;
-  /** Solo en edición: ya existe una fila guardada, así que se puede imprimir. */
+  /** Solo en edición: ya existe una fila guardada, así que se puede imprimir y adjuntar. */
   recordId?: string;
-}
-
-function PrintButton({ recordId, kind, label }: { recordId: string; kind: "prescription" | "ultrasound" | "general-ultrasound" | "lab-exam"; label: string }) {
-  return (
-    <button
-      type="button"
-      onClick={() => openClinicalRecordPdf(recordId, kind)}
-      className="flex items-center gap-1 text-xs font-semibold text-primary hover:text-primary/80 transition-colors mb-2"
-    >
-      <Printer size={14} />{label}
-    </button>
-  );
 }
 
 /**
@@ -60,8 +57,8 @@ function PrintButton({ recordId, kind, label }: { recordId: string; kind: "presc
  * modal) con tabs horizontales porque la consulta real tiene demasiados módulos
  * (motivo/diagnóstico, récipe, ultrasonido) para un modal con scroll infinito.
  */
-export function ConsultationForm({ title, patientId, initialValues, onBack, onSubmit, submitting, submitLabel, recordId }: Props) {
-  const [tab, setTab] = useState<ConsultationTab>("principal");
+export function ConsultationForm({ title, patientId, initialValues, initialTab = "principal", onBack, onSubmit, onSubmitAndAttach, submitting, submitLabel, recordId }: Props) {
+  const [tab, setTab] = useState<ConsultationTab>(initialTab);
   const [form, setForm] = useState(initialValues);
 
   function handleSubmit(e: React.FormEvent) {
@@ -83,7 +80,12 @@ export function ConsultationForm({ title, patientId, initialValues, onBack, onSu
       <form onSubmit={handleSubmit} className="flex-1 flex flex-col" noValidate>
         <div className="flex-1 p-4 max-w-2xl w-full mx-auto space-y-4">
           {form.category === "obstetrics" && (
-            <PregnancyPicker patientId={patientId} pregnancyId={form.pregnancyId} onChange={(pregnancyId) => setForm((f) => ({ ...f, pregnancyId }))} />
+            <PregnancyPicker
+              patientId={patientId}
+              pregnancyId={form.pregnancyId}
+              autoSelectActive={!recordId}
+              onChange={(pregnancyId) => setForm((f) => ({ ...f, pregnancyId }))}
+            />
           )}
           {tab === "principal" && (
             <ConsultationPrincipalFields form={form} onChange={setForm} />
@@ -119,11 +121,19 @@ export function ConsultationForm({ title, patientId, initialValues, onBack, onSu
             </>
           )}
           {tab === "medicalReports" && <MedicalReportsTab patientId={patientId} recordId={recordId} />}
+          {tab === "attachments" && (
+            <AttachmentsSection
+              recordId={recordId}
+              onSaveFirst={onSubmitAndAttach ? () => onSubmitAndAttach(form) : undefined}
+              saving={submitting}
+            />
+          )}
         </div>
 
-        <div className="sticky bottom-0 bg-card border-t border-border p-4 flex justify-end gap-2">
-          <Button type="button" variant="outline" onClick={onBack}>Cancelar</Button>
-          <Button type="submit" disabled={submitting}>{submitting ? "Guardando..." : submitLabel}</Button>
+        {/* En teléfono la barra queda encima de la .bottom-nav fija (≈4rem + safe area). */}
+        <div className="sticky bottom-[calc(4rem+env(safe-area-inset-bottom))] md:bottom-0 z-20 bg-card border-t border-border p-4 flex justify-end gap-2">
+          <Button type="button" variant="outline" className="h-11 md:h-10" onClick={onBack}>Cancelar</Button>
+          <Button type="submit" className="h-11 md:h-10" disabled={submitting}>{submitting ? "Guardando..." : submitLabel}</Button>
         </div>
       </form>
     </div>

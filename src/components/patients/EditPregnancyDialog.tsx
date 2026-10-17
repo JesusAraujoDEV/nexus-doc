@@ -54,12 +54,12 @@ export function EditPregnancyDialog({ pregnancy, open, onOpenChange }: Props) {
           {isFinalized && (
             <div className="space-y-3 rounded-lg border border-border p-3">
               <p className="text-sm font-semibold">Recién Nacido</p>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div><Label>Fecha de nacimiento</Label><Input type="date" value={newborn.birthDate || ""} onChange={set("birthDate")} /></div>
                 <div><Label>Tipo de parto</Label><Input value={newborn.deliveryType || ""} onChange={set("deliveryType")} /></div>
               </div>
               <div><Label>Nombre</Label><Input value={newborn.name || ""} onChange={set("name")} /></div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div><Label>Peso (gr)</Label><Input type="number" value={newborn.weight ?? ""} onChange={(e) => setNewborn((n) => ({ ...n, weight: e.target.value ? Number(e.target.value) : null }))} /></div>
                 <div><Label>Talla (cm)</Label><Input type="number" value={newborn.length ?? ""} onChange={(e) => setNewborn((n) => ({ ...n, length: e.target.value ? Number(e.target.value) : null }))} /></div>
               </div>

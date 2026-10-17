@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle } from "
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { parseDateOnly, todayKey } from "@/lib/calendar-date";
 
 interface Props {
   open: boolean;
@@ -11,20 +12,26 @@ interface Props {
   onConfirm: (referenceDate: string, weeks: number, days: number) => void;
 }
 
+/** Fecha de la eco (día local) menos semanas/días, restando en calendario (sin ms UTC). */
+function approximateLmp(referenceDate: string, weeks: number, days: number): Date {
+  const date = parseDateOnly(referenceDate);
+  date.setDate(date.getDate() - (weeks * 7 + days));
+  return date;
+}
+
 /**
  * "Fecha incierta": la doctora no tiene la F.U.M exacta, pero sí una ecografía con
  * fecha y edad gestacional. Mismo flujo que MedDig: fecha de la eco + semanas/días
  * → F.U.M aproximada = fecha de la eco menos esas semanas/días.
  */
 export function FechaInciertaCalculator({ open, onOpenChange, onConfirm }: Props) {
-  const [referenceDate, setReferenceDate] = useState(new Date().toISOString().slice(0, 10));
+  const [referenceDate, setReferenceDate] = useState(todayKey);
   const [weeks, setWeeks] = useState("");
   const [days, setDays] = useState("");
 
   const canCalculate = referenceDate && weeks !== "" && days !== "";
   const preview = canCalculate
-    ? new Date(new Date(referenceDate).getTime() - (Number(weeks) * 7 + Number(days)) * 86400000)
-      .toLocaleDateString("es-VE", { day: "numeric", month: "long", year: "numeric" })
+    ? approximateLmp(referenceDate, Number(weeks), Number(days)).toLocaleDateString("es-VE", { day: "numeric", month: "long", year: "numeric" })
     : null;
 
   return (

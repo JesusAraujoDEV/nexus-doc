@@ -1,6 +1,7 @@
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClinicalRecord } from "@/lib/clinical-records-api";
+import { todayKey } from "@/lib/calendar-date";
 import { useToast } from "@/components/ui/use-toast";
 import { ConsultationForm, ConsultationFormValues } from "@/components/patients/ConsultationForm";
 
@@ -9,7 +10,8 @@ function buildEmpty(pregnancyId: string | null): ConsultationFormValues {
     category: pregnancyId ? "obstetrics" : "gynecology",
     pregnancyId: pregnancyId || "",
     visitType: "",
-    visitDate: new Date().toISOString().slice(0, 10),
+    // Fecha local: toISOString() daría el día UTC (de noche en Venezuela, mañana).
+    visitDate: todayKey(),
     symptoms: "",
     diagnosis: "",
     treatment: "",
@@ -23,6 +25,27 @@ function buildEmpty(pregnancyId: string | null): ConsultationFormValues {
   };
 }
 
+function toCreatePayload(patientId: string, form: ConsultationFormValues) {
+  const recipeItems = form.recipeItems.filter((i) => i.nombre?.trim());
+  return {
+    patientId,
+    category: form.category,
+    pregnancyId: form.category === "obstetrics" && form.pregnancyId ? form.pregnancyId : undefined,
+    visitType: form.visitType || undefined,
+    visitDate: form.visitDate || undefined,
+    symptoms: form.symptoms || undefined,
+    diagnosis: form.diagnosis || undefined,
+    treatment: form.treatment || undefined,
+    labOrders: form.labOrders || undefined,
+    privateNotes: form.privateNotes || undefined,
+    nextAppointmentDate: form.nextAppointmentDate || undefined,
+    recipeItems: recipeItems.length ? recipeItems : undefined,
+    ultrasoundFindings: Object.keys(form.ultrasound).length ? form.ultrasound : undefined,
+    indicatesPrescription: form.indicatesPrescription,
+    indicatesImagingStudy: form.indicatesImagingStudy,
+  };
+}
+
 export default function NewConsultationPage() {
   const { id: patientId } = useParams();
   const [searchParams] = useSearchParams();
@@ -32,27 +55,14 @@ export default function NewConsultationPage() {
   const goBack = () => navigate(`/admin/patients/${patientId}`);
 
   const mutation = useMutation({
-    mutationFn: (form: ConsultationFormValues) =>
-      createClinicalRecord({
-        patientId: patientId as string,
-        category: form.category,
-        pregnancyId: form.category === "obstetrics" && form.pregnancyId ? form.pregnancyId : undefined,
-        visitType: form.visitType || undefined,
-        visitDate: form.visitDate || undefined,
-        symptoms: form.symptoms || undefined,
-        diagnosis: form.diagnosis || undefined,
-        treatment: form.treatment || undefined,
-        labOrders: form.labOrders || undefined,
-        privateNotes: form.privateNotes || undefined,
-        nextAppointmentDate: form.nextAppointmentDate || undefined,
-        recipeItems: form.recipeItems.filter((i) => i.nombre?.trim()).length ? form.recipeItems.filter((i) => i.nombre?.trim()) : undefined,
-        ultrasoundFindings: Object.keys(form.ultrasound).length ? form.ultrasound : undefined,
-        indicatesPrescription: form.indicatesPrescription,
-        indicatesImagingStudy: form.indicatesImagingStudy,
-      }),
-    onSuccess: () => {
+    mutationFn: ({ form }: { form: ConsultationFormValues; attach: boolean }) =>
+      createClinicalRecord(toCreatePayload(patientId as string, form)),
+    onSuccess: (record, { attach }) => {
       queryClient.invalidateQueries({ queryKey: ["patient", patientId] });
+      queryClient.invalidateQueries({ queryKey: ["pregnancies", patientId] });
       toast({ title: "Consulta creada" });
+      // "Guardar y adjuntar": reabre la consulta recién creada en la pestaña Adjuntos.
+      if (attach) return navigate(`/admin/patients/${patientId}/consultations/${record.id}/edit?tab=attachments`, { replace: true });
       goBack();
     },
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
@@ -64,7 +74,8 @@ export default function NewConsultationPage() {
       patientId={patientId as string}
       initialValues={buildEmpty(searchParams.get("pregnancyId"))}
       onBack={goBack}
-      onSubmit={(form) => mutation.mutate(form)}
+      onSubmit={(form) => mutation.mutate({ form, attach: false })}
+      onSubmitAndAttach={(form) => mutation.mutate({ form, attach: true })}
       submitting={mutation.isPending}
       submitLabel="Guardar consulta"
     />

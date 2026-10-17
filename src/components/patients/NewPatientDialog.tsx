@@ -37,8 +37,8 @@ export function NewPatientDialog({ open, onOpenChange }: Props) {
       createPatient({
         firstName: form.firstName,
         lastName: form.lastName,
-        cedula: form.cedula,
-        phone: form.phone,
+        cedula: form.cedula.trim() || null,
+        phone: form.phone.trim() || null,
         birthDate: form.birthDate || undefined,
         address: form.address || undefined,
         referredByType: referredByType || undefined,
@@ -67,24 +67,25 @@ export function NewPatientDialog({ open, onOpenChange }: Props) {
           <DialogTitle>Nueva paciente</DialogTitle>
         </DialogHeader>
         <form onSubmit={(e) => { e.preventDefault(); mutation.mutate(); }} className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div><Label htmlFor="np-fn">Nombre *</Label><Input id="np-fn" value={form.firstName} onChange={set("firstName")} required /></div>
             <div><Label htmlFor="np-ln">Apellido *</Label><Input id="np-ln" value={form.lastName} onChange={set("lastName")} required /></div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div><Label htmlFor="np-ced">Cedula *</Label><Input id="np-ced" value={form.cedula} onChange={set("cedula")} required /></div>
-            <div><Label htmlFor="np-phone">Telefono *</Label><Input id="np-phone" value={form.phone} onChange={set("phone")} required /></div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* Opcionales: hay menores sin cédula y pacientes sin teléfono. */}
+            <div><Label htmlFor="np-ced">Cédula</Label><Input id="np-ced" inputMode="numeric" value={form.cedula} onChange={set("cedula")} /></div>
+            <div><Label htmlFor="np-phone">Teléfono</Label><Input id="np-phone" type="tel" value={form.phone} onChange={set("phone")} /></div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div><Label htmlFor="np-bd">Fecha de nacimiento</Label><Input id="np-bd" type="date" value={form.birthDate} onChange={set("birthDate")} /></div>
             <div><Label htmlFor="np-addr">Dirección</Label><Input id="np-addr" value={form.address} onChange={set("address")} /></div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div><Label htmlFor="np-weight">Peso (kg)</Label><Input id="np-weight" type="number" step="0.1" min="0" value={form.weightKg} onChange={set("weightKg")} /></div>
             <div><Label htmlFor="np-height">Altura (cm)</Label><Input id="np-height" type="number" step="0.1" min="0" value={form.heightCm} onChange={set("heightCm")} /></div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <Label>Referido por</Label>
               <Select value={referredByType} onValueChange={(v) => setReferredByType(v as ReferredByType)}>

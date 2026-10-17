@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { MessageCircle, Phone, MapPin, Pencil, Trash2 } from "lucide-react";
 import { PatientDetail } from "@/lib/patients-api";
+import { parseApiDate } from "@/lib/calendar-date";
 import { EditPatientDialog } from "./EditPatientDialog";
 
+/** Edad en años cumplidos, comparando año/mes/día locales (no milisegundos UTC). */
 function ageFrom(birthDate: string | null) {
   if (!birthDate) return null;
-  const diff = Date.now() - new Date(birthDate).getTime();
-  return Math.floor(diff / (365.25 * 24 * 3600 * 1000));
+  const birth = parseApiDate(birthDate);
+  const today = new Date();
+  const hadBirthday = today.getMonth() > birth.getMonth() || (today.getMonth() === birth.getMonth() && today.getDate() >= birth.getDate());
+  return today.getFullYear() - birth.getFullYear() - (hadBirthday ? 0 : 1);
 }
 
 export function PatientHeader({ p, onDelete }: { p: PatientDetail; onDelete?: () => void }) {
@@ -25,11 +29,11 @@ export function PatientHeader({ p, onDelete }: { p: PatientDetail; onDelete?: ()
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
               <h2 className="text-lg font-bold text-foreground">{name}</h2>
-              <button onClick={() => setEditing(true)} className="p-1 rounded hover:bg-muted transition-colors" title="Editar paciente">
-                <Pencil size={14} className="text-muted-foreground" />
+              <button onClick={() => setEditing(true)} className="h-11 w-11 md:h-8 md:w-8 shrink-0 flex items-center justify-center rounded hover:bg-muted transition-colors" title="Editar paciente" aria-label="Editar paciente">
+                <Pencil size={16} className="text-muted-foreground" />
               </button>
               {onDelete && (
-                <button onClick={onDelete} className="p-1 rounded hover:bg-destructive/10 transition-colors" title="Eliminar paciente">
+                <button onClick={onDelete} className="h-11 w-11 md:h-8 md:w-8 shrink-0 flex items-center justify-center rounded hover:bg-destructive/10 transition-colors" title="Eliminar paciente" aria-label="Eliminar paciente">
                   <Trash2 size={14} className="text-destructive" />
                 </button>
               )}

@@ -5,7 +5,7 @@ export function UltrasoundOvariosFields(p: FieldProps) {
   return (
     <div>
       <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Ovarios</p>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <CatalogField label="Ovario derecho" field="OV-DER" {...p} />
         <CatalogField label="Ovario izquierdo" field="OV-IZQ" {...p} />
         <NumberField label="Ov. D. dim 1" field="OV-DER-M1" {...p} />

@@ -44,14 +44,14 @@ export function UltrasoundObstetrico1erFields(p: FieldProps) {
         <div className="space-y-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Saco Gestacional</p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <CatalogField label="Estado" field="SAC-GES" {...p} />
               <NumberField label="Dimensiones (mm)" field="SAC-GES-DIM-MM" {...p} />
             </div>
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Embrión</p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <CatalogField label="Estado" field="EMBRION" {...p} />
               <CatalogField label="Actividad Cardíaca" field="ACT-CARD" {...p} />
               <CatalogField label="Actividad Motora" field="ACT-MOT" {...p} />
@@ -60,7 +60,7 @@ export function UltrasoundObstetrico1erFields(p: FieldProps) {
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Varios</p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <CatalogField label="Placa Coriónica" field="PLACA-CORIONICA" {...p} />
               <CatalogField label="Localización" field="PLA-COR-LOC" {...p} />
               <CatalogField label="Saco Vitelino" field="SAC-VIT" {...p} />

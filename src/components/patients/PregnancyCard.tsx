@@ -2,11 +2,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Baby, Printer, Pencil, Plus } from "lucide-react";
 import { Pregnancy, openPregnancyPdf } from "@/lib/pregnancies-api";
+import { formatApiDate } from "@/lib/calendar-date";
 import { EditPregnancyDialog } from "./EditPregnancyDialog";
 
 function formatDate(iso: string | null) {
   if (!iso) return null;
-  return new Date(iso).toLocaleDateString("es-VE", { day: "2-digit", month: "long", year: "numeric" });
+  return formatApiDate(iso);
 }
 
 function statusLabel(p: Pregnancy) {

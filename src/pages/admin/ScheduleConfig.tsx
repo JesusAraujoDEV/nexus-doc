@@ -43,7 +43,7 @@ function SlotEditor({ slot, onUpdate, onDelete }: {
       <select
         value={slot.start}
         onChange={e => onUpdate(slot.id, "start", e.target.value)}
-        className="flex-1 h-9 rounded-lg bg-card border border-border text-sm text-foreground px-2 min-w-0"
+        className="flex-1 h-11 md:h-9 rounded-lg bg-card border border-border text-base md:text-sm text-foreground px-2 min-w-0"
       >
         {TIME_OPTIONS.map(t => <option key={t} value={t}>{t}</option>)}
       </select>
@@ -51,13 +51,14 @@ function SlotEditor({ slot, onUpdate, onDelete }: {
       <select
         value={slot.end}
         onChange={e => onUpdate(slot.id, "end", e.target.value)}
-        className="flex-1 h-9 rounded-lg bg-card border border-border text-sm text-foreground px-2 min-w-0"
+        className="flex-1 h-11 md:h-9 rounded-lg bg-card border border-border text-base md:text-sm text-foreground px-2 min-w-0"
       >
         {TIME_OPTIONS.filter(t => t > slot.start).map(t => <option key={t} value={t}>{t}</option>)}
       </select>
       <button
         onClick={() => onDelete(slot.id)}
-        className="w-8 h-8 rounded-lg bg-destructive/10 flex items-center justify-center shrink-0 hover:bg-destructive/20 transition-colors"
+        aria-label="Eliminar bloque"
+        className="w-11 h-11 md:w-8 md:h-8 rounded-lg bg-destructive/10 flex items-center justify-center shrink-0 hover:bg-destructive/20 transition-colors"
       >
         <Trash2 size={13} className="text-destructive" />
       </button>
@@ -67,7 +68,6 @@ function SlotEditor({ slot, onUpdate, onDelete }: {
 
 export default function ScheduleConfig() {
   const [schedule, setSchedule] = useState<Schedule>(defaultSchedule);
-  const [saved, setSaved] = useState(false);
 
   const toggleDay = (day: string) => {
     setSchedule(s => ({ ...s, [day]: { ...s[day], active: !s[day].active } }));
@@ -95,11 +95,6 @@ export default function ScheduleConfig() {
     }));
   };
 
-  const handleSave = () => {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
-  };
-
   const activeDays = DAYS.filter(d => schedule[d].active).length;
 
   return (
@@ -113,19 +108,20 @@ export default function ScheduleConfig() {
               {activeDays} días activos esta semana
             </p>
           </div>
+          {/* El guardado del horario todavía no existe en el backend: el botón no debe simular éxito. */}
           <button
-            onClick={handleSave}
-            className={cn(
-              "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300",
-              saved
-                ? "bg-accent text-white shadow-accent-glow"
-                : "gradient-primary text-white shadow-primary"
-            )}
+            type="button"
+            disabled
+            aria-disabled="true"
+            className="flex items-center gap-2 px-4 min-h-11 rounded-xl text-sm font-semibold bg-muted text-muted-foreground cursor-not-allowed"
           >
             <Save size={15} />
-            {saved ? "¡Guardado!" : "Guardar"}
+            Guardar (próximamente)
           </button>
         </div>
+        <p className="mt-3 text-xs text-muted-foreground rounded-lg bg-muted/60 p-2">
+          Vista previa: los cambios de esta pantalla todavía no se guardan.
+        </p>
       </div>
 
       <div className="flex-1 p-4 space-y-4 pb-8">
@@ -181,7 +177,8 @@ export default function ScheduleConfig() {
                 {dayData.active && (
                   <button
                     onClick={() => addSlot(day)}
-                    className="w-8 h-8 rounded-xl gradient-primary flex items-center justify-center shadow-primary active:scale-95 transition-transform"
+                    aria-label={`Agregar bloque el ${day}`}
+                    className="w-11 h-11 md:w-8 md:h-8 rounded-xl gradient-primary flex items-center justify-center shadow-primary active:scale-95 transition-transform"
                   >
                     <Plus size={14} className="text-white" />
                   </button>

@@ -18,3 +18,23 @@ export function toDateKey(date: Date): string {
   const d = String(date.getDate()).padStart(2, "0");
   return `${y}-${m}-${d}`;
 }
+
+const DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/;
+
+/**
+ * Helper único para fechas que vienen de la API: "YYYY-MM-DD" se toma como día
+ * local (ver parseDateOnly); un timestamp completo se respeta tal cual.
+ */
+export function parseApiDate(value: string): Date {
+  return DATE_ONLY.test(value) ? parseDateOnly(value) : new Date(value);
+}
+
+/** Formatea una fecha de la API en es-VE sin el corrimiento UTC de las fechas solo-día. */
+export function formatApiDate(value: string, options: Intl.DateTimeFormatOptions = { day: "2-digit", month: "long", year: "numeric" }): string {
+  return parseApiDate(value).toLocaleDateString("es-VE", options);
+}
+
+/** Hoy en hora local como "YYYY-MM-DD" (toISOString daría el día UTC: de noche en Venezuela, mañana). */
+export function todayKey(): string {
+  return toDateKey(new Date());
+}

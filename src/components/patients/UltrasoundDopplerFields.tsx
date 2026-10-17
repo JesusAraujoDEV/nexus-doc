@@ -10,7 +10,7 @@ export function UltrasoundDopplerFields({ values, onChange }: FieldProps) {
   const p = { values, onChange };
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <TextField label="Corazón" field="DOP-CORAZON" {...p} />
         <TextField label="Septus" field="DOP-SEPTUS" {...p} />
         <TextField label="Art. Uterina" field="DOP-ART-UT" {...p} />

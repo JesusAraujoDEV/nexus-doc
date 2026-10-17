@@ -21,7 +21,7 @@ export function PatientsMobileList({ items, navigate, sortBy, sortDir, onSort, o
         <select
           value={sortBy}
           onChange={(e) => onSort(e.target.value as PatientSortBy)}
-          className="h-9 flex-1 rounded-lg bg-muted border-0 text-xs px-2.5"
+          className="h-11 flex-1 rounded-lg bg-muted border-0 text-base px-2.5"
         >
           <option value="createdAt">Ordenar: más recientes</option>
           <option value="name">Ordenar: nombre</option>
@@ -31,7 +31,7 @@ export function PatientsMobileList({ items, navigate, sortBy, sortDir, onSort, o
         </select>
         <button
           onClick={onSortDirToggle}
-          className="h-9 w-9 shrink-0 rounded-lg bg-muted flex items-center justify-center text-muted-foreground"
+          className="h-11 w-11 shrink-0 rounded-lg bg-muted flex items-center justify-center text-muted-foreground"
           aria-label="Invertir orden"
         >
           {sortDir === "ASC" ? "↑" : "↓"}

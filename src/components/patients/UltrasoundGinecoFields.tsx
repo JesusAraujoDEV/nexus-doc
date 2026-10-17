@@ -13,7 +13,7 @@ export function UltrasoundGinecoFields(p: FieldProps) {
       <UltrasoundUteroFields {...p} />
       <div>
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Endométrio</p>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <NumberField label="Espesor (mm)" field="ESP-END" {...p} />
           <CatalogField label="Características" field="ENDOMETRIO" {...p} />
         </div>

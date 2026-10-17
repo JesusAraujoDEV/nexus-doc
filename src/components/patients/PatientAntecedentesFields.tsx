@@ -83,7 +83,7 @@ export function PatientAntecedentesFields({ value, onChange }: Props) {
   return (
     <div className="space-y-3 rounded-lg border border-border p-4">
       <p className="text-sm font-semibold text-foreground">Antecedentes</p>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div><Label>Lugar de nacimiento</Label><Input value={value.lugarNacimiento} onChange={set("lugarNacimiento")} /></div>
         <div><Label>Menarquia (edad)</Label><Input type="number" value={value.menarquia} onChange={set("menarquia")} /></div>
         <div><Label>1ra relación (edad)</Label><Input type="number" value={value.irs} onChange={set("irs")} /></div>

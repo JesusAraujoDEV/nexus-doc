@@ -2,7 +2,7 @@ import { ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ConsultationCategory } from "./ConsultationForm";
 
-export type ConsultationTab = "principal" | "recipe" | "ultrasonido" | "labExams" | "generalUltrasound" | "medicalReports";
+export type ConsultationTab = "principal" | "recipe" | "ultrasonido" | "labExams" | "generalUltrasound" | "medicalReports" | "attachments";
 const TABS: { key: ConsultationTab; label: string }[] = [
   { key: "principal", label: "Principal" },
   { key: "recipe", label: "Récipe" },
@@ -10,7 +10,12 @@ const TABS: { key: ConsultationTab; label: string }[] = [
   { key: "labExams", label: "Lab. exámenes" },
   { key: "generalUltrasound", label: "Eco. general" },
   { key: "medicalReports", label: "Informes/Constancias" },
+  { key: "attachments", label: "Adjuntos" },
 ];
+
+export function isConsultationTab(value: string | null): value is ConsultationTab {
+  return TABS.some((t) => t.key === value);
+}
 
 interface Props {
   title: string;
@@ -21,10 +26,13 @@ interface Props {
   onTabChange: (t: ConsultationTab) => void;
 }
 
+// Pastillas de ≥44px de alto en teléfono; compactas desde md.
+const PILL = "shrink-0 whitespace-nowrap px-4 min-h-11 md:min-h-0 md:px-3 md:py-1.5 rounded-full text-sm md:text-xs transition-colors";
+
 export function ConsultationFormHeader({ title, onBack, category, onCategoryChange, tab, onTabChange }: Props) {
   return (
     <div className="px-5 pt-6 pb-4 border-b border-border bg-card sticky top-0 z-10 space-y-3">
-      <button onClick={onBack} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
+      <button type="button" onClick={onBack} className="flex items-center gap-1 min-h-11 md:min-h-0 text-sm text-muted-foreground hover:text-foreground transition-colors">
         <ChevronLeft size={16} />Volver a la paciente
       </button>
       <h1 className="text-lg font-bold text-foreground">{title}</h1>
@@ -35,7 +43,8 @@ export function ConsultationFormHeader({ title, onBack, category, onCategoryChan
             type="button"
             onClick={() => onCategoryChange(c)}
             className={cn(
-              "px-3 py-1.5 rounded-full text-xs font-semibold transition-colors",
+              PILL,
+              "font-semibold",
               category === c ? "bg-foreground text-background" : "bg-muted text-muted-foreground hover:bg-secondary",
             )}
           >
@@ -47,9 +56,11 @@ export function ConsultationFormHeader({ title, onBack, category, onCategoryChan
         {TABS.map((t) => (
           <button
             key={t.key}
+            type="button"
             onClick={() => onTabChange(t.key)}
             className={cn(
-              "shrink-0 whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
+              PILL,
+              "font-medium",
               tab === t.key ? "bg-primary text-white" : "bg-muted text-muted-foreground hover:bg-secondary",
             )}
           >

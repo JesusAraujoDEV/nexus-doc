@@ -15,7 +15,7 @@ export function ConsultationPrincipalFields({ form, onChange }: Props) {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div><Label>Tipo de consulta</Label><VisitTypeCombobox value={form.visitType} onChange={(v) => onChange({ ...form, visitType: v })} /></div>
         <div><Label htmlFor="cf-date">Fecha</Label><Input id="cf-date" type="date" value={form.visitDate} onChange={set("visitDate")} /></div>
       </div>

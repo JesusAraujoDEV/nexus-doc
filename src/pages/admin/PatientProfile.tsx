@@ -12,16 +12,18 @@ import { PregnancySection } from "@/components/patients/PregnancySection";
 import { PregnancyBanner } from "@/components/patients/PregnancyBanner";
 import { PatientConsultationsTab } from "@/components/patients/PatientConsultationsTab";
 import { PatientLabExamsTab } from "@/components/patients/PatientLabExamsTab";
+import { PatientAttachmentsTab } from "@/components/patients/PatientAttachmentsTab";
 import { ConfirmDeleteDialog } from "@/components/patients/ConfirmDeleteDialog";
 import { useToast } from "@/components/ui/use-toast";
 
-type ProfileTab = "info" | "background" | "pregnancies" | "consultations" | "labExams";
+type ProfileTab = "info" | "background" | "pregnancies" | "consultations" | "labExams" | "files";
 const TABS: { key: ProfileTab; label: string }[] = [
   { key: "info", label: "Info" },
   { key: "background", label: "Antecedentes" },
   { key: "pregnancies", label: "Embarazos" },
   { key: "consultations", label: "Consultas" },
   { key: "labExams", label: "Lab. exámenes" },
+  { key: "files", label: "Archivos" },
 ];
 
 export default function PatientProfile() {
@@ -83,7 +85,7 @@ export default function PatientProfile() {
                   key={t.key}
                   onClick={() => setTab(t.key)}
                   className={cn(
-                    "shrink-0 whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-medium transition-colors",
+                    "shrink-0 whitespace-nowrap px-4 min-h-11 md:min-h-0 md:px-3 md:py-1.5 rounded-full text-sm md:text-xs font-medium transition-colors",
                     tab === t.key ? "bg-primary text-white" : "bg-muted text-muted-foreground hover:bg-secondary",
                   )}
                 >
@@ -97,6 +99,7 @@ export default function PatientProfile() {
             {tab === "pregnancies" && <PregnancySection patientId={data.id} />}
             {tab === "consultations" && <PatientConsultationsTab patientId={data.id} records={records} />}
             {tab === "labExams" && <PatientLabExamsTab patientId={data.id} active={tab === "labExams"} />}
+            {tab === "files" && <PatientAttachmentsTab patientId={data.id} records={records} />}
 
             <ConfirmDeleteDialog
               open={showDeletePatient}

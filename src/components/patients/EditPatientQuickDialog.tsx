@@ -52,7 +52,7 @@ export function EditPatientQuickDialog({ patient, open, onOpenChange }: Props) {
           <DialogTitle>Editar paciente</DialogTitle>
         </DialogHeader>
         <form onSubmit={(e) => { e.preventDefault(); mutation.mutate(); }} className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <Label htmlFor="epq-fn">Nombre</Label>
               <Input id="epq-fn" value={form.firstName} onChange={set("firstName")} required />
@@ -62,7 +62,7 @@ export function EditPatientQuickDialog({ patient, open, onOpenChange }: Props) {
               <Input id="epq-ln" value={form.lastName} onChange={set("lastName")} required />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <Label htmlFor="epq-ced">Cedula</Label>
               <Input id="epq-ced" value={form.cedula} onChange={set("cedula")} />

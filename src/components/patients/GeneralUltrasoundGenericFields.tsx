@@ -49,7 +49,7 @@ const GENERIC_FIELDS: Record<string, FieldDef[]> = {
 export function GeneralUltrasoundGenericFields({ subType, ...p }: { subType: GeneralUltrasoundSubType } & GuFieldProps) {
   const fields = GENERIC_FIELDS[subType] || [];
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
       {fields.map((f) =>
         f.numeric ? <GuNumberField key={f.field} label={f.label} field={f.field} {...p} /> : <GuField key={f.field} label={f.label} field={f.field} {...p} />,
       )}

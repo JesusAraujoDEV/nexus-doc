@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { Baby } from "lucide-react";
 import { fetchPregnanciesByPatient } from "@/lib/pregnancies-api";
+import { formatApiDate } from "@/lib/calendar-date";
 
 function formatDate(iso: string | null) {
   if (!iso) return null;
-  return new Date(iso).toLocaleDateString("es-VE", { day: "2-digit", month: "long", year: "numeric" });
+  return formatApiDate(iso);
 }
 
 /** Aviso inmediato de embarazo activo, visible sin entrar a la pestaña "Embarazos". */
