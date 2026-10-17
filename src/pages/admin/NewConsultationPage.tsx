@@ -2,6 +2,7 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClinicalRecord } from "@/lib/clinical-records-api";
 import { todayKey } from "@/lib/calendar-date";
+import { EMPTY_CERTIFICATE, certificateFromForm, cleanImpressions } from "@/lib/consultation-extras";
 import { useToast } from "@/components/ui/use-toast";
 import { ConsultationForm, ConsultationFormValues } from "@/components/patients/ConsultationForm";
 
@@ -22,6 +23,10 @@ function buildEmpty(pregnancyId: string | null): ConsultationFormValues {
     ultrasound: {},
     indicatesPrescription: false,
     indicatesImagingStudy: false,
+    diagnosticImpressions: [],
+    evolution: "",
+    recommendations: "",
+    medicalCertificate: { ...EMPTY_CERTIFICATE },
   };
 }
 
@@ -43,6 +48,10 @@ function toCreatePayload(patientId: string, form: ConsultationFormValues) {
     ultrasoundFindings: Object.keys(form.ultrasound).length ? form.ultrasound : undefined,
     indicatesPrescription: form.indicatesPrescription,
     indicatesImagingStudy: form.indicatesImagingStudy,
+    diagnosticImpressions: cleanImpressions(form.diagnosticImpressions) ?? undefined,
+    medicalCertificate: certificateFromForm(form.medicalCertificate) ?? undefined,
+    evolution: form.evolution.trim() || undefined,
+    recommendations: form.recommendations.trim() || undefined,
   };
 }
 

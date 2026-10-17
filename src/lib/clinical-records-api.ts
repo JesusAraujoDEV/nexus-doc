@@ -6,6 +6,14 @@ export interface RecipeItem {
   posologia: string | null;
 }
 
+/** Constancia médica emitida en la consulta (migrada del legacy o cargada en el form). */
+export interface MedicalCertificate {
+  diagnostico?: string;
+  motivo?: string;
+  reposo?: boolean;
+  diasReposo?: number | null;
+}
+
 export interface ClinicalRecord {
   id: string;
   symptoms: string | null;
@@ -27,6 +35,12 @@ export interface ClinicalRecord {
   pregnancyId: string | null;
   indicatesPrescription: boolean;
   indicatesImagingStudy: boolean;
+  /** Impresiones diagnósticas (hasta ~3 en el legacy). */
+  diagnosticImpressions: string[] | null;
+  medicalCertificate: MedicalCertificate | null;
+  evolution: string | null;
+  /** Recomendaciones / indicaciones a la paciente. */
+  recommendations: string | null;
 }
 
 /**
@@ -89,6 +103,10 @@ export function createClinicalRecord(data: {
   pregnancyId?: string;
   indicatesPrescription?: boolean;
   indicatesImagingStudy?: boolean;
+  diagnosticImpressions?: string[];
+  medicalCertificate?: MedicalCertificate;
+  evolution?: string;
+  recommendations?: string;
 }) {
   return apiFetch<ClinicalRecord>("/clinical-records", {
     method: "POST",

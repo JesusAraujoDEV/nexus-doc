@@ -3,6 +3,7 @@ import { ChevronDown, ChevronUp, Stethoscope, Pencil, Trash2, Printer } from "lu
 import { cn } from "@/lib/utils";
 import { ClinicalRecord, consultationDate, openClinicalRecordPdf } from "@/lib/clinical-records-api";
 import { formatApiDate as formatDate } from "@/lib/calendar-date";
+import { ConsultationCardSummary } from "@/components/patients/ConsultationCardSummary";
 
 function Field({ label, value }: { label: string; value: string | null }) {
   if (!value) return null;
@@ -24,7 +25,8 @@ interface Props {
 
 export function ConsultationCard({ record, idx, onEdit, onDelete }: Props) {
   const [open, setOpen] = useState(idx === 0);
-  const hasDetail = record.diagnosis || record.treatment || record.labOrders || record.privateNotes || record.nextAppointmentDate;
+  const hasDetail = record.diagnosis || record.treatment || record.labOrders || record.privateNotes || record.nextAppointmentDate
+    || record.evolution || record.recommendations || record.diagnosticImpressions?.length || record.medicalCertificate;
   const hasRecipe = !!record.recipeItems?.length;
   const hasUltrasound = !!record.ultrasoundFindings && Object.keys(record.ultrasoundFindings).length > 0;
 
@@ -43,6 +45,7 @@ export function ConsultationCard({ record, idx, onEdit, onDelete }: Props) {
               {record.visitType || "Consulta"}
             </p>
             <p className="text-xs text-muted-foreground">{formatDate(consultationDate(record))}</p>
+            <ConsultationCardSummary record={record} />
           </div>
         </div>
         {(hasDetail || hasRecipe || hasUltrasound) && (open ? <ChevronUp size={16} className="text-muted-foreground shrink-0" /> : <ChevronDown size={16} className="text-muted-foreground shrink-0" />)}
@@ -52,7 +55,9 @@ export function ConsultationCard({ record, idx, onEdit, onDelete }: Props) {
         <div className={cn("px-4 pb-4 space-y-3 border-t border-border pt-3")}>
           <Field label="Motivo" value={record.symptoms} />
           <Field label="Diagnóstico" value={record.diagnosis} />
+          <Field label="Evolución" value={record.evolution} />
           <Field label="Tratamiento" value={record.treatment} />
+          <Field label="Recomendaciones" value={record.recommendations} />
           <Field label="Exámenes indicados" value={record.labOrders} />
           <Field label="Observaciones" value={record.privateNotes} />
           <Field label="Próxima consulta" value={record.nextAppointmentDate ? formatDate(record.nextAppointmentDate) : null} />

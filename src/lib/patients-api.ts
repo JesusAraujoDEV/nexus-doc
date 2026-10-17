@@ -26,6 +26,9 @@ export interface PatientDetail {
   lastName: string;
   cedula: string | null;
   phone: string | null;
+  /** Teléfono fijo / secundario (legacy PACIENTE.TELEFONO). */
+  phoneSecondary: string | null;
+  email: string | null;
   birthDate: string | null;
   gender: string | null;
   address: string | null;

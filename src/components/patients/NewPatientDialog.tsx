@@ -11,7 +11,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { REFERIDO_LABEL } from "@/lib/referred-by";
 import { fetchReferringDoctors, createReferringDoctor } from "@/lib/referring-doctors-api";
 import { CatalogComboBox } from "./CatalogComboBox";
-import { PatientAntecedentesFields, AntecedentesForm, ANTECEDENTES_VACIO, buildMedicalBackground } from "./PatientAntecedentesFields";
+import { PatientAntecedentesFields } from "./PatientAntecedentesFields";
+import { AntecedentesForm, ANTECEDENTES_VACIO, buildMedicalBackground } from "@/lib/medical-background";
 
 interface Props {
   open: boolean;

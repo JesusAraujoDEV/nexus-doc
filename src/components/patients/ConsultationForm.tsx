@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { RecipeItem } from "@/lib/clinical-records-api";
+import { MedicalCertificateForm } from "@/lib/consultation-extras";
 import { ConsultationFormHeader, ConsultationTab } from "@/components/patients/ConsultationFormHeader";
 import { ConsultationPrincipalFields } from "@/components/patients/ConsultationPrincipalFields";
 import { ConsultationPrintButton as PrintButton } from "@/components/patients/ConsultationPrintButton";
@@ -29,6 +30,10 @@ export interface ConsultationFormValues {
   ultrasound: UltrasoundValues;
   indicatesPrescription: boolean;
   indicatesImagingStudy: boolean;
+  diagnosticImpressions: string[];
+  evolution: string;
+  recommendations: string;
+  medicalCertificate: MedicalCertificateForm;
 }
 
 interface Props {

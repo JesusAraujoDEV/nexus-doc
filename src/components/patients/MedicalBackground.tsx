@@ -1,8 +1,26 @@
 import { PatientDetail } from "@/lib/patients-api";
+import { AntecedentePersonal, parseMedicalBackground } from "@/lib/medical-background";
 
 interface Gineco {
   menarquia?: number; irs?: number; gestas?: number;
-  partos?: number; cesareas?: number; abortos?: number;
+  partos?: number; cesareas?: number; abortos?: number; ectopicos?: number;
+}
+
+function PersonalesList({ items }: { items: AntecedentePersonal[] }) {
+  if (!items.length) return null;
+  return (
+    <div>
+      <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">Antecedentes personales</p>
+      <ul className="space-y-0.5">
+        {items.map((a, i) => (
+          <li key={`${a.cie9 ?? ""}-${i}`} className="text-sm text-foreground">
+            {a.titulo}
+            {a.cie9 && <span className="ml-1.5 text-[11px] text-muted-foreground">CIE-9 {a.cie9}</span>}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
 function TextBlock({ label, value }: { label: string; value?: unknown }) {
@@ -18,7 +36,7 @@ function TextBlock({ label, value }: { label: string; value?: unknown }) {
 function GinecoRow({ g }: { g: Gineco }) {
   const items: [string, number | undefined][] = [
     ["Menarquia", g.menarquia], ["1ra Rel.", g.irs], ["Gestas", g.gestas],
-    ["Partos", g.partos], ["Cesáreas", g.cesareas], ["Abortos", g.abortos],
+    ["Partos", g.partos], ["Cesáreas", g.cesareas], ["Abortos", g.abortos], ["Ectópicos", g.ectopicos],
   ];
   const present = items.filter(([, v]) => v !== undefined && v !== null);
   if (present.length === 0) return null;
@@ -42,7 +60,9 @@ export function MedicalBackground({ p }: { p: PatientDetail }) {
   const habitos = bg.habitos as Record<string, string> | undefined;
   const gineco = bg.antecedentesGinecoObs as Gineco | undefined;
 
-  const isEmpty = !bg.notas && !bg.alergias && !bg.cirugiasPrevias && !bg.ocupacion && !gineco && !habitos;
+  const personales = parseMedicalBackground(bg).antecedentesPersonales;
+
+  const isEmpty = !bg.notas && !bg.alergias && !bg.cirugiasPrevias && !bg.ocupacion && !gineco && !habitos && !personales.length;
   if (isEmpty) {
     return <div className="medical-card p-4 text-sm text-muted-foreground text-center">Sin antecedentes registrados.</div>;
   }
@@ -51,6 +71,7 @@ export function MedicalBackground({ p }: { p: PatientDetail }) {
     <div className="medical-card p-4 space-y-3">
       <TextBlock label="Ocupación" value={bg.ocupacion} />
       {gineco && <GinecoRow g={gineco} />}
+      <PersonalesList items={personales} />
       <TextBlock label="Alergias" value={bg.alergias} />
       <TextBlock label="Cirugías previas" value={bg.cirugiasPrevias} />
       <TextBlock label="Notas" value={bg.notas} />

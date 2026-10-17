@@ -2,6 +2,7 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { ClinicalRecord, fetchClinicalRecord, updateClinicalRecord } from "@/lib/clinical-records-api";
+import { certificateFromForm, certificateToForm, cleanImpressions } from "@/lib/consultation-extras";
 import { useToast } from "@/components/ui/use-toast";
 import { ConsultationForm, ConsultationFormValues } from "@/components/patients/ConsultationForm";
 import { isConsultationTab } from "@/components/patients/ConsultationFormHeader";
@@ -22,6 +23,10 @@ function toFormValues(record: ClinicalRecord): ConsultationFormValues {
     ultrasound: record.ultrasoundFindings || {},
     indicatesPrescription: record.indicatesPrescription || false,
     indicatesImagingStudy: record.indicatesImagingStudy || false,
+    diagnosticImpressions: record.diagnosticImpressions || [],
+    evolution: record.evolution || "",
+    recommendations: record.recommendations || "",
+    medicalCertificate: certificateToForm(record.medicalCertificate),
   };
 }
 
@@ -61,6 +66,10 @@ export default function EditConsultationPage() {
         ultrasoundFindings: form.ultrasound,
         indicatesPrescription: form.indicatesPrescription,
         indicatesImagingStudy: form.indicatesImagingStudy,
+        diagnosticImpressions: cleanImpressions(form.diagnosticImpressions),
+        medicalCertificate: certificateFromForm(form.medicalCertificate),
+        evolution: form.evolution.trim() || null,
+        recommendations: form.recommendations.trim() || null,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["clinical-record", recordId] });

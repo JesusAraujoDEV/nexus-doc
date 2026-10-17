@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MessageCircle, Phone, MapPin, Pencil, Trash2 } from "lucide-react";
+import { MessageCircle, Phone, MapPin, Pencil, Trash2, Mail } from "lucide-react";
 import { PatientDetail } from "@/lib/patients-api";
 import { parseApiDate } from "@/lib/calendar-date";
 import { EditPatientDialog } from "./EditPatientDialog";
@@ -12,6 +12,9 @@ function ageFrom(birthDate: string | null) {
   const hadBirthday = today.getMonth() > birth.getMonth() || (today.getMonth() === birth.getMonth() && today.getDate() >= birth.getDate());
   return today.getFullYear() - birth.getFullYear() - (hadBirthday ? 0 : 1);
 }
+
+// ≥44px de alto en teléfono para que el link sea tocable; compacto desde md.
+const CONTACT_LINK = "inline-flex items-center gap-1.5 min-h-11 md:min-h-0 hover:text-foreground transition-colors";
 
 export function PatientHeader({ p, onDelete }: { p: PatientDetail; onDelete?: () => void }) {
   const [editing, setEditing] = useState(false);
@@ -47,6 +50,20 @@ export function PatientHeader({ p, onDelete }: { p: PatientDetail; onDelete?: ()
               <p className="flex items-start gap-1.5 text-xs text-muted-foreground mt-2">
                 <MapPin size={13} className="shrink-0 mt-0.5" />{p.address}
               </p>
+            )}
+            {(p.phoneSecondary || p.email) && (
+              <div className="flex flex-wrap gap-x-4 mt-1 text-xs text-muted-foreground">
+                {p.phoneSecondary && (
+                  <a href={`tel:${p.phoneSecondary.replace(/[^\d+]/g, "")}`} className={CONTACT_LINK} aria-label={`Llamar al teléfono secundario ${p.phoneSecondary}`}>
+                    <Phone size={13} className="shrink-0" />{p.phoneSecondary}
+                  </a>
+                )}
+                {p.email && (
+                  <a href={`mailto:${p.email}`} className={`${CONTACT_LINK} min-w-0 break-all`}>
+                    <Mail size={13} className="shrink-0" />{p.email}
+                  </a>
+                )}
+              </div>
             )}
           </div>
         </div>

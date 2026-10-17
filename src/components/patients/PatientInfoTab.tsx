@@ -21,7 +21,9 @@ function Stat({ label, value }: { label: string; value: string }) {
 export function PatientInfoTab({ p }: { p: PatientDetail }) {
   const hasVitals = p.weightKg != null || p.heightCm != null;
   const referredLabel = p.referredByType ? REFERRED_LABELS[p.referredByType] : null;
-  const isEmpty = !hasVitals && !referredLabel && !p.referredByDetail;
+  const rawProcedencia = p.medicalBackground?.procedencia;
+  const procedencia = typeof rawProcedencia === "string" ? rawProcedencia.trim() : "";
+  const isEmpty = !hasVitals && !referredLabel && !p.referredByDetail && !procedencia;
 
   if (isEmpty) {
     return <div className="medical-card p-4 text-sm text-muted-foreground text-center">Sin datos adicionales.</div>;
@@ -40,8 +42,16 @@ export function PatientInfoTab({ p }: { p: PatientDetail }) {
           <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Cómo llegó</p>
           <p className="text-sm text-foreground">
             {referredLabel}
-            {p.referredByDetail && <span className="text-muted-foreground"> — {p.referredByDetail}</span>}
+            {p.referredByDetail && (
+              <span className={referredLabel ? "text-muted-foreground" : undefined}>{referredLabel ? " — " : ""}{p.referredByDetail}</span>
+            )}
           </p>
+        </div>
+      )}
+      {procedencia && (
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Procedencia</p>
+          <p className="text-sm text-foreground">{procedencia}</p>
         </div>
       )}
     </div>
