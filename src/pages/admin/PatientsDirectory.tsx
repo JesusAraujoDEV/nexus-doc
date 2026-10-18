@@ -7,6 +7,7 @@ import { fetchPatients, PatientSortBy, SortDir, PatientListItem, deletePatient }
 import { PatientsMobileList } from "@/components/patients/PatientsMobileList";
 import { PatientsTable } from "@/components/patients/PatientsTable";
 import { PatientFilters, Filters, EMPTY_FILTERS } from "@/components/patients/PatientFilters";
+import { RecentPatientsChips, RecentFilter } from "@/components/patients/RecentPatientsChips";
 import { ConfirmDeleteDialog } from "@/components/patients/ConfirmDeleteDialog";
 import { EditPatientQuickDialog } from "@/components/patients/EditPatientQuickDialog";
 import { NewPatientDialog } from "@/components/patients/NewPatientDialog";
@@ -30,9 +31,17 @@ export default function PatientsDirectory() {
   const { toast } = useToast();
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
-  const [sortBy, setSortBy] = useState<PatientSortBy>("createdAt");
+  // Por defecto, las atendidas más recientemente primero. createdAt no sirve:
+  // la historia importada tiene todas la misma fecha de carga.
+  const [sortBy, setSortBy] = useState<PatientSortBy>("lastVisit");
   const [sortDir, setSortDir] = useState<SortDir>("DESC");
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
+  const [recent, setRecent] = useState<RecentFilter>("");
+
+  function handleRecent(value: RecentFilter) {
+    setRecent(value);
+    if (value) { setSortBy("lastVisit"); setSortDir("DESC"); }
+  }
   const debouncedQuery = useDebounced(query, 350);
 
   const [editingPatient, setEditingPatient] = useState<PatientListItem | null>(null);
@@ -51,7 +60,7 @@ export default function PatientsDirectory() {
 
   useEffect(
     () => setPage(1),
-    [debouncedQuery, sortBy, sortDir, filters.gender, filters.hasVisits, filters.hasCedula, filters.pregnant, filters.labsPending],
+    [debouncedQuery, sortBy, sortDir, recent, filters.gender, filters.hasVisits, filters.hasCedula, filters.pregnant, filters.labsPending],
   );
 
   function handleSort(column: PatientSortBy) {
@@ -66,7 +75,7 @@ export default function PatientsDirectory() {
   const onNewConsultation = (p: PatientListItem) => navigate(`/admin/patients/${p.id}/consultations/new`);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["patients", debouncedQuery, page, sortBy, sortDir, filters],
+    queryKey: ["patients", debouncedQuery, page, sortBy, sortDir, filters, recent],
     queryFn: () => fetchPatients({
       search: debouncedQuery || undefined,
       page,
@@ -78,6 +87,7 @@ export default function PatientsDirectory() {
       hasCedula: filters.hasCedula || undefined,
       pregnant: filters.pregnant || undefined,
       labsPending: filters.labsPending || undefined,
+      recent: recent || undefined,
     }),
   });
 
@@ -89,7 +99,7 @@ export default function PatientsDirectory() {
         <div className="flex items-center justify-between mb-3">
           <div>
             <h1 className="text-lg font-bold text-foreground">Pacientes</h1>
-            <p className="text-xs text-muted-foreground">{data?.total ?? "…"} registros totales</p>
+            <p className="text-xs text-muted-foreground">{data?.total ?? "…"} pacientes</p>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -110,6 +120,7 @@ export default function PatientsDirectory() {
             className="pl-9 h-11 rounded-xl bg-muted border-0 text-sm"
           />
         </div>
+        <RecentPatientsChips value={recent} onChange={handleRecent} />
         <PatientFilters filters={filters} onChange={setFilters} />
       </div>
 

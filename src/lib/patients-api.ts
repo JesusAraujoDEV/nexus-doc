@@ -78,6 +78,8 @@ export interface PatientListParams {
   hasCedula?: "true" | "false";
   pregnant?: "true" | "history";
   labsPending?: "true";
+  /** Atendidas en los últimos 7/30/90 días, o "new" = primera consulta en los últimos 30 días. */
+  recent?: "7" | "30" | "90" | "new";
 }
 
 export function fetchPatients(params: PatientListParams) {
@@ -92,6 +94,7 @@ export function fetchPatients(params: PatientListParams) {
   if (params.hasCedula) query.set("hasCedula", params.hasCedula);
   if (params.pregnant) query.set("pregnant", params.pregnant);
   if (params.labsPending) query.set("labsPending", params.labsPending);
+  if (params.recent) query.set("recent", params.recent);
   return apiFetch<PatientListResponse>(`/patients?${query.toString()}`);
 }
 
