@@ -4,6 +4,9 @@ import { cn } from "@/lib/utils";
 import { ClinicalRecord, consultationDate, openClinicalRecordPdf } from "@/lib/clinical-records-api";
 import { formatApiDate as formatDate } from "@/lib/calendar-date";
 import { ConsultationCardSummary } from "@/components/patients/ConsultationCardSummary";
+import { useConsultationAttachments } from "@/hooks/use-consultation-attachments";
+import { ConsultationAttachments } from "@/components/attachments/ConsultationAttachments";
+import { AttachPhotoButton } from "@/components/attachments/AttachPhotoButton";
 
 function Field({ label, value }: { label: string; value: string | null }) {
   if (!value) return null;
@@ -25,8 +28,7 @@ interface Props {
 
 export function ConsultationCard({ record, idx, onEdit, onDelete }: Props) {
   const [open, setOpen] = useState(idx === 0);
-  const hasDetail = record.diagnosis || record.treatment || record.labOrders || record.privateNotes || record.nextAppointmentDate
-    || record.evolution || record.recommendations || record.diagnosticImpressions?.length || record.medicalCertificate;
+  const attachments = useConsultationAttachments(record.id, open);
   const hasRecipe = !!record.recipeItems?.length;
   const hasUltrasound = !!record.ultrasoundFindings && Object.keys(record.ultrasoundFindings).length > 0;
 
@@ -48,10 +50,10 @@ export function ConsultationCard({ record, idx, onEdit, onDelete }: Props) {
             <ConsultationCardSummary record={record} />
           </div>
         </div>
-        {(hasDetail || hasRecipe || hasUltrasound) && (open ? <ChevronUp size={16} className="text-muted-foreground shrink-0" /> : <ChevronDown size={16} className="text-muted-foreground shrink-0" />)}
+        {open ? <ChevronUp size={16} className="text-muted-foreground shrink-0" /> : <ChevronDown size={16} className="text-muted-foreground shrink-0" />}
       </button>
 
-      {open && (hasDetail || hasRecipe || hasUltrasound) && (
+      {open && (
         <div className={cn("px-4 pb-4 space-y-3 border-t border-border pt-3")}>
           <Field label="Motivo" value={record.symptoms} />
           <Field label="Diagnóstico" value={record.diagnosis} />
@@ -61,8 +63,8 @@ export function ConsultationCard({ record, idx, onEdit, onDelete }: Props) {
           <Field label="Exámenes indicados" value={record.labOrders} />
           <Field label="Observaciones" value={record.privateNotes} />
           <Field label="Próxima consulta" value={record.nextAppointmentDate ? formatDate(record.nextAppointmentDate) : null} />
-          {(onEdit || onDelete || hasRecipe || hasUltrasound) && (
-            <div className="flex flex-wrap gap-3 pt-2 border-t border-border">
+          <ConsultationAttachments state={attachments} />
+          <div className="flex flex-wrap gap-3 pt-2 border-t border-border">
               {hasRecipe && (
                 <button onClick={() => openClinicalRecordPdf(record.id, "prescription")} className="flex items-center gap-1 min-h-11 md:min-h-0 text-sm md:text-xs text-primary hover:text-primary/80 transition-colors">
                   <Printer size={12} />Imprimir récipe
@@ -83,8 +85,8 @@ export function ConsultationCard({ record, idx, onEdit, onDelete }: Props) {
                   <Trash2 size={12} />Eliminar
                 </button>
               )}
+              <AttachPhotoButton onFiles={attachments.uploads.enqueue} />
             </div>
-          )}
         </div>
       )}
     </div>
