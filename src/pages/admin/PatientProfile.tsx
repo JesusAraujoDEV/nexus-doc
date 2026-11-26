@@ -61,7 +61,7 @@ export default function PatientProfile() {
       <div className="px-5 pt-6 pb-4 md:min-h-[85px] border-b border-border bg-card sticky top-0 z-10">
         <button
           onClick={() => navigate("/admin/patients")}
-          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          className="flex items-center gap-1 min-h-11 md:min-h-0 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <ChevronLeft size={16} />Pacientes
         </button>

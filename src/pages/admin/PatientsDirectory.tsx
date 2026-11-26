@@ -95,7 +95,7 @@ export default function PatientsDirectory() {
 
   return (
     <div className="flex flex-col min-h-full">
-      <div className="px-5 pt-6 pb-4 border-b border-border bg-card sticky top-0 z-10">
+      <div className="px-5 pt-6 pb-4 border-b border-border bg-card md:sticky md:top-0 md:z-10">
         <div className="flex items-center justify-between mb-3">
           <div>
             <h1 className="text-lg font-bold text-foreground">Pacientes</h1>

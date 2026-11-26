@@ -31,7 +31,7 @@ const PILL = "shrink-0 whitespace-nowrap px-4 min-h-11 md:min-h-0 md:px-3 md:py-
 
 export function ConsultationFormHeader({ title, onBack, category, onCategoryChange, tab, onTabChange }: Props) {
   return (
-    <div className="px-5 pt-6 pb-4 border-b border-border bg-card sticky top-0 z-10 space-y-3">
+    <div className="px-5 pt-6 pb-4 border-b border-border bg-card md:sticky md:top-0 md:z-10 space-y-3">
       <button type="button" onClick={onBack} className="flex items-center gap-1 min-h-11 md:min-h-0 text-sm text-muted-foreground hover:text-foreground transition-colors">
         <ChevronLeft size={16} />Volver a la paciente
       </button>

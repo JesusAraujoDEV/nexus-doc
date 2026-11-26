@@ -94,7 +94,7 @@ export function PrintDateDialog({ open, onOpenChange, documentLabel, defaultDate
             type="button"
             variant="outline"
             size="lg"
-            className="h-12 text-base flex-1 sm:flex-none"
+            className="h-12 text-base"
             onClick={() => onOpenChange(false)}
           >
             Cancelar
@@ -102,7 +102,7 @@ export function PrintDateDialog({ open, onOpenChange, documentLabel, defaultDate
           <Button
             type="button"
             size="lg"
-            className="h-12 text-base gap-2 flex-1 sm:flex-none"
+            className="h-12 text-base gap-2"
             disabled={!readableDate}
             onClick={handleConfirm}
           >

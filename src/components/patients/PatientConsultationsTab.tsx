@@ -36,7 +36,7 @@ export function PatientConsultationsTab({ patientId, records }: { patientId: str
         </div>
         <button
           onClick={() => navigate(`/admin/patients/${patientId}/consultations/new`)}
-          className="flex items-center gap-1 text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
+          className="flex items-center gap-1 min-h-11 md:min-h-0 text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
         >
           <Plus size={14} />Nueva consulta
         </button>
