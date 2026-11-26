@@ -7,6 +7,7 @@ import { ConsultationCardSummary } from "@/components/patients/ConsultationCardS
 import { PrintDateDialog } from "@/components/patients/PrintDateDialog";
 import { useConsultationAttachments } from "@/hooks/use-consultation-attachments";
 import { ConsultationAttachments } from "@/components/attachments/ConsultationAttachments";
+import { AttachmentDropZone } from "@/components/attachments/AttachmentDropZone";
 import { AttachPhotoButton } from "@/components/attachments/AttachPhotoButton";
 
 function Field({ label, value }: { label: string; value: string | null }) {
@@ -66,6 +67,7 @@ export function ConsultationCard({ record, idx, onEdit, onDelete }: Props) {
           <Field label="Observaciones" value={record.privateNotes} />
           <Field label="Próxima consulta" value={record.nextAppointmentDate ? formatDate(record.nextAppointmentDate) : null} />
           <ConsultationAttachments state={attachments} />
+          <AttachmentDropZone onFiles={attachments.uploads.enqueue} className="p-4" />
           <div className="flex flex-wrap gap-3 pt-2 border-t border-border">
               {hasRecipe && (
                 <button type="button" onClick={() => setPrintKind("prescription")} className="flex items-center gap-1 min-h-11 md:min-h-0 text-sm md:text-xs text-primary hover:text-primary/80 transition-colors">

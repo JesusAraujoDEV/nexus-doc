@@ -177,4 +177,21 @@ describe("ConsultationCard", () => {
     expect(await screen.findByRole("button", { name: /Adjuntar foto/i })).toBeInTheDocument();
     await waitFor(() => expect(fetchRecordAttachments).toHaveBeenCalledWith("rec-1"));
   });
+
+  it("muestra el recuadro de arrastre solo desplegada y sube archivos al soltarlos", async () => {
+    uploadAttachment.mockResolvedValue(
+      makeAttachment({ id: "att-3", fileName: "eco-soltada.jpg", fileType: "IMAGE", mimeType: "image/jpeg" }),
+    );
+
+    renderWithClient(<ConsultationCard record={makeRecord()} idx={1} patientId="pat-1" />);
+    expect(screen.queryByRole("region", { name: /arrastrar o pegar/i })).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /Control ginecológico/i }));
+    const zone = await screen.findByRole("region", { name: /arrastrar o pegar/i });
+    const photo = new File(["img"], "eco-soltada.jpg", { type: "image/jpeg" });
+
+    fireEvent.drop(zone, { dataTransfer: { files: [photo] } });
+
+    await waitFor(() => expect(uploadAttachment).toHaveBeenCalledWith("rec-1", photo, expect.any(Function)));
+  });
 });

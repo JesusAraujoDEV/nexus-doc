@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ATTACHMENT_LIMITS_HINT } from "@/lib/attachment-rules";
 import { useConsultationAttachments } from "@/hooks/use-consultation-attachments";
 import { AttachmentPickButtons } from "./AttachmentPickButtons";
+import { AttachmentDropZone } from "./AttachmentDropZone";
 import { AttachmentUploadList } from "./AttachmentUploadList";
 import { AttachmentGrid } from "./AttachmentGrid";
 import { AttachmentViewerDialog } from "./AttachmentViewerDialog";
@@ -30,6 +31,7 @@ function RecordAttachments({ recordId }: { recordId: string }) {
     <div className="space-y-4 rounded-lg border border-border p-4">
       <SectionTitle />
       <AttachmentPickButtons onFiles={uploads.enqueue} />
+      <AttachmentDropZone onFiles={uploads.enqueue} listenPagePaste />
       <p className="text-xs text-muted-foreground">{ATTACHMENT_LIMITS_HINT}</p>
       <AttachmentUploadList items={uploads.items} onDismiss={uploads.dismiss} onClearDone={uploads.clearDone} />
       {isLoading && <Loader2 className="animate-spin text-muted-foreground" size={20} aria-label="Cargando adjuntos" />}
