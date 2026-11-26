@@ -5,6 +5,7 @@ import { fetchStats } from "@/lib/stats-api";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { AgeDistributionChart, VisitTypesChart } from "@/components/dashboard/DashboardCharts";
 import { AnalysisSection } from "@/components/dashboard/AnalysisSection";
+import { TodayScheduleCard } from "@/components/dashboard/TodayScheduleCard";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -18,6 +19,11 @@ export default function Dashboard() {
       </div>
 
       <div className="flex-1 p-4 space-y-4">
+        <TodayScheduleCard
+          onSelectPatient={(patientId) => navigate(`/admin/patients/${patientId}`)}
+          onOpenCalendar={() => navigate("/admin/calendar")}
+        />
+
         {isLoading && (
           <div className="py-16 flex justify-center text-muted-foreground">
             <Loader2 size={22} className="animate-spin" />

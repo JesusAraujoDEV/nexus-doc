@@ -19,6 +19,15 @@ export interface PatientListResponse {
 }
 
 export type ReferredByType = "redes" | "otro_doctor" | "colega" | "amigo" | "otro";
+export type AppointmentStatus = "PENDIENTE" | "CONFIRMADA" | "COMPLETADA" | "CANCELADA";
+
+export interface PatientAppointment {
+  id: string;
+  appointmentDate: string;
+  startTime: string;
+  endTime: string;
+  status: AppointmentStatus;
+}
 
 export interface PatientDetail {
   id: string;
@@ -39,6 +48,7 @@ export interface PatientDetail {
   weightKg: number | null;
   heightCm: number | null;
   clinicalRecords: ClinicalRecord[];
+  appointments?: PatientAppointment[];
 }
 
 export interface CreatePatientData {

@@ -18,6 +18,7 @@ export function PatientConsultationsTab({ patientId, records }: { patientId: str
     mutationFn: (recordId: string) => deleteClinicalRecord(recordId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["patient", patientId] });
+      queryClient.invalidateQueries({ queryKey: ["upcoming-schedule"] });
       toast({ title: "Consulta eliminada" });
       setDeletingRecord(null);
     },
