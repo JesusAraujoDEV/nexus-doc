@@ -1,4 +1,5 @@
 import { apiFetch, API_URL, getToken, ApiError } from "@/lib/api";
+import { buildPdfUrl } from "@/lib/pdf-url";
 
 export type MedicalReportType = "informe" | "constancia";
 
@@ -57,11 +58,15 @@ export function deleteMedicalReport(id: string) {
   return apiFetch<{ id: string; deleted: boolean }>(`/medical-reports/${id}`, { method: "DELETE" });
 }
 
+export function medicalReportPdfUrl(id: string, fecha?: string): string {
+  return buildPdfUrl(`${API_URL}/medical-reports/${id}/pdf`, fecha);
+}
+
 /** Abre el PDF del informe/constancia en pestaña nueva. Mismo patrón que openClinicalRecordPdf/openPregnancyPdf. */
-export async function openMedicalReportPdf(id: string) {
+export async function openMedicalReportPdf(id: string, fecha?: string) {
   const tab = window.open("", "_blank");
   const token = getToken();
-  const res = await fetch(`${API_URL}/medical-reports/${id}/pdf`, {
+  const res = await fetch(medicalReportPdfUrl(id, fecha), {
     headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
   if (!res.ok) {
