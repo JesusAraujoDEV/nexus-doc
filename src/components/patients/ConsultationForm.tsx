@@ -97,19 +97,19 @@ export function ConsultationForm({ title, patientId, initialValues, initialTab =
           )}
           {tab === "recipe" && (
             <>
-              {recordId && <PrintButton recordId={recordId} kind="prescription" label="Imprimir récipe" />}
+              {recordId && <PrintButton recordId={recordId} kind="prescription" label="Imprimir récipe" defaultDate={form.visitDate} />}
               <RecipeItemsEditor items={form.recipeItems} onChange={(recipeItems) => setForm((f) => ({ ...f, recipeItems }))} />
             </>
           )}
           {tab === "ultrasonido" && (
             <>
-              {recordId && <PrintButton recordId={recordId} kind="ultrasound" label="Imprimir ecografía" />}
+              {recordId && <PrintButton recordId={recordId} kind="ultrasound" label="Imprimir ecografía" defaultDate={form.visitDate} />}
               <UltrasoundFieldsEditor category={form.category} values={form.ultrasound} onChange={(ultrasound) => setForm((f) => ({ ...f, ultrasound }))} />
             </>
           )}
           {tab === "labExams" && (
             <>
-              {recordId && <PrintButton recordId={recordId} kind="lab-exam" label="Imprimir exámenes de laboratorio" />}
+              {recordId && <PrintButton recordId={recordId} kind="lab-exam" label="Imprimir exámenes de laboratorio" defaultDate={form.visitDate} />}
               <LabExamsTab
                 patientId={patientId}
                 recordId={recordId}
@@ -121,7 +121,7 @@ export function ConsultationForm({ title, patientId, initialValues, initialTab =
           )}
           {tab === "generalUltrasound" && (
             <>
-              {recordId && <PrintButton recordId={recordId} kind="general-ultrasound" label="Imprimir ultrasonido general" />}
+              {recordId && <PrintButton recordId={recordId} kind="general-ultrasound" label="Imprimir ultrasonido general" defaultDate={form.visitDate} />}
               <GeneralUltrasoundTab recordId={recordId} />
             </>
           )}

@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { ClinicalRecord, consultationDate, openClinicalRecordPdf } from "@/lib/clinical-records-api";
 import { formatApiDate as formatDate } from "@/lib/calendar-date";
 import { ConsultationCardSummary } from "@/components/patients/ConsultationCardSummary";
+import { PrintDateDialog } from "@/components/patients/PrintDateDialog";
 
 function Field({ label, value }: { label: string; value: string | null }) {
   if (!value) return null;
@@ -25,6 +26,7 @@ interface Props {
 
 export function ConsultationCard({ record, idx, onEdit, onDelete }: Props) {
   const [open, setOpen] = useState(idx === 0);
+  const [printKind, setPrintKind] = useState<"prescription" | "ultrasound" | null>(null);
   const hasDetail = record.diagnosis || record.treatment || record.labOrders || record.privateNotes || record.nextAppointmentDate
     || record.evolution || record.recommendations || record.diagnosticImpressions?.length || record.medicalCertificate;
   const hasRecipe = !!record.recipeItems?.length;
@@ -64,12 +66,12 @@ export function ConsultationCard({ record, idx, onEdit, onDelete }: Props) {
           {(onEdit || onDelete || hasRecipe || hasUltrasound) && (
             <div className="flex flex-wrap gap-3 pt-2 border-t border-border">
               {hasRecipe && (
-                <button onClick={() => openClinicalRecordPdf(record.id, "prescription")} className="flex items-center gap-1 min-h-11 md:min-h-0 text-sm md:text-xs text-primary hover:text-primary/80 transition-colors">
+                <button type="button" onClick={() => setPrintKind("prescription")} className="flex items-center gap-1 min-h-11 md:min-h-0 text-sm md:text-xs text-primary hover:text-primary/80 transition-colors">
                   <Printer size={12} />Imprimir récipe
                 </button>
               )}
               {hasUltrasound && (
-                <button onClick={() => openClinicalRecordPdf(record.id, "ultrasound")} className="flex items-center gap-1 min-h-11 md:min-h-0 text-sm md:text-xs text-primary hover:text-primary/80 transition-colors">
+                <button type="button" onClick={() => setPrintKind("ultrasound")} className="flex items-center gap-1 min-h-11 md:min-h-0 text-sm md:text-xs text-primary hover:text-primary/80 transition-colors">
                   <Printer size={12} />Imprimir ecografía
                 </button>
               )}
@@ -87,6 +89,13 @@ export function ConsultationCard({ record, idx, onEdit, onDelete }: Props) {
           )}
         </div>
       )}
+      <PrintDateDialog
+        open={printKind !== null}
+        onOpenChange={(isOpen) => { if (!isOpen) setPrintKind(null); }}
+        documentLabel={printKind === "ultrasound" ? "la ecografía" : "el récipe"}
+        defaultDate={consultationDate(record)}
+        onConfirm={(fecha) => (printKind ? openClinicalRecordPdf(record.id, printKind, fecha) : undefined)}
+      />
     </div>
   );
 }

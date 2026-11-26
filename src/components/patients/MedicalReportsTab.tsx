@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { fetchMedicalReportsByRecord, deleteMedicalReport, openMedicalReportPdf, MedicalReport } from "@/lib/medical-reports-api";
 import { InformeMedicoForm } from "./InformeMedicoForm";
 import { ConstanciaForm } from "./ConstanciaForm";
+import { PrintDateDialog } from "./PrintDateDialog";
 
 type SubTab = "informe" | "constancia";
 const SUB_TABS: { key: SubTab; label: string }[] = [
@@ -19,7 +20,7 @@ interface Props {
   recordId?: string;
 }
 
-function ReportRow({ report, onDeleted }: { report: MedicalReport; onDeleted: () => void }) {
+function ReportRow({ report, onPrint, onDeleted }: { report: MedicalReport; onPrint: () => void; onDeleted: () => void }) {
   const del = useMutation({ mutationFn: () => deleteMedicalReport(report.id), onSuccess: onDeleted });
   return (
     <div className="flex items-center justify-between px-2 py-1.5 text-sm border-b border-border last:border-0">
@@ -30,7 +31,7 @@ function ReportRow({ report, onDeleted }: { report: MedicalReport; onDeleted: ()
         </p>
       </div>
       <div className="flex items-center gap-1">
-        <Button type="button" variant="ghost" size="icon" onClick={() => openMedicalReportPdf(report.id)}>
+        <Button type="button" variant="ghost" size="icon" onClick={onPrint}>
           <Printer size={14} />
         </Button>
         <Button type="button" variant="ghost" size="icon" onClick={() => del.mutate()} disabled={del.isPending}>
@@ -44,6 +45,7 @@ function ReportRow({ report, onDeleted }: { report: MedicalReport; onDeleted: ()
 /** "Informes/Constancias": lista lo emitido en esta consulta arriba, formulario de emisión abajo. */
 export function MedicalReportsTab({ patientId, recordId }: Props) {
   const [subTab, setSubTab] = useState<SubTab>("informe");
+  const [reportToPrint, setReportToPrint] = useState<MedicalReport | null>(null);
   const queryClient = useQueryClient();
 
   const { data: reports = [] } = useQuery({
@@ -68,7 +70,9 @@ export function MedicalReportsTab({ patientId, recordId }: Props) {
 
       {reports.length > 0 && (
         <div className="border border-border rounded-md divide-y">
-          {reports.map((r) => <ReportRow key={r.id} report={r} onDeleted={invalidate} />)}
+          {reports.map((r) => (
+            <ReportRow key={r.id} report={r} onPrint={() => setReportToPrint(r)} onDeleted={invalidate} />
+          ))}
         </div>
       )}
 
@@ -92,6 +96,14 @@ export function MedicalReportsTab({ patientId, recordId }: Props) {
       ) : (
         <ConstanciaForm patientId={patientId} recordId={recordId} onSaved={invalidate} />
       )}
+
+      <PrintDateDialog
+        open={reportToPrint !== null}
+        onOpenChange={(isOpen) => { if (!isOpen) setReportToPrint(null); }}
+        documentLabel={reportToPrint?.type === "constancia" ? "la constancia" : "el informe médico"}
+        defaultDate={reportToPrint?.createdAt}
+        onConfirm={(fecha) => (reportToPrint ? openMedicalReportPdf(reportToPrint.id, fecha) : undefined)}
+      />
     </div>
   );
 }
