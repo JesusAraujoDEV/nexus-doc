@@ -20,6 +20,11 @@ export function toDateKey(date: Date): string {
 }
 
 const DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/;
+const WEEKDAYS_ES = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+const MONTHS_ES = [
+  "enero", "febrero", "marzo", "abril", "mayo", "junio",
+  "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
+];
 
 /**
  * Helper único para fechas que vienen de la API: "YYYY-MM-DD" se toma como día
@@ -37,4 +42,21 @@ export function formatApiDate(value: string, options: Intl.DateTimeFormatOptions
 /** Hoy en hora local como "YYYY-MM-DD" (toISOString daría el día UTC: de noche en Venezuela, mañana). */
 export function todayKey(): string {
   return toDateKey(new Date());
+}
+
+/** Normaliza una fecha de la API (solo-día o timestamp) a "YYYY-MM-DD" sin correr el día. */
+export function toDateInputValue(value?: string | null): string {
+  if (!value) return todayKey();
+  if (DATE_ONLY.test(value)) return value;
+  const parsed = parseApiDate(value);
+  if (Number.isNaN(parsed.getTime())) return todayKey();
+  return toDateKey(parsed);
+}
+
+/** Formatea "YYYY-MM-DD" en español legible ("miércoles 25 de noviembre de 2026") sin corrimiento UTC. */
+export function formatLongSpanishDate(value: string): string {
+  if (!DATE_ONLY.test(value)) return "";
+  const date = parseDateOnly(value);
+  if (Number.isNaN(date.getTime()) || toDateKey(date) !== value) return "";
+  return `${WEEKDAYS_ES[date.getDay()]} ${date.getDate()} de ${MONTHS_ES[date.getMonth()]} de ${date.getFullYear()}`;
 }

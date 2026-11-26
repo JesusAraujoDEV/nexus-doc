@@ -1,4 +1,5 @@
 import { apiFetch, API_URL, getToken, ApiError } from "@/lib/api";
+import { buildPdfUrl } from "@/lib/pdf-url";
 
 export interface RecipeItem {
   nombre: string | null;
@@ -68,15 +69,21 @@ export function deleteClinicalRecord(id: string) {
   return apiFetch<{ id: string; deleted: boolean }>(`/clinical-records/${id}`, { method: "DELETE" });
 }
 
+export type ClinicalRecordPdfKind = "prescription" | "ultrasound" | "general-ultrasound" | "lab-exam";
+
+export function clinicalRecordPdfUrl(id: string, kind: ClinicalRecordPdfKind, fecha?: string): string {
+  return buildPdfUrl(`${API_URL}/clinical-records/${id}/${kind}-pdf`, fecha);
+}
+
 /**
  * Abre en una pestaña nueva el récipe o el informe de ecografía de una consulta, en PDF.
  * La pestaña se abre ANTES del fetch (sincrónico con el click) porque los navegadores
  * bloquean window.open() si se llama después de un await.
  */
-export async function openClinicalRecordPdf(id: string, kind: "prescription" | "ultrasound" | "general-ultrasound" | "lab-exam") {
+export async function openClinicalRecordPdf(id: string, kind: ClinicalRecordPdfKind, fecha?: string) {
   const tab = window.open("", "_blank");
   const token = getToken();
-  const res = await fetch(`${API_URL}/clinical-records/${id}/${kind}-pdf`, {
+  const res = await fetch(clinicalRecordPdfUrl(id, kind, fecha), {
     headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
   if (!res.ok) {

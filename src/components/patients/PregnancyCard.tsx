@@ -4,6 +4,7 @@ import { Baby, Printer, Pencil, Plus } from "lucide-react";
 import { Pregnancy, openPregnancyPdf } from "@/lib/pregnancies-api";
 import { formatApiDate } from "@/lib/calendar-date";
 import { EditPregnancyDialog } from "./EditPregnancyDialog";
+import { PrintDateDialog } from "./PrintDateDialog";
 
 function formatDate(iso: string | null) {
   if (!iso) return null;
@@ -19,6 +20,7 @@ function statusLabel(p: Pregnancy) {
 
 export function PregnancyCard({ pregnancy }: { pregnancy: Pregnancy }) {
   const [editing, setEditing] = useState(false);
+  const [printing, setPrinting] = useState(false);
   const navigate = useNavigate();
   const records = pregnancy.clinicalRecords || [];
 
@@ -37,8 +39,8 @@ export function PregnancyCard({ pregnancy }: { pregnancy: Pregnancy }) {
           </div>
         </div>
         <div className="flex gap-2 shrink-0">
-          <button onClick={() => openPregnancyPdf(pregnancy.id)} className="text-xs text-primary flex items-center gap-1"><Printer size={12} />Imprimir</button>
-          <button onClick={() => setEditing(true)} className="text-xs text-muted-foreground flex items-center gap-1"><Pencil size={12} />Editar</button>
+          <button type="button" onClick={() => setPrinting(true)} className="text-xs text-primary flex items-center gap-1"><Printer size={12} />Imprimir</button>
+          <button type="button" onClick={() => setEditing(true)} className="text-xs text-muted-foreground flex items-center gap-1"><Pencil size={12} />Editar</button>
         </div>
       </div>
 
@@ -67,6 +69,12 @@ export function PregnancyCard({ pregnancy }: { pregnancy: Pregnancy }) {
       </div>
 
       <EditPregnancyDialog pregnancy={pregnancy} open={editing} onOpenChange={setEditing} />
+      <PrintDateDialog
+        open={printing}
+        onOpenChange={setPrinting}
+        documentLabel="la ficha de embarazo"
+        onConfirm={(fecha) => openPregnancyPdf(pregnancy.id, fecha)}
+      />
     </div>
   );
 }
