@@ -10,6 +10,7 @@ import { PatientInfoTab } from "@/components/patients/PatientInfoTab";
 import { MedicalBackground } from "@/components/patients/MedicalBackground";
 import { PregnancySection } from "@/components/patients/PregnancySection";
 import { PregnancyBanner } from "@/components/patients/PregnancyBanner";
+import { NextVisitBanner } from "@/components/patients/NextVisitBanner";
 import { PatientConsultationsTab } from "@/components/patients/PatientConsultationsTab";
 import { PatientLabExamsTab } from "@/components/patients/PatientLabExamsTab";
 import { PatientAttachmentsTab } from "@/components/patients/PatientAttachmentsTab";
@@ -77,6 +78,7 @@ export default function PatientProfile() {
         {data && (
           <>
             <PatientHeader p={data} onDelete={() => setShowDeletePatient(true)} />
+            <NextVisitBanner records={records} appointments={data.appointments} />
             <PregnancyBanner patientId={data.id} />
 
             <div className="flex gap-2 overflow-x-auto -mx-4 px-4">
