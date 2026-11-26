@@ -15,10 +15,11 @@ function heatClass(count: number, max: number) {
 
 interface Props {
   countsByMonth: number[];
+  unitLabel?: string;
   onMonthClick: (monthIndex: number) => void;
 }
 
-export function CalendarYearView({ countsByMonth, onMonthClick }: Props) {
+export function CalendarYearView({ countsByMonth, unitLabel = "consultas", onMonthClick }: Props) {
   const max = Math.max(1, ...countsByMonth);
 
   return (
@@ -28,15 +29,16 @@ export function CalendarYearView({ countsByMonth, onMonthClick }: Props) {
         return (
           <button
             key={label}
+            type="button"
             onClick={() => onMonthClick(i)}
             className={cn(
               "rounded-xl p-4 text-left transition-colors hover:opacity-90",
               heatClass(count, max),
             )}
           >
-            <p className="text-xs font-semibold">{label}</p>
+            <p className="text-sm font-semibold">{label}</p>
             <p className="text-2xl font-bold mt-1">{count}</p>
-            <p className="text-[10px] opacity-80">consultas</p>
+            <p className="text-xs opacity-85">{unitLabel}</p>
           </button>
         );
       })}
