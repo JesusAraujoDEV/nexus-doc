@@ -10,6 +10,9 @@ const MB = 1024 * 1024;
 export const MAX_IMAGE_BYTES = 15 * MB;
 export const MAX_DOCUMENT_BYTES = 25 * MB;
 
+/** Texto visible con los formatos y tamaños permitidos. */
+export const ATTACHMENT_LIMITS_HINT = "Fotos JPG, PNG o WEBP hasta 15 MB · PDF, Word o Excel hasta 25 MB.";
+
 /** Valor de `accept` para "Subir archivo". */
 export const ATTACHMENT_ACCEPT = [
   ...IMAGE_EXTENSIONS.map((e) => `.${e}`),
