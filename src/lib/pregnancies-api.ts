@@ -1,6 +1,7 @@
 import { apiFetch, API_URL, getToken, ApiError } from "@/lib/api";
 import { ClinicalRecord } from "@/lib/clinical-records-api";
 import { buildPdfUrl } from "@/lib/pdf-url";
+import { openPdfInTab } from "@/lib/open-pdf-tab";
 
 export interface NewbornData {
   birthDate?: string | null;
@@ -72,16 +73,6 @@ export function pregnancyPdfUrl(id: string, fecha?: string): string {
   return buildPdfUrl(`${API_URL}/pregnancies/${id}/pdf`, fecha);
 }
 
-export async function openPregnancyPdf(id: string, fecha?: string) {
-  const tab = window.open("", "_blank");
-  const token = getToken();
-  const res = await fetch(pregnancyPdfUrl(id, fecha), {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-  });
-  if (!res.ok) {
-    tab?.close();
-    throw new ApiError(res.status, `No se pudo generar el PDF (${res.status})`);
-  }
-  const blob = await res.blob();
-  if (tab) tab.location.href = URL.createObjectURL(blob);
+export function openPregnancyPdf(id: string, fecha?: string) {
+  return openPdfInTab(pregnancyPdfUrl(id, fecha));
 }

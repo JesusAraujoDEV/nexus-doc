@@ -1,5 +1,6 @@
 import { apiFetch, API_URL, getToken, ApiError } from "@/lib/api";
 import { buildPdfUrl } from "@/lib/pdf-url";
+import { openPdfInTab } from "@/lib/open-pdf-tab";
 
 export interface RecipeItem {
   nombre: string | null;
@@ -80,18 +81,8 @@ export function clinicalRecordPdfUrl(id: string, kind: ClinicalRecordPdfKind, fe
  * La pestaña se abre ANTES del fetch (sincrónico con el click) porque los navegadores
  * bloquean window.open() si se llama después de un await.
  */
-export async function openClinicalRecordPdf(id: string, kind: ClinicalRecordPdfKind, fecha?: string) {
-  const tab = window.open("", "_blank");
-  const token = getToken();
-  const res = await fetch(clinicalRecordPdfUrl(id, kind, fecha), {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-  });
-  if (!res.ok) {
-    tab?.close();
-    throw new ApiError(res.status, `No se pudo generar el PDF (${res.status})`);
-  }
-  const blob = await res.blob();
-  if (tab) tab.location.href = URL.createObjectURL(blob);
+export function openClinicalRecordPdf(id: string, kind: ClinicalRecordPdfKind, fecha?: string) {
+  return openPdfInTab(clinicalRecordPdfUrl(id, kind, fecha));
 }
 
 export function createClinicalRecord(data: {

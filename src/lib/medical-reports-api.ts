@@ -1,5 +1,6 @@
 import { apiFetch, API_URL, getToken, ApiError } from "@/lib/api";
 import { buildPdfUrl } from "@/lib/pdf-url";
+import { openPdfInTab } from "@/lib/open-pdf-tab";
 
 export type MedicalReportType = "informe" | "constancia";
 
@@ -63,16 +64,6 @@ export function medicalReportPdfUrl(id: string, fecha?: string): string {
 }
 
 /** Abre el PDF del informe/constancia en pestaña nueva. Mismo patrón que openClinicalRecordPdf/openPregnancyPdf. */
-export async function openMedicalReportPdf(id: string, fecha?: string) {
-  const tab = window.open("", "_blank");
-  const token = getToken();
-  const res = await fetch(medicalReportPdfUrl(id, fecha), {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-  });
-  if (!res.ok) {
-    tab?.close();
-    throw new ApiError(res.status, `No se pudo generar el PDF (${res.status})`);
-  }
-  const blob = await res.blob();
-  if (tab) tab.location.href = URL.createObjectURL(blob);
+export function openMedicalReportPdf(id: string, fecha?: string) {
+  return openPdfInTab(medicalReportPdfUrl(id, fecha));
 }
