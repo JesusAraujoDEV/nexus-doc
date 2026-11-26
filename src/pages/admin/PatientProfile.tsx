@@ -58,7 +58,7 @@ export default function PatientProfile() {
 
   return (
     <div className="flex flex-col min-h-full">
-      <div className="px-5 pt-6 pb-4 border-b border-border bg-card sticky top-0 z-10">
+      <div className="px-5 pt-6 pb-4 md:min-h-[85px] border-b border-border bg-card sticky top-0 z-10">
         <button
           onClick={() => navigate("/admin/patients")}
           className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"

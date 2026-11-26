@@ -24,7 +24,7 @@ export function Sidebar() {
   return (
     <aside className="hidden md:flex md:flex-col w-64 h-screen fixed left-0 top-0 bg-card border-r border-border z-20">
       {/* Logo */}
-      <div className="flex items-center gap-3 px-6 py-5 border-b border-border">
+      <div className="flex items-center gap-3 px-6 py-6 border-b border-border">
         <div className="w-9 h-9 rounded-xl gradient-primary flex items-center justify-center shadow-primary">
           <Stethoscope size={18} className="text-white" />
         </div>
