@@ -1,8 +1,7 @@
-import { useState } from "react";
 import { Loader2, Paperclip } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRecordAttachments } from "@/hooks/use-record-attachments";
-import { useAttachmentUploads } from "@/hooks/use-attachment-uploads";
+import { ATTACHMENT_LIMITS_HINT } from "@/lib/attachment-rules";
+import { useConsultationAttachments } from "@/hooks/use-consultation-attachments";
 import { AttachmentPickButtons } from "./AttachmentPickButtons";
 import { AttachmentUploadList } from "./AttachmentUploadList";
 import { AttachmentGrid } from "./AttachmentGrid";
@@ -25,25 +24,21 @@ function SectionTitle() {
 }
 
 function RecordAttachments({ recordId }: { recordId: string }) {
-  const { data: attachments = [], isLoading, isError } = useRecordAttachments(recordId);
-  const uploads = useAttachmentUploads(recordId);
-  const [openId, setOpenId] = useState<string | null>(null);
-  // Se busca por id en la lista viva para que el visor refleje un renombrado.
-  const opened = attachments.find((a) => a.id === openId) ?? null;
+  const { attachments, isLoading, isError, uploads, opened, openViewer, closeViewer } = useConsultationAttachments(recordId);
 
   return (
     <div className="space-y-4 rounded-lg border border-border p-4">
       <SectionTitle />
       <AttachmentPickButtons onFiles={uploads.enqueue} />
-      <p className="text-xs text-muted-foreground">Fotos JPG, PNG o WEBP hasta 15 MB · PDF, Word o Excel hasta 25 MB.</p>
+      <p className="text-xs text-muted-foreground">{ATTACHMENT_LIMITS_HINT}</p>
       <AttachmentUploadList items={uploads.items} onDismiss={uploads.dismiss} onClearDone={uploads.clearDone} />
       {isLoading && <Loader2 className="animate-spin text-muted-foreground" size={20} aria-label="Cargando adjuntos" />}
       {isError && <p className="text-sm text-destructive">No se pudieron cargar los adjuntos.</p>}
       {!isLoading && !isError && attachments.length === 0 && (
         <p className="text-sm text-muted-foreground">Esta consulta no tiene adjuntos todavía.</p>
       )}
-      {attachments.length > 0 && <AttachmentGrid attachments={attachments} onOpen={(a) => setOpenId(a.id)} />}
-      <AttachmentViewerDialog attachment={opened} onClose={() => setOpenId(null)} />
+      {attachments.length > 0 && <AttachmentGrid attachments={attachments} onOpen={openViewer} />}
+      <AttachmentViewerDialog attachment={opened} onClose={closeViewer} />
     </div>
   );
 }
