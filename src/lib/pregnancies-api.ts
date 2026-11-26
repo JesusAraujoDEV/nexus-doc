@@ -1,4 +1,4 @@
-import { apiFetch, API_URL, getToken, ApiError } from "@/lib/api";
+import { apiFetch, API_URL } from "@/lib/api";
 import { ClinicalRecord } from "@/lib/clinical-records-api";
 import { buildPdfUrl } from "@/lib/pdf-url";
 import { openPdfInTab } from "@/lib/open-pdf-tab";
