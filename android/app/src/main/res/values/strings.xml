@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">NexusDoc</string>
+    <string name="title_activity_main">NexusDoc</string>
+    <string name="package_name">lat.jesusaraujo.nexusdoc</string>
+    <string name="custom_url_scheme">lat.jesusaraujo.nexusdoc</string>
+</resources>

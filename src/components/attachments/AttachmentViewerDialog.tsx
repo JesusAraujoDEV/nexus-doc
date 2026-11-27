@@ -6,6 +6,7 @@ import { Attachment } from "@/lib/files-api";
 import { formatBytes } from "@/lib/attachment-rules";
 import { useAttachmentObjectUrl } from "@/hooks/use-attachment-object-url";
 import { useAttachmentActions } from "@/hooks/use-attachment-actions";
+import { isNativeApp, openFileNative } from "@/lib/native-file";
 import { ConfirmDeleteDialog } from "@/components/patients/ConfirmDeleteDialog";
 import { AttachmentPreview } from "./AttachmentPreview";
 import { RenameAttachmentDialog } from "./RenameAttachmentDialog";
@@ -31,12 +32,18 @@ function ViewerBody({ attachment, onClose }: { attachment: Attachment; onClose: 
       </DialogHeader>
       <AttachmentPreview attachment={attachment} url={url} isLoading={isLoading} isError={isError} />
       <div className="flex flex-wrap gap-2">
-        {url && (
+        {url && isNativeApp() && (
+          <Button type="button" variant="outline" className={actionClass}
+            onClick={async () => openFileNative(await (await fetch(url)).blob(), attachment.fileName)}>
+            <ExternalLink />Abrir
+          </Button>
+        )}
+        {url && !isNativeApp() && (
           <Button asChild variant="outline" className={actionClass}>
             <a href={url} download={attachment.fileName}><Download />Descargar</a>
           </Button>
         )}
-        {url && attachment.fileType === "PDF" && (
+        {url && !isNativeApp() && attachment.fileType === "PDF" && (
           <Button asChild variant="outline" className={actionClass}>
             <a href={url} target="_blank" rel="noopener noreferrer"><ExternalLink />Abrir</a>
           </Button>
