@@ -1,5 +1,7 @@
 import { apiFetch } from "@/lib/api";
-import { filenameFrom, isNativeApp, openFileNative } from "@/lib/native-file";
+import { isNativeApp } from "@/lib/is-native-app";
+import { openFileNative } from "@/lib/open-file-native";
+import { filenameFrom } from "@/lib/content-disposition";
 
 /** Agrega el token corto `access` a la URL del PDF. */
 export function withPdfAccess(url: string, token: string): string {

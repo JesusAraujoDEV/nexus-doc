@@ -27,5 +27,5 @@ export function useAttachmentObjectUrl(id: string, enabled = true) {
     return () => URL.revokeObjectURL(objectUrl);
   }, [query.data]);
 
-  return { url, isLoading: query.isLoading, isError: query.isError, error: query.error };
+  return { url, blob: query.data ?? null, isLoading: query.isLoading, isError: query.isError, error: query.error };
 }

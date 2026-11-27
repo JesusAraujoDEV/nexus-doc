@@ -6,7 +6,7 @@ import { Attachment } from "@/lib/files-api";
 import { formatBytes } from "@/lib/attachment-rules";
 import { useAttachmentObjectUrl } from "@/hooks/use-attachment-object-url";
 import { useAttachmentActions } from "@/hooks/use-attachment-actions";
-import { isNativeApp, openFileNative } from "@/lib/native-file";
+import { isNativeApp } from "@/lib/is-native-app";
 import { ConfirmDeleteDialog } from "@/components/patients/ConfirmDeleteDialog";
 import { AttachmentPreview } from "./AttachmentPreview";
 import { RenameAttachmentDialog } from "./RenameAttachmentDialog";
@@ -18,8 +18,8 @@ interface Props {
 }
 
 function ViewerBody({ attachment, onClose }: { attachment: Attachment; onClose: () => void }) {
-  const { url, isLoading, isError } = useAttachmentObjectUrl(attachment.id);
-  const { rename, remove } = useAttachmentActions();
+  const { url, blob, isLoading, isError } = useAttachmentObjectUrl(attachment.id);
+  const { rename, remove, openNative } = useAttachmentActions();
   const [renaming, setRenaming] = useState(false);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const actionClass = "h-11 flex-1 min-w-[8rem]";
@@ -32,9 +32,9 @@ function ViewerBody({ attachment, onClose }: { attachment: Attachment; onClose: 
       </DialogHeader>
       <AttachmentPreview attachment={attachment} url={url} isLoading={isLoading} isError={isError} />
       <div className="flex flex-wrap gap-2">
-        {url && isNativeApp() && (
-          <Button type="button" variant="outline" className={actionClass}
-            onClick={async () => openFileNative(await (await fetch(url)).blob(), attachment.fileName)}>
+        {blob && isNativeApp() && (
+          <Button type="button" variant="outline" className={actionClass} disabled={openNative.isPending}
+            onClick={() => openNative.mutate({ blob, fileName: attachment.fileName })}>
             <ExternalLink />Abrir
           </Button>
         )}

@@ -20,3 +20,11 @@ La doctora pidió usar NexusDoc como app en su Android. Se eligió Capacitor sob
 ## Follow-ups
 - Prueba en emulador y revisión de código en curso (subagentes).
 - APK firmado con keystore propio si se publica en Play Store; iPhone requiere Mac + cuenta Apple.
+
+## Ajustes tras revisión de código
+- Botón "Abrir" de adjuntos: pasa por `useAttachmentActions().openNative` (errores en toast) y usa el blob ya cacheado.
+- Sin `contentType` genérico: el plugin deduce el tipo por extensión (Word/Excel).
+- `android:allowBackup="false"`: el token de sesión del WebView no se sube al respaldo de Google.
+- Archivos abiertos en `cache/abiertos/`, que se vacía al iniciar la app.
+- `native-file.ts` dividido en `is-native-app.ts`, `open-file-native.ts`, `content-disposition.ts` (+ tests).
+- Atrás de Android cierra el diálogo abierto antes de cambiar de pantalla.

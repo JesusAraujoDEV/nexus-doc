@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
 import { renameAttachment, deleteAttachment, restoreAttachment } from "@/lib/files-api";
+import { openFileNative } from "@/lib/open-file-native";
 
 /**
  * Renombrar / eliminar (a papelera) / restaurar un adjunto. Todas invalidan el
@@ -39,5 +40,11 @@ export function useAttachmentActions() {
     onError,
   });
 
-  return { rename, remove, restore };
+  // En la app de Android: abre el adjunto con el visor del teléfono.
+  const openNative = useMutation({
+    mutationFn: ({ blob, fileName }: { blob: Blob; fileName: string }) => openFileNative(blob, fileName),
+    onError,
+  });
+
+  return { rename, remove, restore, openNative };
 }
